@@ -179,7 +179,7 @@
     "asar": false,
     "portable": {
       "artifactName": "BotDeck-Portable-${arch}.${ext}",
-      "requestExecutionLevel": "asInvoker"
+      "requestExecutionLevel": "user"
     }
   },
   "allowScripts": {
