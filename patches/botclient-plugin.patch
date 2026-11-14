@@ -1,0 +1,34 @@
+diff --git a/index.tsx b/index.tsx
+index 418a476..71c4424 100644
+--- a/index.tsx
++++ b/index.tsx
+@@ -998,16 +998,6 @@ export default definePlugin({
+         ...applicationEmojiPatches,
+         directMessagePatch,
+         settingsProtoPatch,
+-        // Support link
+-        {
+-            find: '"support.discord.com"',
+-            replacement: [
+-                {
+-                    match: '"support.discord.com"',
+-                    replace: '"github.com/aiko-chan-ai/DiscordBotClient/discussions#"',
+-                },
+-            ],
+-        },
+         // === Apply Patches from Vesktop ===
+         // #region Vesktop Patches
+         // src > renderer > patches > windowsTitleBar.tsx
+diff --git a/utils/patches.ts b/utils/patches.ts
+index 2f4d5aa..f7703d5 100644
+--- a/utils/patches.ts
++++ b/utils/patches.ts
+@@ -253,7 +253,7 @@ export function handleDispatchPatch(data: any, eventName: string, n: any, receiv
+         data.guild_experiments = window.BotClientNative.getGuildExperiments();
+         data.experiments = window.BotClientNative.getUserExperiments(experiments, data.user.id);
+         data.apex_experiments = window.BotClientNative.getApexExperiments(data.user.id);
+-        data.auth_session_id_hash = btoa("aiko-chan-ai/DiscordBotClient");
++        data.auth_session_id_hash = btoa("BotDeck");
+         data.static_client_session_id = crypto.randomUUID();
+         data.users = [
+             defaultPrivateChannel.recipients[0],

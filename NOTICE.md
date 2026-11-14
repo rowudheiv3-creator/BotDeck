@@ -28,3 +28,8 @@ distribute. The Discord web client itself is loaded from Discord at run time and
 
 Third-party Discord clients are discouraged by, and may violate, the Discord Terms of Service.
 Use at your own risk. This project is not affiliated with or endorsed by Discord.
+
+## Patches applied at build time
+`patches/vencord.patch` and `patches/botclient-plugin.patch` are applied on top of the pinned upstream checkouts
+(`npm run requirement`): FakeNitro enabled by default, the donor-badge network request removed, and upstream
+branding strings replaced. Read them before building; they are short.

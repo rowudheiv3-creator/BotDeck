@@ -29,7 +29,7 @@
     "build:bin": "electron-builder --publish never",
     "build": "npm run build:deps && npm run build:ts && npm run build:bin",
     "build:deps": "npm run vencord && npm run discohook",
-    "requirement": "npm ci && tsx scripts/vencordClone.ts && tsx scripts/discohookClone.ts",
+    "requirement": "npm ci && tsx scripts/vencordClone.ts && tsx scripts/discohookClone.ts && tsx scripts/applyPatches.ts",
     "build:settings": "tsc -p tsconfig.renderer.json && vite build --config scripts/settingsVite.mts",
     "build:win": "electron-builder -w --publish never"
   },
