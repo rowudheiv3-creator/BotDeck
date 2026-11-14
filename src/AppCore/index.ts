@@ -16,7 +16,6 @@ import {
 } from "electron";
 import contextMenu from "electron-context-menu";
 import { scope } from "electron-log";
-import { autoUpdater } from "electron-updater";
 import EventEmitter from "events";
 import path from "path";
 
@@ -69,16 +68,11 @@ export class DiscordBotClient extends EventEmitter {
                 type: "separator",
             },
             {
-                label: "Check for Updates...",
+                label: "About updates...",
                 type: "normal",
                 click: () => {
                     this.checkingForUpdates(true);
                 },
-            },
-            {
-                label: "Github Repository",
-                type: "normal",
-                click: () => shell.openExternal(`https://github.com/${Constants.GithubRepo}`),
             },
             {
                 type: "separator",
@@ -587,7 +581,7 @@ export class DiscordBotClient extends EventEmitter {
             () => this.quit(),
             this.config.config.startup_animation,
         );
-        this.startupWindow.fail("Unable to start DiscordBotClient. Please try again.");
+        this.startupWindow.fail("Unable to start BotDeck. Please try again.");
     }
     showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
         const notif = new Notification(options);
@@ -602,116 +596,17 @@ export class DiscordBotClient extends EventEmitter {
         }, 15000).unref();
         notif.show();
     }
+    // BotDeck never downloads or installs code on its own. The upstream auto-updater was
+    // removed so that nothing from a third-party release feed can replace this build.
     checkingForUpdates (forceEmitted = false) {
-        if (!app.isPackaged) {
-            // autoUpdater.forceDevUpdateConfig = true; // ! Test
-            if (forceEmitted) {
-                this.showNotification({
-                    title: "Update Manager",
-                    body: "Auto-updates are disabled in development mode.",
-                    silent: false,
-                });
-            }
-            return Promise.resolve(false);
+        if (forceEmitted) {
+            this.showNotification({
+                title: "Updates",
+                body: "BotDeck does not update itself. Install new versions manually from where you got this build.",
+                silent: false,
+            });
         }
-
-        autoUpdater.logger = scope("AutoUpdater");
-        autoUpdater.disableWebInstaller = true;
-
-        // Auto download only on Windows and Linux
-        // Mac requires code signing for auto-update to work properly
-        autoUpdater.autoDownload = process.platform !== "darwin";
-
-        autoUpdater.removeAllListeners();
-
-        return new Promise(resolve => {
-            autoUpdater.on("update-available", info => {
-                const releaseUrl = `https://github.com/${Constants.GithubRepo}/releases/tag/v${info.version}`;
-
-                if (process.platform === "darwin") {
-                    this.showNotification(
-                        {
-                            title: `New version available: ${info.version}`,
-                            body: "Please download the new version manually (MacOS)",
-                            silent: false,
-                        },
-                        () => {
-                            shell.openExternal(releaseUrl);
-                        },
-                    );
-                    resolve(true);
-                    return;
-                }
-
-                this.showNotification(
-                    {
-                        title: "Update Manager",
-                        body: `A new version (${info.version}) is available and is being downloaded in the background.`,
-                        silent: false,
-                    },
-                    () => {
-                        shell.openExternal(releaseUrl);
-                    },
-                );
-            });
-
-            autoUpdater.on("update-not-available", info => {
-                if (forceEmitted) {
-                    this.showNotification({
-                        title: "Update Manager",
-                        body: `You are using the latest version (v${app.getVersion()})`,
-                        silent: false,
-                    });
-                }
-                resolve(true);
-            });
-
-            autoUpdater.on("error", err => {
-                // Only log error, show notification if forced
-                this.logger.error("Error in auto-updater: " + err);
-                if (forceEmitted) {
-                    this.showNotification(
-                        {
-                            title: "Update Manager",
-                            body: `Error checking for updates: ${err.message}`,
-                            silent: false,
-                        },
-                        () => {
-                            shell.openExternal(`https://github.com/${Constants.GithubRepo}/releases`);
-                        },
-                    );
-                }
-                resolve(false);
-            });
-
-            autoUpdater.on("download-progress", progressObj => {
-                const percent = Math.round(progressObj.percent);
-                this.logger.debug(`Downloaded ${percent}%`);
-                if (this.tray && !this.tray.isDestroyed()) {
-                    this.tray.setToolTip(`${Constants.AppName} v${app.getVersion()} - Downloading: ${percent}%`);
-                }
-            });
-
-            autoUpdater.on("update-downloaded", info => {
-                if (this.tray && !this.tray.isDestroyed()) {
-                    this.tray.setToolTip(`${Constants.AppName} v${app.getVersion()}`);
-                }
-
-                dialog
-                    .showMessageBox(this.appWindow, {
-                        type: "info",
-                        title: "Update Ready",
-                        message: `Version ${info.version} has been downloaded. Restart the application to apply the updates?`,
-                        buttons: ["Restart", "Later"],
-                    })
-                    .then(returnValue => {
-                        if (returnValue.response === 0) autoUpdater.quitAndInstall(true, true);
-                    });
-                resolve(true);
-            });
-
-            autoUpdater.checkForUpdates();
-        });
+        return Promise.resolve(false);
     }
     relaunch () {
         this.#shouldQuitApp = true;

@@ -19,7 +19,8 @@ export class StartupWindow {
         quit: () => void,
         mode: Settings["startup_animation"] = defaultSettings.startup_animation,
     ) {
-        const classic = mode === "classic";
+        const classic = true; // the animated screen used third-party artwork and was removed
+        void mode;
         this.animationDone = classic;
         const area = screen.getPrimaryDisplay().workAreaSize;
         this.window = new BrowserWindow({
@@ -32,7 +33,7 @@ export class StartupWindow {
             transparent: !classic,
             hasShadow: classic,
             backgroundColor: classic ? "#282b30" : "#00000000",
-            title: "DiscordBotClient",
+            title: "BotDeck",
             autoHideMenuBar: true,
             webPreferences: {
                 preload: path.join(__dirname, "..", "Preloads", "StartupPreload.js"),
@@ -52,9 +53,6 @@ export class StartupWindow {
         });
         contents.ipc.on("startup:quit", event => {
             if (isOwner(event)) quit();
-        });
-        contents.ipc.handle("startup:artwork-credit", event => {
-            if (isOwner(event)) return shell.openExternal("https://www.mihoyo.com/");
         });
         contents.ipc.on("startup:animation-finished", event => {
             if (!isOwner(event)) return;
@@ -81,7 +79,7 @@ export class StartupWindow {
                 if (this.window.isDestroyed()) return;
                 dialog.showErrorBox(
                     "Startup failed",
-                    "The startup screen could not be loaded. Please reinstall DiscordBotClient.",
+                    "The startup screen could not be loaded. Please reinstall BotDeck.",
                 );
                 quit();
             });

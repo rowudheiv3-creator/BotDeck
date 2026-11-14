@@ -1,14 +1,10 @@
 {
-  "name": "discord-bot-client",
-  "productName": "DiscordBotClient",
+  "name": "botdeck-client",
+  "productName": "BotDeck",
   "version": "3.10.6",
-  "description": "DiscordBotClient - login into discord with a bot token",
+  "description": "BotDeck - use your Discord bot in a Discord-style client (fork of DiscordBotClient by aiko-chan-ai, GPL-3.0)",
   "author": {
-    "name": "aiko-chan-ai",
-    "email": "aiko@shiroko.onmicrosoft.com"
-  },
-  "repository": {
-    "url": "https://github.com/aiko-chan-ai/DiscordBotClient/"
+    "name": "BotDeck contributors"
   },
   "license": "GPL-3.0",
   "main": "build/index.js",
@@ -34,7 +30,8 @@
     "build": "npm run build:deps && npm run build:ts && npm run build:bin",
     "build:deps": "npm run vencord && npm run discohook",
     "requirement": "npm ci && tsx scripts/vencordClone.ts && tsx scripts/discohookClone.ts",
-    "build:settings": "tsc -p tsconfig.renderer.json && vite build --config scripts/settingsVite.mts"
+    "build:settings": "tsc -p tsconfig.renderer.json && vite build --config scripts/settingsVite.mts",
+    "build:win": "electron-builder -w --publish never"
   },
   "keywords": [],
   "devDependencies": {
@@ -83,7 +80,6 @@
     "discord-protos": "^1.2.399",
     "electron-context-menu": "^5.1.0",
     "electron-log": "^5.4.4",
-    "electron-updater": "^6.8.11",
     "express": "^4.22.3",
     "ini": "^6.0.0",
     "morgan": "^1.12.1",
@@ -114,10 +110,10 @@
       "!tsconfig.renderer.json",
       "!plans"
     ],
-    "appId": "DiscordBotClient",
-    "productName": "DiscordBotClient",
+    "appId": "BotDeck",
+    "productName": "BotDeck",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
-    "copyright": "Copyright © 2026 aiko-chan-ai",
+    "copyright": "Copyright © 2026 BotDeck contributors. Based on DiscordBotClient, Copyright © 2026 aiko-chan-ai, GPL-3.0",
     "mac": {
       "category": "public.app-category.social-networking",
       "target": [
@@ -147,7 +143,7 @@
       ],
       "desktop": {
         "entry": {
-          "Name": "DiscordBotClient",
+          "Name": "BotDeck",
           "GenericName": "Internet Messenger",
           "Type": "Application",
           "Categories": "Network;InstantMessaging;Chat;",
@@ -173,13 +169,6 @@
       "allowToChangeInstallationDirectory": true,
       "license": "./LICENSE"
     },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "aiko-chan-ai",
-        "repo": "DiscordBotClient"
-      }
-    ],
     "asar": false
   },
   "allowScripts": {

@@ -5,7 +5,7 @@ import { Router } from "express";
 const app = Router({ mergeParams: true });
 
 app.get("/", (req, res) => {
-    return res.redirect("https://github.com/aiko-chan-ai/DiscordBotClient/releases");
+    return res.status(404).end();
 });
 
 export default app;

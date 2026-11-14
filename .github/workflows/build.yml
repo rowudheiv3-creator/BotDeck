@@ -1,4 +1,4 @@
-name: Build and release
+name: Build BotDeck (Windows)
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-15]
+        os: [windows-2022]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -71,13 +71,11 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dbc-${{ runner.os }}
+          name: botdeck-${{ runner.os }}
           retention-days: 7
           if-no-files-found: error
           path: |
             dist/*.exe
-            dist/*.AppImage
-            dist/*.dmg
             dist/*.zip
             dist/latest*.yml
             dist/*.blockmap

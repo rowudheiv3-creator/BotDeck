@@ -16,7 +16,6 @@ const fixtures = [
     ['Main window security', 'testMainWindowSecurity.cjs', 'DBC_SECURITY_TEST_PROFILE', 'dbc-security-test-', 90000],
     ['Message editor', 'testMessageEditor.cjs', 'DBC_EDITOR_TEST_PROFILE', 'dbc-editor-test-', 90000],
     // Reproduce Windows CI's ambient motion preference; the fixture must control each case itself.
-    ['Startup window', 'testStartupWindow.cjs', 'DBC_STARTUP_TEST_PROFILE', 'dbc-startup-test-', 110000, ['--force-prefers-reduced-motion=reduce']],
 ];
 
 for (const [name, file, profileKey, prefix, timeout, args = []] of fixtures) {

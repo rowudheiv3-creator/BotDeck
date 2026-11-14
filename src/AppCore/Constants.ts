@@ -4,9 +4,6 @@ import { app, nativeImage } from "electron";
 import path from "path";
 import UserPatch from "src/AppUtils/UserPatch";
 
-const GithubUserName = "aiko-chan-ai";
-const GithubRepoName = "DiscordBotClient";
-
 export default class Constants extends null {
     static BlacklistRoutes = [
         "outbound-promotions/codes",
@@ -32,14 +29,13 @@ export default class Constants extends null {
         "auth/conditional/start", // Disable WebAuthn
     ];
     static LatestStorageUpdate = 1735000000000;
-    static AppName = "DiscordBotClient";
-    static AppID = "DiscordBotClient";
+    static AppName = "BotDeck";
+    static AppID = "BotDeck";
     static iconPath = path.join(app.getAppPath(), "assets", "icon.png");
     static icon16 = nativeImage.createFromPath(Constants.iconPath).resize({ width: 16 });
     static icon128 = nativeImage.createFromPath(Constants.iconPath).resize({ width: 128 });
     static DiscordBackgroundColor = "#36393f";
-    static GithubRepo = `${GithubUserName}/${GithubRepoName}`;
-    static UserAgentDiscordBot = `DiscordBot (https://github.com/${GithubUserName}/${GithubRepoName}, v${app.getVersion()})`;
+    static UserAgentDiscordBot = `DiscordBot (BotDeck, v${app.getVersion()})`;
     static VencordExtensionPath = path.join(app.getAppPath(), "VencordExtension");
     static DiscordHTMLPath = path.join(app.getAppPath(), "assets", "snapshot", "index.html");
     static EditorHTMLFolderPath = path.join(app.getAppPath(), "assets", "editor"); // Beta feature
