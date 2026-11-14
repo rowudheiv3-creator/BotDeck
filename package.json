@@ -160,6 +160,12 @@
           "arch": [
             "x64"
           ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "./assets/icon.png"
@@ -167,9 +173,14 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "license": "./LICENSE"
+      "license": "./LICENSE",
+      "artifactName": "BotDeck-Setup-${arch}.${ext}"
     },
-    "asar": false
+    "asar": false,
+    "portable": {
+      "artifactName": "BotDeck-Portable-${arch}.${ext}",
+      "requestExecutionLevel": "asInvoker"
+    }
   },
   "allowScripts": {
     "electron-winstaller@5.4.0": true,

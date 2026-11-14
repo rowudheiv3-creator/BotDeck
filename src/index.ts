@@ -1,6 +1,7 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
 import { app } from "electron";
+import path from "path";
 import { errorHandler, eventLogger, hooks, scope, transports } from "electron-log";
 import { inspect } from "util";
 
@@ -36,6 +37,11 @@ export default function ansiRegex({onlyFirst = false} = {}) {
 	return new RegExp(pattern, onlyFirst ? undefined : 'g');
 }
 */
+
+// Portable build: keep every setting/cache next to the exe instead of scattering files in AppData.
+if (process.env.PORTABLE_EXECUTABLE_DIR) {
+    app.setPath("userData", path.join(process.env.PORTABLE_EXECUTABLE_DIR, "BotDeck-data"));
+}
 
 const botClient = new DiscordBotClient();
 
