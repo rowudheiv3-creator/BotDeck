@@ -12,10 +12,10 @@ for (const [dir, patch] of targets) {
     const cwd = path.join(root, dir);
     const file = path.join(root, patch);
     try {
-        execFileSync("git", ["apply", "--check", "--reverse", file], { cwd, stdio: "ignore" });
+        execFileSync("git", ["apply", "--check", "--reverse", "--ignore-whitespace", file], { cwd, stdio: "ignore" });
         console.log("already applied:", patch);
     } catch {
-        execFileSync("git", ["apply", file], { cwd, stdio: "inherit" });
+        execFileSync("git", ["apply", "--ignore-whitespace", file], { cwd, stdio: "inherit" });
         console.log("applied:", patch);
     }
 }

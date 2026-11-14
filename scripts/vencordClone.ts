@@ -16,7 +16,7 @@ function run (command: string, args: string[], cwd = root) {
 
 function prepareCheckout (directory: string, repository: string, revision: string) {
     if (!existsSync(directory)) {
-        run("git", ["clone", "--filter=blob:none", repository, directory]);
+        run("git", ["clone", "-c", "core.autocrlf=false", "--filter=blob:none", repository, directory]);
         run("git", ["checkout", "--detach", revision], directory);
     } else if (!existsSync(path.join(directory, ".git"))) {
         throw new Error(directory + " exists but is not a Git checkout.");
