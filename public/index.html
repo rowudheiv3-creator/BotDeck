@@ -126,6 +126,22 @@
   #logt.on { background:#5865f2; }
   #pinm { display:none; position:fixed; inset:0; background:#000a; z-index:30; align-items:center; justify-content:center; } #pinm.on { display:flex; }
   #pinm .card2 { background:#2b2d31; color:#dbdee1; width:min(620px,94vw); max-height:86vh; overflow:auto; border-radius:10px; padding:14px; } #pinm .pm { padding:8px 0; border-top:1px solid #0003; } #pinm .pm b { margin-right:6px; }
+  :root[data-theme=light] { --bg0:#e3e5e8; --bg1:#f2f3f5; --bg2:#ffffff; --line:#d4d7dc; --txt:#2e3338; --mut:#4e5058; --dim:#747f8d; }
+  :root[data-theme=light] #me { background:#ebedef; } :root[data-theme=light] #row { background:#ebedef; } :root[data-theme=light] .mb:hover { background:#e3e5e8; }
+  :root[data-theme=light] #ac button.sel, :root[data-theme=light] #ac button:hover { background:#e3e5e8; } :root[data-theme=light] #toast { background:#fff; color:#2e3338; }
+  :root[data-theme=light] .c:hover, :root[data-theme=light] .c.sel { background:#d7d9dd; color:#060607; } :root[data-theme=light] #srch, :root[data-theme=light] #qs input { background:#e3e5e8; } :root[data-theme=light] #pinm .card2 { background:#fff; color:#2e3338; }
+  .spoil { background:#202225; color:transparent; border-radius:3px; cursor:pointer; } .spoil.on { background:#4f545c55; color:inherit; }
+  .bq { display:block; border-left:4px solid #4e5058; padding-left:10px; margin:2px 0; } .h1 { display:block; font-size:1.5em; font-weight:700; } .h2 { display:block; font-size:1.25em; font-weight:700; } .h3 { display:block; font-size:1.1em; font-weight:700; } .sub { display:block; font-size:.78em; color:var(--dim); }
+  .rep { cursor:pointer; } .flash { animation:flash 1.6s; } @keyframes flash { 0%,60% { background:#5865f244; } 100% { background:transparent; } }
+  .att img, .emb img:not(.emoji) { cursor:zoom-in; }
+  #lb { display:none; position:fixed; inset:0; background:#000d; z-index:40; align-items:center; justify-content:center; cursor:zoom-out; } #lb.on { display:flex; } #lb img { max-width:94vw; max-height:92vh; border-radius:6px; }
+  #typing { height:20px; padding:0 18px; font-size:12px; color:var(--mut); } 
+  #qs { display:none; position:fixed; inset:0; background:#000a; z-index:35; align-items:flex-start; justify-content:center; padding-top:14vh; } #qs.on { display:flex; }
+  #qs .card2 { background:var(--bg1); width:min(520px,94vw); border-radius:10px; padding:10px; } #qs input { width:100%; padding:10px; font-size:16px; background:var(--bg0); border:0; border-radius:6px; color:inherit; }
+  #qs .li { display:flex; justify-content:space-between; gap:8px; width:100%; background:none; border:0; color:inherit; text-align:left; padding:7px 10px; border-radius:5px; } #qs .li.sel, #qs .li:hover { background:var(--acc); color:#fff; } #qs small { opacity:.7; }
+  #setm { display:none; position:fixed; inset:0; background:#000a; z-index:30; align-items:center; justify-content:center; } #setm.on { display:flex; }
+  #setm .card2 { background:var(--bg1); width:min(440px,94vw); border-radius:10px; padding:16px; display:grid; gap:10px; } #setm label { display:grid; gap:4px; font-size:13px; color:var(--mut); } #setm input[type=text], #setm select { padding:7px 9px; background:var(--bg0); border:0; border-radius:5px; color:inherit; font:inherit; }
+  #setm .row2 { display:flex; gap:8px; align-items:center; } #setm button { background:var(--acc); border:0; border-radius:5px; color:#fff; padding:7px 12px; cursor:pointer; }
   #head .sp { flex:1; } #head button { background:none; border:0; font-size:18px; opacity:.7; } #head button:hover, #head button.on { opacity:1; }
   .dmin { display:flex; gap:6px; padding:8px 2px; } .dmin input { padding:7px 9px; } .dmin button { background:var(--acc); border:0; border-radius:5px; color:#fff; padding:0 12px; }
   #main { position:relative; }
@@ -153,12 +169,13 @@
   <aside id="side">
     <div id="gname"></div>
     <div id="chans"></div>
-    <div id="me"><span id="st" title=""></span><img id="mav" alt=""><span class="nm" id="mnm"></span><button id="out">ออก / Log out</button></div>
+    <div id="me"><span id="st" title=""></span><img id="mav" alt=""><span class="nm" id="mnm"></span><button id="setb" title="ตั้งค่า / settings">⚙</button><button id="out">ออก / Log out</button></div>
   </aside>
   <section id="main">
     <div id="banner"></div>
     <div id="head"><span id="cname">BotDeck</span><small id="ctopic"></small><span class="sp"></span><input id="srch" type="text" placeholder="ค้นหาในช่อง / search" autocomplete="off"><button id="logt" title="เก็บข้อความที่ถูกลบ / keep deleted messages">🕵</button><button id="pinb" title="ข้อความที่ปักหมุด / pins">📌</button><button id="mtog" title="รายชื่อสมาชิก">👥</button></div>
     <div id="msgs"><div class="empty">เลือกเซิร์ฟเวอร์และช่องทางซ้ายมือ<br>Pick a server and channel on the left.</div></div>
+    <div id="typing"></div>
     <div id="composer">
       <div id="replybar"><span id="rtext"></span><button id="rx" title="ยกเลิก">✕</button></div>
       <div id="files"></div>
@@ -180,6 +197,18 @@
   <div id="e_prev" style="margin-top:10px"></div>
   <div class="btns"><button type="button" id="e_cancel">ยกเลิก</button><button type="button" id="e_send">ส่ง Embed</button></div>
 </div></div>
+<div id="lb"><img alt=""></div>
+<div id="qs"><div class="card2"><input id="qsi" type="text" placeholder="ไปที่ช่อง… / jump to a channel (Ctrl+K)" autocomplete="off"><div id="qsl"></div></div></div>
+<div id="setm"><div class="card2">
+  <div style="display:flex;justify-content:space-between"><b>⚙ ตั้งค่า / Settings</b><button id="setx" style="background:none;color:inherit">✕</button></div>
+  <label>ธีม / Theme<select id="s_theme"><option value="dark">มืด / Dark</option><option value="light">สว่าง / Light</option></select></label>
+  <label class="row2"><input type="checkbox" id="s_snd"> เสียงเมื่อมีคนแท็ก / mention sound</label>
+  <label class="row2"><input type="checkbox" id="s_ntf"> แจ้งเตือนบนเดสก์ท็อป / desktop notifications</label>
+  <hr style="border:0;border-top:1px solid var(--line);width:100%">
+  <label>สถานะบอท / Bot status<select id="s_st"><option value="online">🟢 Online</option><option value="idle">🌙 Idle</option><option value="dnd">⛔ Do not disturb</option><option value="invisible">⚪ Invisible</option></select></label>
+  <label>กิจกรรม / Activity<span class="row2"><select id="s_ty"><option value="0">Playing</option><option value="2">Listening to</option><option value="3">Watching</option><option value="5">Competing in</option></select><input type="text" id="s_tx" maxlength="128" placeholder="ข้อความ / text" style="flex:1"></span></label>
+  <button id="s_ap">ใช้สถานะ / Apply status</button>
+</div></div>
 <div id="pinm"><div class="card2"><div style="display:flex;justify-content:space-between"><b>📌 Pins</b><button id="pinx" style="background:none;border:0;color:inherit;cursor:pointer">✕</button></div><div id="pinl"></div></div></div>
 <div id="toast"></div>
 <div id="picker"><input type="text" id="psearch" placeholder="ค้นหาอีโมจิ / search emoji"><div id="pbody"></div><label id="psup"><input type="checkbox" id="psuper"> ⚡ Super reaction</label></div>
@@ -195,6 +224,7 @@ let status = 'idle';
 let gid = null, cid = null; // gid 'home' = direct messages
 const cache = new Map();   // channelId -> {msgs:[oldest..newest], more:bool}
 const unread = new Set();
+const memberCache = new Map(); // guildId -> users, for @ autocomplete
 const dms = new Map();     // channelId -> {id, name, userId, avatar}
 let keepDeleted = false; try { keepDeleted = localStorage.getItem('bd_keepdel') === '1'; } catch (e) {}
 let query = '';
@@ -353,7 +383,7 @@ async function loadMembers() {
   el.innerHTML = '<div class="empty" style="margin-top:20px">กำลังโหลด…</div>';
   const g0 = gid;
   try {
-    const list = await api('members?guild=' + gid);
+    const list = await api('members?guild=' + gid); memberCache.set(gid, list.map(x => x.user));
     if (g0 !== gid) return;
     const g = guild(); const roles = new Map((g ? g.roles : []).map(r => [r.id, r]));
     const rows = list.map(m => {
@@ -373,7 +403,7 @@ async function loadMembers() {
 
 /* ---------- messages ---------- */
 async function openChannel(id) {
-  cid = id; unread.delete(id); setReply(null); stopEdit();
+  cid = id; unread.delete(id); setReply(null); stopEdit(); setTimeout(drawTyping, 0);
   const c = chan(); $('cname').textContent = (gid === 'home' ? '' : '# ') + (c ? c.name : ''); $('ctopic').textContent = (c && c.topic) || '';
   $('box').disabled = false; $('box').focus();
   renderChans(); renderGuilds();
@@ -405,19 +435,37 @@ async function loadOlder() {
 
 function userName(m, id) { const u = (m.mentions || []).find(x => x.id === id); return u ? name(u) : id; }
 
+function fmtStamp(n, f) {
+  const d = new Date(n * 1000), L = (o) => d.toLocaleString([], o);
+  if (f === 'R') { const t = Math.round((d - Date.now()) / 1000), a = Math.abs(t); const u = a < 60 ? [a, 'second'] : a < 3600 ? [Math.round(a / 60), 'minute'] : a < 86400 ? [Math.round(a / 3600), 'hour'] : [Math.round(a / 86400), 'day']; return new Intl.RelativeTimeFormat([], { numeric: 'auto' }).format(t < 0 ? -u[0] : u[0], u[1]); }
+  return f === 't' ? L({ timeStyle: 'short' }) : f === 'T' ? L({ timeStyle: 'medium' }) : f === 'd' ? L({ dateStyle: 'short' }) : f === 'D' ? L({ dateStyle: 'long' }) : f === 'F' ? L({ dateStyle: 'full', timeStyle: 'short' }) : L({ dateStyle: 'long', timeStyle: 'short' });
+}
 function md(text, m) {
   const keep = [], hold = (h) => '\u0000' + (keep.push(h) - 1) + '\u0000';
   let s = esc(text);
   s = s.replace(/```(?:[a-z0-9]+\n)?([\s\S]*?)```/gi, (_, c) => hold('<pre>' + c + '</pre>'));
   s = s.replace(/`([^`\n]+)`/g, (_, c) => hold('<code>' + c + '</code>'));
+  s = s.replace(/\[([^\]\n]{1,200})\]\((https?:\/\/[^\s)]+)\)/g, (_, t, u) => hold('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + t + '</a>'));
   s = s.replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)\]'"]/g, u => hold('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + u + '</a>'));
   s = s.replace(/&lt;(a?):(\w+):(\d+)&gt;/g, (_, an, n, id) => hold('<img class="emoji" alt=":' + n + ':" title=":' + n + ':" src="https://cdn.discordapp.com/emojis/' + id + '.' + (an ? 'gif' : 'png') + '?size=48">'));
   s = s.replace(/&lt;@!?(\d+)&gt;/g, (_, id) => hold('<span class="mention">@' + esc(userName(m, id)) + '</span>'));
-  s = s.replace(/&lt;@&amp;(\d+)&gt;/g, () => hold('<span class="mention">@role</span>'));
+  s = s.replace(/&lt;@&amp;(\d+)&gt;/g, (_, id) => { const g = guild(); const r = g && (g.roles || []).find(x => x.id === id); return hold('<span class="mention"' + (r && r.color ? ' style="color:#' + r.color.toString(16).padStart(6, '0') + '"' : '') + '>@' + esc(r ? r.name : 'role') + '</span>'); });
+  s = s.replace(/&lt;t:(-?\d{1,12})(?::([tTdDfFR]))?&gt;/g, (_, n, f) => hold('<span class="mention" title="' + esc(new Date(n * 1000).toLocaleString()) + '">' + esc(fmtStamp(+n, f || 'f')) + '</span>'));
+  s = s.replace(/@(everyone|here)\b/g, (x) => hold('<span class="mention">' + x + '</span>'));
   s = s.replace(/&lt;#(\d+)&gt;/g, (_, id) => { const g = guild(); const c = g && g.channels.find(x => x.id === id); return hold('<span class="mention">#' + esc(c ? c.name : id) + '</span>'); });
   s = s.replace(/\*\*([\s\S]+?)\*\*/g, '<b>$1</b>').replace(/__([\s\S]+?)__/g, '<u>$1</u>')
        .replace(/\*([^*\n]+)\*/g, '<i>$1</i>').replace(/~~([\s\S]+?)~~/g, '<s>$1</s>');
-  s = s.replace(/\n/g, '<br>');
+  s = s.replace(/\|\|([\s\S]+?)\|\|/g, '<span class="spoil">$1</span>');
+  const BLK = /^(&gt; |#{1,3} |-# )/;
+  const lines = s.split('\n'); s = '';
+  lines.forEach((l, i) => {
+    let x = /^&gt; (.*)$/.exec(l), blk = true;
+    if (x) l = '<span class="bq">' + x[1] + '</span>';
+    else if ((x = /^(#{1,3}) (.+)$/.exec(l))) l = '<span class="h' + x[1].length + '">' + x[2] + '</span>';
+    else if ((x = /^-# (.+)$/.exec(l))) l = '<span class="sub">' + x[1] + '</span>';
+    else blk = false;
+    s += (i && !blk && !lines[i - 1].match(BLK) ? '<br>' : '') + l;
+  });
   return s.replace(/\u0000(\d+)\u0000/g, (_, i) => keep[+i]);
 }
 
@@ -467,7 +515,7 @@ function msgHTML(m, grouped) {
   else h += '<div class="av"><img alt="" loading="lazy" src="' + esc(avatar(a)) + '"></div>';
   h += '<div class="body">';
   if (!grouped) h += '<div><span class="who">' + esc(name(a)) + '</span>' + (a.bot ? '<span class="bot">BOT</span>' : '') + '<span class="time">' + t.toLocaleString() + '</span></div>';
-  if (m.referenced_message) { const r = m.referenced_message; h += '<div class="rep">↪ ' + esc(name(r.author)) + ': ' + esc((r.content || '').slice(0, 90)) + '</div>'; }
+  if (m.referenced_message) { const r = m.referenced_message; h += '<div class="rep" data-ref="' + esc(r.id || '') + '">↪ ' + esc(name(r.author)) + ': ' + esc((r.content || '').slice(0, 90)) + '</div>'; }
   if (editing === m.id) h += '<div class="edit"><textarea rows="2" id="ed"></textarea><small>Enter = บันทึก · Esc = ยกเลิก</small></div>';
   else if (m.content) h += '<div>' + md(m.content, m) + (m.edited_timestamp ? ' <span class="time"' + ((m.history || []).length ? ' title="' + esc(m.history.join('\n— ก่อนหน้า / before —\n')) + '"' : '') + '>(แก้ไข)</span>' : '') + (m.deleted ? '<span class="delb">🗑 ถูกลบ / deleted</span>' : '') + '</div>';
   for (const f of (m.attachments || [])) {
@@ -627,22 +675,36 @@ async function send() {
 let acItems = [], acSel = 0;
 function hideAC() { $('ac').style.display = 'none'; acItems = []; }
 function updateAC() {
-  const box = $('box'), pos = box.selectionStart, m = /(?:^|\s):([A-Za-z0-9_]{2,32})$/.exec(box.value.slice(0, pos));
-  if (!m) return hideAC();
-  const q = m[1].toLowerCase();
-  acItems = allEmojis().filter(e => e.name.toLowerCase().includes(q)).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1)).slice(0, 10);
+  const box = $('box'), pre = box.value.slice(0, box.selectionStart);
+  let m = /(?:^|\s):([A-Za-z0-9_]{2,32})$/.exec(pre);
+  if (m) {
+    const q = m[1].toLowerCase();
+    acItems = allEmojis().filter(e => e.name.toLowerCase().includes(q)).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1)).slice(0, 10)
+      .map(e => ({ rx: /:([A-Za-z0-9_]{2,32})$/, ins: '<' + (e.animated ? 'a' : '') + ':' + e.name + ':' + e.id + '> ', img: emojiURL(e, 32), label: ':' + e.name + ':', sub: e.guild }));
+  } else if ((m = /(?:^|\s)@([^\s@]{0,32})$/.exec(pre))) {
+    const q = m[1].toLowerCase(), seen = new Map();
+    for (const u of (memberCache.get(gid) || [])) seen.set(u.id, u);
+    const e = cache.get(cid); for (const x of (e ? e.msgs : [])) { if (x.author) seen.set(x.author.id, x.author); for (const u of (x.mentions || [])) seen.set(u.id, u); }
+    acItems = [...seen.values()].filter(u => name(u).toLowerCase().includes(q) || (u.username || '').toLowerCase().includes(q)).slice(0, 10)
+      .map(u => ({ rx: /@([^\s@]{0,32})$/, ins: '<@' + u.id + '> ', img: avatar(u), label: '@' + name(u), sub: u.username }));
+    const g = guild();
+    if (g && 'everyone'.startsWith(q)) acItems.push({ rx: /@([^\s@]{0,32})$/, ins: '@everyone ', label: '@everyone', sub: '' });
+    if (g) for (const r of (g.roles || [])) if (r.name !== '@everyone' && r.name.toLowerCase().includes(q) && acItems.length < 12) acItems.push({ rx: /@([^\s@]{0,32})$/, ins: '<@&' + r.id + '> ', label: '@' + r.name, sub: 'role' });
+  } else if ((m = /(?:^|\s)#([^\s#]{0,32})$/.exec(pre))) {
+    const q = m[1].toLowerCase(), g = guild();
+    acItems = (g ? g.channels : []).filter(c => c.name.toLowerCase().includes(q)).slice(0, 10).map(c => ({ rx: /#([^\s#]{0,32})$/, ins: '<#' + c.id + '> ', label: '#' + c.name, sub: '' }));
+  } else return hideAC();
   if (!acItems.length) return hideAC();
   acSel = 0; renderAC();
 }
 function renderAC() {
   const el = $('ac'); el.style.display = 'block'; el.textContent = '';
-  acItems.forEach((e, i) => { const b = document.createElement('button'); b.className = i === acSel ? 'sel' : ''; b.innerHTML = '<img alt="" src="' + esc(emojiURL(e, 32)) + '"> :' + esc(e.name) + ': <small>' + esc(e.guild) + '</small>'; b.onmousedown = (ev) => { ev.preventDefault(); pickAC(i); }; el.appendChild(b); });
+  acItems.forEach((e, i) => { const b = document.createElement('button'); b.className = i === acSel ? 'sel' : ''; b.innerHTML = (e.img ? '<img alt="" src="' + esc(e.img) + '"> ' : '') + esc(e.label) + ' <small>' + esc(e.sub) + '</small>'; b.onmousedown = (ev) => { ev.preventDefault(); pickAC(i); }; el.appendChild(b); });
 }
 function pickAC(i) {
   const e = acItems[i]; if (!e) return;
-  const box = $('box'), pos = box.selectionStart, before = box.value.slice(0, pos).replace(/:([A-Za-z0-9_]{2,32})$/, '');
-  const ins = '<' + (e.animated ? 'a' : '') + ':' + e.name + ':' + e.id + '> ';
-  box.value = before + ins + box.value.slice(pos); box.selectionStart = box.selectionEnd = before.length + ins.length; hideAC(); box.focus();
+  const box = $('box'), pos = box.selectionStart, before = box.value.slice(0, pos).replace(e.rx, '');
+  box.value = before + e.ins + box.value.slice(pos); box.selectionStart = box.selectionEnd = before.length + e.ins.length; hideAC(); box.focus();
 }
 $('box').onkeydown = (e) => {
   if (acItems.length) {
@@ -711,8 +773,11 @@ function onEvent(ev) {
   if (t === 'status') { status = d.status; if (status === 'error') refresh(); else { show(); if (status === 'ready') refresh(); } return; }
   if (t === 'state') { refresh(); return; }
   if (!d || !d.channel_id) return;
+  if (t === 'TYPING_START') { noteTyping(d); return; }
   const e = cache.get(d.channel_id);
   if (t === 'MESSAGE_CREATE') {
+    if (d.author) clearTyping(d.channel_id, d.author.id);
+    notifyMsg(d);
     if (!d.guild_id && d.author && S && S.me && d.author.id !== S.me.id) { addDM(d.channel_id, name(d.author), d.author.id, d.author); }
     if (e) { if (!e.msgs.some(x => x.id === d.id)) e.msgs.push(d); }
     if (d.channel_id === cid) renderMsgs(false);
@@ -789,6 +854,95 @@ $('pinb').onclick = async () => {
     }
   } catch (e) { box.textContent = e.message; }
 };
+
+/* ---------- typing indicator ---------- */
+const typers = new Map(); // channelId -> Map(userId -> {name, until})
+function noteTyping(d) {
+  if (S && S.me && d.user_id === S.me.id) return;
+  const u = (d.member && d.member.user) || null;
+  const e = cache.get(d.channel_id); const au = e && e.msgs.find(x => x.author && x.author.id === d.user_id);
+  const nm = (d.member && d.member.nick) || (u ? name(u) : au ? name(au.author) : 'ใครบางคน / someone');
+  if (!typers.has(d.channel_id)) typers.set(d.channel_id, new Map());
+  typers.get(d.channel_id).set(d.user_id, { name: nm, until: Date.now() + 9000 });
+  drawTyping(); setTimeout(drawTyping, 9100);
+}
+function clearTyping(ch, uid) { const m = typers.get(ch); if (m && m.delete(uid)) drawTyping(); }
+function drawTyping() {
+  const m = typers.get(cid), now = Date.now(); let names = [];
+  if (m) for (const [k, v] of m) { if (v.until < now) m.delete(k); else names.push(v.name); }
+  $('typing').textContent = !names.length ? '' : names.length === 1 ? '⌨ ' + names[0] + ' กำลังพิมพ์… / is typing…' : names.length === 2 ? '⌨ ' + names.join(' & ') + ' กำลังพิมพ์… / are typing…' : '⌨ หลายคนกำลังพิมพ์… / several people are typing…';
+}
+
+/* ---------- mention notifications ---------- */
+const pref = (k, d) => { try { const v = localStorage.getItem('bd_' + k); return v === null ? d : v; } catch (e) { return d; } };
+const setPref = (k, v) => { try { localStorage.setItem('bd_' + k, v); } catch (e) {} };
+let missed = 0;
+function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; g.gain.value = 0.05; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + 0.12); } catch (e) {} }
+function notifyMsg(d) {
+  const me = S && S.me && S.me.id; if (!me || !d.author || d.author.id === me) return;
+  const hit = !d.guild_id || (d.mentions || []).some(u => u.id === me) || d.mention_everyone;
+  if (!hit || (!document.hidden && d.channel_id === cid)) return;
+  if (document.hidden) { missed++; document.title = '(' + missed + ') BotDeck'; }
+  if (pref('snd', '1') === '1') beep();
+  if (pref('ntf', '0') === '1' && 'Notification' in window && Notification.permission === 'granted') { try { new Notification(name(d.author), { body: (d.content || '').slice(0, 140) }); } catch (e) {} }
+}
+addEventListener('focus', () => { missed = 0; document.title = 'BotDeck'; });
+
+/* ---------- lightbox, spoilers, jump to reply ---------- */
+function lightbox(src) { $('lb').firstElementChild.src = src; $('lb').classList.add('on'); }
+$('lb').onclick = () => { $('lb').classList.remove('on'); $('lb').firstElementChild.removeAttribute('src'); };
+$('msgs').addEventListener('click', (ev) => {
+  const t = ev.target;
+  if (t.classList && t.classList.contains('spoil')) { t.classList.toggle('on'); return; }
+  if (t.tagName === 'IMG' && !t.classList.contains('emoji') && t.closest('.att, .emb')) { const u = safeUrl(t.currentSrc || t.src); if (u) lightbox(u); return; }
+  const rp = t.closest && t.closest('.rep');
+  if (rp && rp.dataset.ref) {
+    const row = $('msgs').querySelector('.m[data-id="' + CSS.escape(rp.dataset.ref) + '"]');
+    if (row) { row.scrollIntoView({ block: 'center', behavior: 'smooth' }); row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash'); } else toast('ข้อความต้นฉบับยังไม่ได้โหลด / original not loaded');
+  }
+});
+
+/* ---------- quick switcher (Ctrl/Cmd+K) ---------- */
+let qsSel = 0, qsList = [];
+function qsRender() {
+  const q = $('qsi').value.trim().toLowerCase(), all = [];
+  if (S) for (const g of S.guilds) for (const c of g.channels) if (c.type === 0 || c.type === 5) all.push({ gid: g.id, id: c.id, label: '# ' + c.name, sub: g.name });
+  for (const d of dms.values()) all.push({ gid: 'home', id: d.id, label: '@ ' + d.name, sub: 'DM' });
+  qsList = all.filter(x => !q || (x.label + ' ' + x.sub).toLowerCase().includes(q)).slice(0, 12); qsSel = 0; qsDraw();
+}
+function qsDraw() {
+  const el = $('qsl'); el.textContent = '';
+  qsList.forEach((x, i) => { const b = document.createElement('button'); b.className = 'li' + (i === qsSel ? ' sel' : ''); b.innerHTML = '<span>' + esc(x.label) + '</span><small>' + esc(x.sub) + '</small>'; b.onclick = () => qsGo(x); el.appendChild(b); });
+}
+function qsGo(x) { $('qs').classList.remove('on'); gid = x.gid; renderGuilds(); renderChans(); loadMembers(); openChannel(x.id); }
+function qsOpen() { if (!S) return; $('qs').classList.add('on'); $('qsi').value = ''; qsRender(); $('qsi').focus(); }
+$('qsi').oninput = qsRender;
+$('qsi').onkeydown = (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); qsSel = Math.min(qsSel + 1, qsList.length - 1); qsDraw(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); qsSel = Math.max(qsSel - 1, 0); qsDraw(); }
+  else if (e.key === 'Enter' && qsList[qsSel]) { e.preventDefault(); qsGo(qsList[qsSel]); }
+};
+$('qs').onclick = (e) => { if (e.target === $('qs')) $('qs').classList.remove('on'); };
+addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); qsOpen(); }
+  else if (e.key === 'Escape') { $('qs').classList.remove('on'); $('lb').click(); $('setm').classList.remove('on'); }
+});
+
+/* ---------- settings: theme, notifications, bot status ---------- */
+function applyTheme(t) { document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark'; }
+applyTheme(pref('theme', 'dark'));
+$('setb').onclick = () => { $('s_theme').value = pref('theme', 'dark'); $('s_snd').checked = pref('snd', '1') === '1'; $('s_ntf').checked = pref('ntf', '0') === '1' && 'Notification' in window && Notification.permission === 'granted'; $('setm').classList.add('on'); };
+$('setx').onclick = () => $('setm').classList.remove('on');
+$('s_theme').onchange = (e) => { setPref('theme', e.target.value); applyTheme(e.target.value); };
+$('s_snd').onchange = (e) => setPref('snd', e.target.checked ? '1' : '0');
+$('s_ntf').onchange = async (e) => {
+  if (!e.target.checked) return setPref('ntf', '0');
+  if (!('Notification' in window)) { e.target.checked = false; return toast('เบราว์เซอร์นี้ไม่รองรับ / not supported'); }
+  const p = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+  e.target.checked = p === 'granted'; setPref('ntf', p === 'granted' ? '1' : '0');
+};
+$('s_ap').onclick = async () => { try { await api('presence', { status: $('s_st').value, type: +$('s_ty').value, text: $('s_tx').value }); toast('ตั้งสถานะแล้ว / status set'); } catch (e) { toast(e.message); } };
+setInterval(drawTyping, 2000);
 </script>
 </body>
 </html>

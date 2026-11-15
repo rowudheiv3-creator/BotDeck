@@ -62,6 +62,7 @@ export class App {
     post('edit', (ctx) => this.edit(ctx));
     post('react', (ctx) => this.react(ctx));
     post('typing', (ctx) => this.typing(ctx));
+    post('presence', (ctx) => this.setPresence(ctx));
     post('dm', (ctx) => this.openDM(ctx));
     post('upload', (ctx) => this.upload(ctx));
   }
@@ -124,7 +125,7 @@ export class App {
       onEvent: (t, d) => {
         if (gen !== this.gen) return;
         if (this.store.apply(t, d)) this.emit('state', null);
-        if (['MESSAGE_CREATE', 'MESSAGE_UPDATE', 'MESSAGE_DELETE', 'MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(t)) this.emit(t, d);
+        if (['MESSAGE_CREATE', 'MESSAGE_UPDATE', 'MESSAGE_DELETE', 'MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE', 'TYPING_START'].includes(t)) this.emit(t, d);
       },
       onStatus: (s, m) => this.setStatus(gen, s, m),
     });
@@ -283,6 +284,19 @@ export class App {
     if (!isSnowflake(b.channel) || !isSnowflake(b.id) || !validEmoji(b.emoji)) throw new HttpError(400, 'bad request');
     const type = b.burst ? '?type=1' : ''; // 1 = super reaction
     await this.relay(res, dc, dc.do(b.on ? 'PUT' : 'DELETE', `/channels/${b.channel}/messages/${b.id}/reactions/${encodeURIComponent(b.emoji)}/@me${type}`));
+  }
+
+  /** Bot status (online/idle/dnd/invisible) and an optional "Playing/Watching/…" line. */
+  async setPresence({ req, res }) {
+    this.client();
+    const b = await readJson(req);
+    const status = ['online', 'idle', 'dnd', 'invisible'].includes(b.status) ? b.status : 'online';
+    const text = String(b.text || '').slice(0, 128);
+    const type = [0, 2, 3, 5].includes(b.type) ? b.type : 0;
+    const activities = text ? [{ name: text, type }] : [];
+    if (!this.gw) throw new HttpError(409, 'ยังไม่เชื่อมต่อ');
+    this.gw.setPresence({ status, activities });
+    this.json(res, 200, { ok: true });
   }
 
   /** Who reacted with an emoji (first 25). */

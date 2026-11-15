@@ -159,3 +159,23 @@ withRig('super reactions, reactor list and pins', { login: true }, async (rig) =
   assert.equal((await rig.api('pin', { channel: '21', id: '901', on: false })).status, 200);
   assert.equal((await rig.api('pin', { channel: 'x', id: '901', on: true })).status, 400);
 });
+
+withRig('presence is validated and sent over the gateway; typing events reach the browser', { login: true }, async (rig) => {
+  assert.equal((await rig.api('presence', { status: 'dnd', text: 'with tests', type: 3 })).status, 200);
+  await rig.waitFor(() => rig.f.presences.length === 1);
+  assert.deepEqual(rig.f.presences[0].activities, [{ name: 'with tests', type: 3 }]);
+  assert.equal(rig.f.presences[0].status, 'dnd');
+  assert.equal((await rig.api('presence', { status: 'bogus', text: '', type: 99 })).status, 200);
+  await rig.waitFor(() => rig.f.presences.length === 2);
+  assert.equal(rig.f.presences[1].status, 'online', 'unknown status falls back to online');
+  assert.deepEqual(rig.f.presences[1].activities, []);
+  const ctl = new AbortController();
+  const r = await fetch(rig.origin + '/app/api/events', { headers: { Cookie: rig.cookie }, signal: ctl.signal });
+  const reader = r.body.getReader();
+  for (const ws of rig.f.sockets) ws.send(JSON.stringify({ op: 0, s: 50, t: 'TYPING_START', d: { channel_id: '21', user_id: '5', timestamp: 1 } }));
+  let seen = '';
+  const end = Date.now() + 3000;
+  while (Date.now() < end && !seen.includes('TYPING_START')) { const { value } = await reader.read(); seen += Buffer.from(value).toString(); }
+  ctl.abort();
+  assert.ok(seen.includes('TYPING_START'));
+});

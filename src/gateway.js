@@ -30,7 +30,14 @@ export class Gateway {
     this.seq = null;
     this.stopped = false;
     this.ws = null;
+    this.presence = null;
     this.wake = null;
+  }
+
+  /** Sets the bot's status/activity; remembered across reconnects. */
+  setPresence(p) {
+    this.presence = { since: null, afk: false, ...p };
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify({ op: 3, d: this.presence }));
   }
 
   start() {
@@ -110,7 +117,7 @@ export class Gateway {
             if (this.sessionId) send({ op: 6, d: { token: this.token, session_id: this.sessionId, seq: this.seq } });
             else {
               this.seq = null;
-              send({ op: 2, d: { token: this.token, intents: this.intents, properties: { os: process.platform, browser: 'botdeck', device: 'botdeck' } } });
+              send({ op: 2, d: { token: this.token, intents: this.intents, ...(this.presence ? { presence: this.presence } : {}), properties: { os: process.platform, browser: 'botdeck', device: 'botdeck' } } });
             }
             break;
           }
