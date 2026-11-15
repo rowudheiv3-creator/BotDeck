@@ -19,7 +19,7 @@ export async function startFake() {
       if (req.headers.authorization !== `Bot ${GOOD}`) return j(401, { message: '401: Unauthorized' });
       if (path === '/api/v10/users/@me') return j(200, { id: '100', username: 'TestBot', avatar: null });
       if (req.method === 'GET' && path.startsWith('/api/v10/channels/403/')) return j(403, { message: 'Missing Access' });
-      if (req.method === 'GET' && /^\/api\/v10\/channels\/\d+\/messages/.test(path)) {
+      if (req.method === 'GET' && /^\/api\/v10\/channels\/\d+\/messages(\?|$)/.test(path)) {
         return j(200, [{ id: '902', content: 'second', author: { id: '5', username: 'ann' }, timestamp: new Date().toISOString() }, { id: '901', content: 'first', author: { id: '5', username: 'ann' }, timestamp: new Date().toISOString() }]);
       }
       if (req.method === 'POST' && /^\/api\/v10\/channels\/\d+\/messages$/.test(path)) {
@@ -31,7 +31,10 @@ export async function startFake() {
       }
       if (req.method === 'DELETE' && /\/messages\/\d+$/.test(path)) { f.deleted.push(path); res.writeHead(204); return res.end(); }
       if (req.method === 'PATCH' && /\/messages\/\d+$/.test(path)) { f.sent.push({ _patch: path, ...JSON.parse(raw.toString()) }); return j(200, { id: '901', content: 'edited' }); }
-      if (/\/reactions\/.+\/@me$/.test(path)) { res.writeHead(204); return res.end(); }
+      if (req.method === 'GET' && /\/reactions\/[^/]+\?/.test(path)) return j(200, [{ id: '5', username: 'ann' }, { id: '6', username: 'bob' }]);
+      if (req.method === 'GET' && /^\/api\/v10\/channels\/\d+\/messages\/pins/.test(path)) return j(200, { items: [{ pinned_at: 'x', message: { id: '901', content: 'pinned one', author: { id: '5', username: 'ann' }, timestamp: new Date().toISOString() } }], has_more: false });
+      if (/\/messages\/pins\/\d+$/.test(path) && (req.method === 'PUT' || req.method === 'DELETE')) { res.writeHead(204); return res.end(); }
+      if (/\/reactions\/.+\/@me/.test(path)) { res.writeHead(204); return res.end(); }
       if (path.endsWith('/typing')) { res.writeHead(204); return res.end(); }
       if (path === '/api/v10/users/@me/channels') return j(200, { id: '777', type: 1 });
       if (path.startsWith('/api/v10/guilds/403/members')) return j(403, { message: 'Missing Access' });

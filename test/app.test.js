@@ -142,3 +142,20 @@ withRig('the token never appears in any response', { login: true }, async (rig) 
     assert.ok(!r.text.includes(GOOD));
   }
 });
+
+withRig('super reactions, reactor list and pins', { login: true }, async (rig) => {
+  assert.equal((await rig.api('react', { channel: '21', id: '901', emoji: 'party:31', on: true, burst: true })).status, 200);
+  assert.ok(rig.f.calls.includes('PUT /api/v10/channels/21/messages/901/reactions/party%3A31/@me?type=1'));
+  assert.equal((await rig.api('react', { channel: '21', id: '901', emoji: 'party:31', on: false, burst: true })).status, 200);
+  assert.ok(rig.f.calls.includes('DELETE /api/v10/channels/21/messages/901/reactions/party%3A31/@me?type=1'));
+  const who = await rig.api('reactors?channel=21&id=901&emoji=' + encodeURIComponent('👍'));
+  assert.equal(who.status, 200);
+  assert.deepEqual(who.json.map((u) => u.username), ['ann', 'bob']);
+  assert.equal((await rig.api('reactors?channel=21&id=901&emoji=a%2Fb')).status, 400);
+  const pins = await rig.api('pins?channel=21');
+  assert.equal(pins.status, 200);
+  assert.equal(pins.json[0].content, 'pinned one', 'new {items} shape is flattened to messages');
+  assert.equal((await rig.api('pin', { channel: '21', id: '901', on: true })).status, 200);
+  assert.equal((await rig.api('pin', { channel: '21', id: '901', on: false })).status, 200);
+  assert.equal((await rig.api('pin', { channel: 'x', id: '901', on: true })).status, 400);
+});

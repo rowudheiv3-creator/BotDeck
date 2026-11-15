@@ -51,6 +51,9 @@ export class App {
     get('events', (ctx) => this.events(ctx));
     get('messages', (ctx) => this.messages(ctx));
     get('members', (ctx) => this.members(ctx));
+    get('reactors', (ctx) => this.reactors(ctx));
+    get('pins', (ctx) => this.pins(ctx));
+    post('pin', (ctx) => this.pin(ctx));
     post('login', (ctx) => this.login(ctx));
     post('logout', (ctx) => this.logout(ctx));
     post('quit', (ctx) => this.logout(ctx));
@@ -278,7 +281,45 @@ export class App {
     const dc = this.client();
     const b = await readJson(req);
     if (!isSnowflake(b.channel) || !isSnowflake(b.id) || !validEmoji(b.emoji)) throw new HttpError(400, 'bad request');
-    await this.relay(res, dc, dc.do(b.on ? 'PUT' : 'DELETE', `/channels/${b.channel}/messages/${b.id}/reactions/${encodeURIComponent(b.emoji)}/@me`));
+    const type = b.burst ? '?type=1' : ''; // 1 = super reaction
+    await this.relay(res, dc, dc.do(b.on ? 'PUT' : 'DELETE', `/channels/${b.channel}/messages/${b.id}/reactions/${encodeURIComponent(b.emoji)}/@me${type}`));
+  }
+
+  /** Who reacted with an emoji (first 25). */
+  async reactors({ res, url }) {
+    const dc = this.client();
+    const q = url.searchParams;
+    const [ch, id, emoji] = [q.get('channel') || '', q.get('id') || '', q.get('emoji') || ''];
+    if (!isSnowflake(ch) || !isSnowflake(id) || !validEmoji(emoji)) throw new HttpError(400, 'bad request');
+    const type = q.get('burst') === '1' ? 1 : 0;
+    await this.relay(res, dc, dc.do('GET', `/channels/${ch}/messages/${id}/reactions/${encodeURIComponent(emoji)}?limit=25&type=${type}`));
+  }
+
+  /** Pinned messages as a plain array (the newer endpoint wraps them in {items}). */
+  async pins({ res, url }) {
+    const dc = this.client();
+    const ch = url.searchParams.get('channel') || '';
+    if (!isSnowflake(ch)) throw new HttpError(400, 'bad id');
+    const call = (path) => dc.do('GET', path).catch((e) => { throw new HttpError(502, sanitizeErr(e, dc.token)); });
+    let r = await call(`/channels/${ch}/messages/pins`);
+    if (r.status === 404) r = await call(`/channels/${ch}/pins`);
+    if (r.status !== 200) throw new HttpError(r.status, apiError(r.status, r.body));
+    let data;
+    try { data = JSON.parse(r.body.toString()); } catch { throw new HttpError(502, 'ข้อมูลจาก Discord ผิดรูปแบบ'); }
+    const list = Array.isArray(data) ? data : Array.isArray(data.items) ? data.items.map((i) => i.message).filter(Boolean) : [];
+    this.json(res, 200, list);
+  }
+
+  async pin({ req, res }) {
+    const dc = this.client();
+    const b = await readJson(req);
+    if (!isSnowflake(b.channel) || !isSnowflake(b.id)) throw new HttpError(400, 'bad request');
+    const method = b.on ? 'PUT' : 'DELETE';
+    const call = (path) => dc.do(method, path).catch((e) => { throw new HttpError(502, sanitizeErr(e, dc.token)); });
+    let r = await call(`/channels/${b.channel}/messages/pins/${b.id}`);
+    if (r.status === 404) r = await call(`/channels/${b.channel}/pins/${b.id}`);
+    if (r.status < 200 || r.status > 299) throw new HttpError(r.status, apiError(r.status, r.body));
+    this.json(res, 200, { ok: b.on ? 'pinned' : 'unpinned' });
   }
 
   async typing({ req, res }) {
