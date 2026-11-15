@@ -142,6 +142,9 @@
   #setm { display:none; position:fixed; inset:0; background:#000a; z-index:30; align-items:center; justify-content:center; } #setm.on { display:flex; }
   #setm .card2 { background:var(--bg1); width:min(440px,94vw); border-radius:10px; padding:16px; display:grid; gap:10px; } #setm label { display:grid; gap:4px; font-size:13px; color:var(--mut); } #setm input[type=text], #setm select { padding:7px 9px; background:var(--bg0); border:0; border-radius:5px; color:inherit; font:inherit; }
   #setm .row2 { display:flex; gap:8px; align-items:center; } #setm button { background:var(--acc); border:0; border-radius:5px; color:#fff; padding:7px 12px; cursor:pointer; }
+  svg.i { width:1.15em; height:1.15em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:-0.2em; flex:none; pointer-events:none; }
+  #row button.ic svg.i { width:24px; height:24px; } .tools svg.i { width:16px; height:16px; vertical-align:middle; } #head button svg.i { width:20px; height:20px; vertical-align:middle; }
+  .g svg.i { width:26px; height:26px; } .c .n svg.i, .rep svg.i { width:1em; height:1em; opacity:.8; } #lb img { background:#0000; }
   #head .sp { flex:1; } #head button { background:none; border:0; font-size:18px; opacity:.7; } #head button:hover, #head button.on { opacity:1; }
   .dmin { display:flex; gap:6px; padding:8px 2px; } .dmin input { padding:7px 9px; } .dmin button { background:var(--acc); border:0; border-radius:5px; color:#fff; padding:0 12px; }
   #main { position:relative; }
@@ -150,6 +153,8 @@
 </style>
 </head>
 <body>
+<!-- Icons: Lucide (https://lucide.dev), ISC License, Copyright (c) Lucide Contributors; portions MIT (c) Cole Bemis 2013-2022 (Feather) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <path d="M8 14s1.5 2 4 2 4-2 4-2" /> <line x1="9" x2="9.01" y1="9" y2="9" /> <line x1="15" x2="15.01" y1="9" y2="9" /></symbol><symbol id="i-reply" viewBox="0 0 24 24"><polyline points="9 17 4 12 9 7" /> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /> <path d="m15 5 4 4" /></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5" /> <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" /></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol><symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M3 6h18" /> <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /> <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /> <line x1="10" x2="10" y1="11" y2="17" /> <line x1="14" x2="14" y1="11" y2="17" /></symbol><symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M13.234 20.252 21 12.3" /> <path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486" /></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z" /></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> <path d="M12 7v5l4 2" /></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" /></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /> <circle cx="12" cy="12" r="3" /></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></symbol><symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></symbol><symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M10 8h.01" /> <path d="M12 12h.01" /> <path d="M14 8h.01" /> <path d="M16 12h.01" /> <path d="M18 8h.01" /> <path d="M6 8h.01" /> <path d="M7 16h10" /> <path d="M8 12h.01" /> <rect width="20" height="16" x="2" y="4" rx="2" /></symbol><symbol id="i-volume-2" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <path d="M16 9a5 5 0 0 1 0 6" /> <path d="M19.364 18.364a9 9 0 0 0 0-12.728" /></symbol><symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z" /> <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /></symbol><symbol id="i-hash" viewBox="0 0 24 24"><line x1="4" x2="20" y1="9" y2="9" /> <line x1="4" x2="20" y1="15" y2="15" /> <line x1="10" x2="8" y1="3" y2="21" /> <line x1="16" x2="14" y1="3" y2="21" /></symbol><symbol id="i-corner-up-left" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4" /> <path d="M20 20v-7a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.3-4.3" /></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /> <path d="M14 2v4a2 2 0 0 0 2 2h4" /></symbol></defs></svg>
 <div id="login">
   <div class="card">
     <h1>BotDeck</h1>
@@ -169,19 +174,19 @@
   <aside id="side">
     <div id="gname"></div>
     <div id="chans"></div>
-    <div id="me"><span id="st" title=""></span><img id="mav" alt=""><span class="nm" id="mnm"></span><button id="setb" title="ตั้งค่า / settings">⚙</button><button id="out">ออก / Log out</button></div>
+    <div id="me"><span id="st" title=""></span><img id="mav" alt=""><span class="nm" id="mnm"></span><button id="setb" title="ตั้งค่า / settings"><svg class="i"><use href="#i-settings"/></svg></button><button id="out">ออก / Log out</button></div>
   </aside>
   <section id="main">
     <div id="banner"></div>
-    <div id="head"><span id="cname">BotDeck</span><small id="ctopic"></small><span class="sp"></span><input id="srch" type="text" placeholder="ค้นหาในช่อง / search" autocomplete="off"><button id="logt" title="เก็บข้อความที่ถูกลบ / keep deleted messages">🕵</button><button id="pinb" title="ข้อความที่ปักหมุด / pins">📌</button><button id="mtog" title="รายชื่อสมาชิก">👥</button></div>
+    <div id="head"><span id="cname">BotDeck</span><small id="ctopic"></small><span class="sp"></span><input id="srch" type="text" placeholder="ค้นหาในช่อง / search" autocomplete="off"><button id="logt" title="เก็บข้อความที่ถูกลบ / keep deleted messages"><svg class="i"><use href="#i-history"/></svg></button><button id="pinb" title="ข้อความที่ปักหมุด / pins"><svg class="i"><use href="#i-pin"/></svg></button><button id="mtog" title="รายชื่อสมาชิก"><svg class="i"><use href="#i-users"/></svg></button></div>
     <div id="msgs"><div class="empty">เลือกเซิร์ฟเวอร์และช่องทางซ้ายมือ<br>Pick a server and channel on the left.</div></div>
     <div id="typing"></div>
     <div id="composer">
-      <div id="replybar"><span id="rtext"></span><button id="rx" title="ยกเลิก">✕</button></div>
+      <div id="replybar"><span id="rtext"></span><button id="rx" title="ยกเลิก"><svg class="i"><use href="#i-x"/></svg></button></div>
       <div id="files"></div>
-      <div id="row"><button class="ic" id="att" title="แนบไฟล์">📎</button>
+      <div id="row"><button class="ic" id="att" title="แนบไฟล์"><svg class="i"><use href="#i-paperclip"/></svg></button>
         <textarea id="box" rows="1" placeholder="พิมพ์ข้อความ… (Enter ส่ง, Shift+Enter ขึ้นบรรทัดใหม่, : ค้นหาอีโมจิ)" disabled></textarea>
-        <button class="ic" id="embtn" title="ส่ง Embed">🧩</button><button class="ic" id="emo" title="อีโมจิ">😀</button><input type="file" id="fin" multiple hidden></div>
+        <button class="ic" id="embtn" title="ส่ง Embed"><svg class="i"><use href="#i-puzzle"/></svg></button><button class="ic" id="emo" title="อีโมจิ"><svg class="i"><use href="#i-smile"/></svg></button><input type="file" id="fin" multiple hidden></div>
       <div id="ac"></div>
     </div>
   </section>
@@ -200,18 +205,18 @@
 <div id="lb"><img alt=""></div>
 <div id="qs"><div class="card2"><input id="qsi" type="text" placeholder="ไปที่ช่อง… / jump to a channel (Ctrl+K)" autocomplete="off"><div id="qsl"></div></div></div>
 <div id="setm"><div class="card2">
-  <div style="display:flex;justify-content:space-between"><b>⚙ ตั้งค่า / Settings</b><button id="setx" style="background:none;color:inherit">✕</button></div>
+  <div style="display:flex;justify-content:space-between"><b>ตั้งค่า / Settings</b><button id="setx" style="background:none;color:inherit"><svg class="i"><use href="#i-x"/></svg></button></div>
   <label>ธีม / Theme<select id="s_theme"><option value="dark">มืด / Dark</option><option value="light">สว่าง / Light</option></select></label>
   <label class="row2"><input type="checkbox" id="s_snd"> เสียงเมื่อมีคนแท็ก / mention sound</label>
   <label class="row2"><input type="checkbox" id="s_ntf"> แจ้งเตือนบนเดสก์ท็อป / desktop notifications</label>
   <hr style="border:0;border-top:1px solid var(--line);width:100%">
-  <label>สถานะบอท / Bot status<select id="s_st"><option value="online">🟢 Online</option><option value="idle">🌙 Idle</option><option value="dnd">⛔ Do not disturb</option><option value="invisible">⚪ Invisible</option></select></label>
+  <label>สถานะบอท / Bot status<select id="s_st"><option value="online">Online</option><option value="idle">Idle</option><option value="dnd">Do not disturb</option><option value="invisible">Invisible</option></select></label>
   <label>กิจกรรม / Activity<span class="row2"><select id="s_ty"><option value="0">Playing</option><option value="2">Listening to</option><option value="3">Watching</option><option value="5">Competing in</option></select><input type="text" id="s_tx" maxlength="128" placeholder="ข้อความ / text" style="flex:1"></span></label>
   <button id="s_ap">ใช้สถานะ / Apply status</button>
 </div></div>
-<div id="pinm"><div class="card2"><div style="display:flex;justify-content:space-between"><b>📌 Pins</b><button id="pinx" style="background:none;border:0;color:inherit;cursor:pointer">✕</button></div><div id="pinl"></div></div></div>
+<div id="pinm"><div class="card2"><div style="display:flex;justify-content:space-between"><b>Pins</b><button id="pinx" style="background:none;border:0;color:inherit;cursor:pointer"><svg class="i"><use href="#i-x"/></svg></button></div><div id="pinl"></div></div></div>
 <div id="toast"></div>
-<div id="picker"><input type="text" id="psearch" placeholder="ค้นหาอีโมจิ / search emoji"><div id="pbody"></div><label id="psup"><input type="checkbox" id="psuper"> ⚡ Super reaction</label></div>
+<div id="picker"><input type="text" id="psearch" placeholder="ค้นหาอีโมจิ / search emoji"><div id="pbody"></div><label id="psup"><input type="checkbox" id="psuper"> <svg class="i"><use href="#i-zap"/></svg> Super reaction</label></div>
 <div id="drop">วางไฟล์เพื่อแนบ / Drop to attach</div>
 
 <script>
@@ -300,7 +305,7 @@ function renderGuilds() {
   const el = $('guilds'); el.textContent = '';
   if (!S) return;
   const home = document.createElement('button');
-  home.className = 'g home' + (gid === 'home' ? ' sel' : ''); home.title = 'ข้อความส่วนตัว / Direct messages'; home.textContent = '💬';
+  home.className = 'g home' + (gid === 'home' ? ' sel' : ''); home.title = 'ข้อความส่วนตัว / Direct messages'; home.innerHTML = '<svg class="i"><use href="#i-message-circle"/></svg>';
   if ([...dms.keys()].some(id => unread.has(id))) { const d = document.createElement('span'); d.className = 'dot'; home.appendChild(d); }
   home.onclick = () => { gid = 'home'; cid = null; renderGuilds(); renderChans(); clearChat(); loadMembers(); };
   el.appendChild(home);
@@ -352,8 +357,8 @@ function renderChans() {
       const readable = c.type === 0 || c.type === 5;
       const b = document.createElement('button');
       b.className = 'c' + (c.id === cid ? ' sel' : '') + (unread.has(c.id) ? ' unread' : '') + (readable ? '' : ' off');
-      const ico = c.type === 2 || c.type === 13 ? '🔊' : c.type === 5 ? '📢' : readable ? '#' : '•';
-      const n = document.createElement('span'); n.className = 'n'; n.textContent = ico + ' ' + c.name;
+      const ico = c.type === 2 || c.type === 13 ? 'volume-2' : c.type === 5 ? 'megaphone' : readable ? 'hash' : 'lock';
+      const n = document.createElement('span'); n.className = 'n'; n.innerHTML = '<svg class="i"><use href="#i-' + ico + '"/></svg> ' + esc(c.name);
       b.appendChild(n);
       if (readable) b.onclick = () => openChannel(c.id);
       else if (c.type === 2 || c.type === 13) b.onclick = () => toast('ห้องเสียง: กำลังพัฒนา (ต้องทำระบบเข้ารหัส DAVE ของ Discord) / Voice: not built yet');
@@ -477,7 +482,7 @@ function reactionsHTML(m) {
   return '<div>' + m.reactions.map((r, i) => {
     const sup = r.burstN != null ? r.burstN : ((r.count_details && r.count_details.burst) || 0);
     return '<span class="rx' + (r.me || r.me_burst ? ' on' : '') + (sup ? ' sup' : '') + '" data-i="' + i + '" title="' + esc(r.emoji.name || '') + ' (คลิกขวา = ดูว่าใคร / right-click = who)">' +
-      (r.emoji.id ? '<img class="emoji" alt="" src="' + esc(emojiURL(r.emoji, 32)) + '">' : esc(r.emoji.name || '')) + ' ' + r.count + (sup ? ' ⚡' + sup : '') + '</span>';
+      (r.emoji.id ? '<img class="emoji" alt="" src="' + esc(emojiURL(r.emoji, 32)) + '">' : esc(r.emoji.name || '')) + ' ' + r.count + (sup ? ' <svg class="i" style="width:.9em;height:.9em"><use href="#i-zap"/></svg>' + sup : '') + '</span>';
   }).join('') + '</div>';
 }
 
@@ -515,14 +520,14 @@ function msgHTML(m, grouped) {
   else h += '<div class="av"><img alt="" loading="lazy" src="' + esc(avatar(a)) + '"></div>';
   h += '<div class="body">';
   if (!grouped) h += '<div><span class="who">' + esc(name(a)) + '</span>' + (a.bot ? '<span class="bot">BOT</span>' : '') + '<span class="time">' + t.toLocaleString() + '</span></div>';
-  if (m.referenced_message) { const r = m.referenced_message; h += '<div class="rep" data-ref="' + esc(r.id || '') + '">↪ ' + esc(name(r.author)) + ': ' + esc((r.content || '').slice(0, 90)) + '</div>'; }
+  if (m.referenced_message) { const r = m.referenced_message; h += '<div class="rep" data-ref="' + esc(r.id || '') + '"><svg class="i"><use href="#i-corner-up-left"/></svg> ' + esc(name(r.author)) + ': ' + esc((r.content || '').slice(0, 90)) + '</div>'; }
   if (editing === m.id) h += '<div class="edit"><textarea rows="2" id="ed"></textarea><small>Enter = บันทึก · Esc = ยกเลิก</small></div>';
-  else if (m.content) h += '<div>' + md(m.content, m) + (m.edited_timestamp ? ' <span class="time"' + ((m.history || []).length ? ' title="' + esc(m.history.join('\n— ก่อนหน้า / before —\n')) + '"' : '') + '>(แก้ไข)</span>' : '') + (m.deleted ? '<span class="delb">🗑 ถูกลบ / deleted</span>' : '') + '</div>';
+  else if (m.content) h += '<div>' + md(m.content, m) + (m.edited_timestamp ? ' <span class="time"' + ((m.history || []).length ? ' title="' + esc(m.history.join('\n— ก่อนหน้า / before —\n')) + '"' : '') + '>(แก้ไข)</span>' : '') + (m.deleted ? '<span class="delb">ถูกลบ / deleted</span>' : '') + '</div>';
   for (const f of (m.attachments || [])) {
     const u = safeUrl(f.url);
     if (!u) continue;
     if ((f.content_type || '').startsWith('image/')) h += '<div class="att"><img loading="lazy" alt="' + esc(f.filename) + '" src="' + esc(u) + '"></div>';
-    else h += '<div class="att"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">📎 ' + esc(f.filename) + '</a></div>';
+    else h += '<div class="att"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer"><svg class="i"><use href="#i-paperclip"/></svg> ' + esc(f.filename) + '</a></div>';
   }
   for (const e of (m.embeds || [])) h += embedHTML(e, m);
   h += reactionsHTML(m) + '</div>';
@@ -551,7 +556,7 @@ function renderMsgs(bottom) {
     d.className = 'm' + (grouped ? '' : ' first') + (mentioned ? ' me' : '') + (m.deleted ? ' del' : ''); d.dataset.id = m.id;
     const own = m.author && m.author.id === meId;
     d.innerHTML = msgHTML(m, grouped) +
-      '<div class="tools"><button data-a="x">😀</button><button data-a="r">↩</button>' + (own ? '<button data-a="e">✏️</button>' : '') + '<button data-a="p" title="ปักหมุด / pin">📌</button><button data-a="c" title="คัดลอกลิงก์ / copy link">🔗</button><button data-a="d">🗑</button></div>';
+      '<div class="tools"><button data-a="x" title="รีแอค / react"><svg class="i"><use href="#i-smile"/></svg></button><button data-a="r" title="ตอบ / reply"><svg class="i"><use href="#i-reply"/></svg></button>' + (own ? '<button data-a="e" title="แก้ไข / edit"><svg class="i"><use href="#i-pencil"/></svg></button>' : '') + '<button data-a="p" title="ปักหมุด / pin"><svg class="i"><use href="#i-pin"/></svg></button><button data-a="c" title="คัดลอกลิงก์ / copy link"><svg class="i"><use href="#i-link"/></svg></button><button data-a="d" title="ลบ / delete"><svg class="i"><use href="#i-trash-2"/></svg></button></div>';
     frag.appendChild(d); prev = m;
   }
   el.textContent = ''; el.appendChild(frag);
@@ -571,7 +576,7 @@ $('msgs').onclick = (ev) => {
   if (a === 'r') setReply(m);
   else if (a === 'x') openPicker(b, { react: m });
   else if (a === 'e') { editing = m.id; renderMsgs(false); }
-  else if (a === 'p') { const want = !m.pinned; api('pin', { channel: cid, id: m.id, on: want }).then(() => { m.pinned = want; toast(want ? '📌 ปักหมุดแล้ว / pinned' : 'เลิกปักหมุดแล้ว / unpinned'); }).catch(err => toast(err.message)); }
+  else if (a === 'p') { const want = !m.pinned; api('pin', { channel: cid, id: m.id, on: want }).then(() => { m.pinned = want; toast(want ? 'ปักหมุดแล้ว / pinned' : 'เลิกปักหมุดแล้ว / unpinned'); }).catch(err => toast(err.message)); }
   else if (a === 'c') { const g = guild(); const link = 'https://discord.com/channels/' + (g ? g.id : '@me') + '/' + cid + '/' + m.id; (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => toast('คัดลอกแล้ว / copied'), () => toast(link)); }
   else if (a === 'd' && confirm('ลบข้อความนี้? / Delete this message?')) api('delete', { channel: cid, id: m.id }).catch(err => toast(err.message));
 };
@@ -645,7 +650,7 @@ function expandShortcodes(text) {
 function setPending(files) {
   pending = files.slice(0, 10);
   const el = $('files'); el.textContent = ''; el.style.display = pending.length ? 'flex' : 'none';
-  pending.forEach((f, i) => { const s = document.createElement('span'); s.textContent = '📎 ' + f.name + ' (' + Math.max(1, Math.round(f.size / 1024)) + ' KB)'; const x = document.createElement('b'); x.textContent = '✕'; x.onclick = () => setPending(pending.filter((_, j) => j !== i)); s.appendChild(x); el.appendChild(s); });
+  pending.forEach((f, i) => { const s = document.createElement('span'); s.innerHTML = '<svg class="i"><use href="#i-paperclip"/></svg> '; s.appendChild(document.createTextNode(f.name + ' (' + Math.max(1, Math.round(f.size / 1024)) + ' KB)')); const x = document.createElement('b'); x.innerHTML = '<svg class="i"><use href="#i-x"/></svg>'; x.onclick = () => setPending(pending.filter((_, j) => j !== i)); s.appendChild(x); el.appendChild(s); });
 }
 $('att').onclick = () => $('fin').click();
 $('fin').onchange = (e) => { setPending(pending.concat([...e.target.files])); e.target.value = ''; $('box').focus(); };
@@ -870,7 +875,7 @@ function clearTyping(ch, uid) { const m = typers.get(ch); if (m && m.delete(uid)
 function drawTyping() {
   const m = typers.get(cid), now = Date.now(); let names = [];
   if (m) for (const [k, v] of m) { if (v.until < now) m.delete(k); else names.push(v.name); }
-  $('typing').textContent = !names.length ? '' : names.length === 1 ? '⌨ ' + names[0] + ' กำลังพิมพ์… / is typing…' : names.length === 2 ? '⌨ ' + names.join(' & ') + ' กำลังพิมพ์… / are typing…' : '⌨ หลายคนกำลังพิมพ์… / several people are typing…';
+  $('typing').textContent = !names.length ? '' : names.length === 1 ? names[0] + ' กำลังพิมพ์… / is typing…' : names.length === 2 ? names.join(' & ') + ' กำลังพิมพ์… / are typing…' : 'หลายคนกำลังพิมพ์… / several people are typing…';
 }
 
 /* ---------- mention notifications ---------- */
