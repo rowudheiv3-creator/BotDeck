@@ -756,3 +756,33 @@ func TestUpload(t *testing.T) {
 		t.Fatalf("oversize must be 413, got %d", c)
 	}
 }
+
+func TestSendEmbedsAreSanitised(t *testing.T) {
+	g := newRig(t)
+	g.post("login", goodTok)
+	g.waitFor("ready", func() bool { s, _, _ := g.state(); return s == "ready" })
+	ok := `{"channel":"21","content":"","embeds":[{"title":"T","description":"D","color":255,"evil":"x","footer":{"text":"f","bogus":1},"image":{"url":"https://a.example/i.png"},"fields":[{"name":"n","value":"v","inline":true}]}]}`
+	if code, b := g.post("send", ok); code != 200 {
+		t.Fatalf("embed send: %d %s", code, b)
+	}
+	g.f.mu.Lock()
+	sent := g.f.sent[len(g.f.sent)-1]
+	g.f.mu.Unlock()
+	e := sent["embeds"].([]any)[0].(map[string]any)
+	if _, has := e["evil"]; has || e["title"] != "T" || e["footer"].(map[string]any)["text"] != "f" {
+		t.Fatalf("embed not rebuilt cleanly: %v", e)
+	}
+	if _, has := e["footer"].(map[string]any)["bogus"]; has {
+		t.Fatal("unknown nested key forwarded")
+	}
+	for _, bad := range []string{
+		`{"channel":"21","embeds":[{"image":{"url":"javascript:alert(1)"}}]}`,
+		`{"channel":"21","embeds":[{"title":"` + strings.Repeat("x", 257) + `"}]}`,
+		`{"channel":"21","embeds":[{}]}`,
+		`{"channel":"21","embeds":[{"fields":[{"name":"","value":"v"}]}]}`,
+	} {
+		if code, _ := g.post("send", bad); code != 400 {
+			t.Errorf("should reject %.60s..., got %d", bad, code)
+		}
+	}
+}

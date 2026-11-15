@@ -71,6 +71,15 @@
   .att img, .emb img { max-width:min(420px,100%); max-height:320px; border-radius:6px; margin-top:4px; display:block; }
   .att a { display:inline-block; margin-top:4px; }
   .emb { border-left:4px solid var(--line); background:var(--bg1); border-radius:4px; padding:8px 12px; margin-top:4px; max-width:520px; }
+  .emb { display:flex; gap:12px; } .emb .eb { min-width:0; flex:1; } .emb .et { width:80px; height:80px; object-fit:cover; margin:0; }
+  .emb .ea { font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px; margin-bottom:4px; } .emb .ei { width:22px; height:22px; border-radius:50%; margin:0; }
+  .emb .ef { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:6px; } .emb .ef .fb { grid-column:1/-1; } .emb .ef2 { color:var(--mut); font-size:12px; margin-top:8px; }
+  .emb a { color:#00a8fc; text-decoration:none; }
+  #embm { display:none; position:fixed; inset:0; background:#000a; z-index:30; align-items:center; justify-content:center; }
+  #embm.on { display:flex; } #embm .card2 { background:var(--bg2,#2b2d31); color:var(--txt,#dbdee1); width:min(640px,94vw); max-height:92vh; overflow:auto; border-radius:10px; padding:18px; }
+  #embm input[type=text], #embm textarea { width:100%; box-sizing:border-box; margin:3px 0 8px; padding:7px; border-radius:6px; border:0; background:var(--bg1); color:inherit; font:inherit; }
+  #embm button { background:var(--bg1); color:inherit; border:0; border-radius:6px; padding:7px 12px; cursor:pointer; font:inherit; } #embm #e_send { background:#5865f2; color:#fff; }
+  #embm .r2 { display:flex; gap:8px; } #embm .r2 > * { flex:1; } #embm .btns { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
   .emb .t { font-weight:700; } .emb .d { color:var(--mut); font-size:14px; }
   .rx { display:inline-flex; gap:4px; align-items:center; background:var(--bg1); border:1px solid var(--line); border-radius:6px; padding:1px 7px; margin:4px 4px 0 0; font-size:13px; }
   .del { opacity:.45; text-decoration:line-through; }
@@ -149,12 +158,22 @@
       <div id="files"></div>
       <div id="row"><button class="ic" id="att" title="แนบไฟล์">📎</button>
         <textarea id="box" rows="1" placeholder="พิมพ์ข้อความ… (Enter ส่ง, Shift+Enter ขึ้นบรรทัดใหม่, : ค้นหาอีโมจิ)" disabled></textarea>
-        <button class="ic" id="emo" title="อีโมจิ">😀</button><input type="file" id="fin" multiple hidden></div>
+        <button class="ic" id="embtn" title="ส่ง Embed">🧩</button><button class="ic" id="emo" title="อีโมจิ">😀</button><input type="file" id="fin" multiple hidden></div>
       <div id="ac"></div>
     </div>
   </section>
   <aside id="mem"></aside>
 </div>
+<div id="embm"><div class="card2">
+  <b>Embed</b> <small>(ข้อความด้านบนช่องพิมพ์จะถูกส่งไปพร้อมกัน)</small>
+  <input type="text" id="e_title" placeholder="Title" maxlength="256"><textarea id="e_desc" rows="3" placeholder="Description" maxlength="4096"></textarea>
+  <div class="r2"><input type="text" id="e_author" placeholder="Author" maxlength="256"><input type="text" id="e_footer" placeholder="Footer" maxlength="2048"></div>
+  <div class="r2"><input type="text" id="e_img" placeholder="Image URL (https://…)"><input type="text" id="e_thumb" placeholder="Thumbnail URL (https://…)"></div>
+  <div class="r2"><input type="text" id="e_url" placeholder="Title link (https://…)"><label>สี <input type="color" id="e_color" value="#5865f2"></label></div>
+  <div id="e_fields"></div><button type="button" id="e_addf">+ Field</button>
+  <div id="e_prev" style="margin-top:10px"></div>
+  <div class="btns"><button type="button" id="e_cancel">ยกเลิก</button><button type="button" id="e_send">ส่ง Embed</button></div>
+</div></div>
 <div id="toast"></div>
 <div id="picker"><input type="text" id="psearch" placeholder="ค้นหาอีโมจิ / search emoji"><div id="pbody"></div></div>
 <div id="drop">วางไฟล์เพื่อแนบ / Drop to attach</div>
@@ -402,6 +421,32 @@ function reactionsHTML(m) {
     (r.emoji.id ? '<img class="emoji" alt="" src="' + esc(emojiURL(r.emoji, 32)) + '">' : esc(r.emoji.name || '')) + ' ' + r.count + '</span>').join('') + '</div>';
 }
 
+function embedHTML(e, m) {
+  const col = e.color != null ? '#' + Number(e.color).toString(16).padStart(6, '0') : 'var(--line)';
+  const link = u => safeUrl(u || '');
+  let h = '<div class="emb" style="border-left-color:' + esc(col) + '"><div class="eb">';
+  if (e.author && e.author.name) {
+    const ai = link(e.author.icon_url), au = link(e.author.url);
+    h += '<div class="ea">' + (ai ? '<img class="ei" alt="" src="' + esc(ai) + '">' : '') +
+      (au ? '<a href="' + esc(au) + '" target="_blank" rel="noopener noreferrer">' + esc(e.author.name) + '</a>' : esc(e.author.name)) + '</div>';
+  }
+  if (e.title) { const tu = link(e.url); h += '<div class="t">' + (tu ? '<a href="' + esc(tu) + '" target="_blank" rel="noopener noreferrer">' + esc(e.title) + '</a>' : esc(e.title)) + '</div>'; }
+  if (e.description) h += '<div class="d">' + md(e.description, m) + '</div>';
+  if ((e.fields || []).length) {
+    h += '<div class="ef">';
+    for (const f of e.fields) h += '<div class="' + (f.inline ? 'fi' : 'fb') + '"><b>' + esc(f.name) + '</b><div class="d">' + md(f.value, m) + '</div></div>';
+    h += '</div>';
+  }
+  const img = link(e.image && e.image.url);
+  if (img) h += '<img loading="lazy" alt="" src="' + esc(img) + '">';
+  const ft = e.footer && e.footer.text, ts = e.timestamp && !isNaN(new Date(e.timestamp)) ? new Date(e.timestamp).toLocaleString() : '';
+  if (ft || ts) h += '<div class="ef2">' + esc([ft, ts].filter(Boolean).join(' • ')) + '</div>';
+  h += '</div>';
+  const th = link(e.thumbnail && e.thumbnail.url);
+  if (th) h += '<img class="et" loading="lazy" alt="" src="' + esc(th) + '">';
+  return h + '</div>';
+}
+
 function msgHTML(m, grouped) {
   const t = new Date(m.timestamp), hhmm = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const a = m.author || {};
@@ -419,16 +464,7 @@ function msgHTML(m, grouped) {
     if ((f.content_type || '').startsWith('image/')) h += '<div class="att"><img loading="lazy" alt="' + esc(f.filename) + '" src="' + esc(u) + '"></div>';
     else h += '<div class="att"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">📎 ' + esc(f.filename) + '</a></div>';
   }
-  for (const e of (m.embeds || [])) {
-    const col = e.color != null ? '#' + e.color.toString(16).padStart(6, '0') : 'var(--line)';
-    h += '<div class="emb" style="border-left-color:' + col + '">';
-    if (e.title) h += '<div class="t">' + esc(e.title) + '</div>';
-    if (e.description) h += '<div class="d">' + md(e.description, m) + '</div>';
-    for (const f of (e.fields || [])) h += '<div class="d"><b>' + esc(f.name) + '</b><br>' + md(f.value, m) + '</div>';
-    const img = safeUrl((e.image && e.image.url) || (e.thumbnail && e.thumbnail.url) || '');
-    if (img) h += '<img loading="lazy" alt="" src="' + esc(img) + '">';
-    h += '</div>';
-  }
+  for (const e of (m.embeds || [])) h += embedHTML(e, m);
   h += reactionsHTML(m) + '</div>';
   return h;
 }
@@ -666,6 +702,41 @@ function connect() {
   es.onopen = () => { cache.clear(); refresh().then(() => { if (cid) openChannel(cid); }).catch(() => {}); };
 }
 refresh().catch(() => {}); connect();
+
+/* embed composer */
+function addField(n, v, i) {
+  const d = document.createElement('div'); d.className = 'r2';
+  d.innerHTML = '<input type="text" placeholder="Field name" maxlength="256"><input type="text" placeholder="Field value" maxlength="1024"><label><input type="checkbox"> inline</label>';
+  d.children[0].value = n || ''; d.children[1].value = v || ''; d.children[2].firstChild.checked = !!i;
+  d.addEventListener('input', embPreview); $('e_fields').appendChild(d);
+}
+function embBuild() {
+  const g = id => $(id).value.trim(), e = {};
+  if (g('e_title')) e.title = g('e_title');
+  if (g('e_desc')) e.description = g('e_desc');
+  if (g('e_url')) e.url = g('e_url');
+  e.color = parseInt($('e_color').value.slice(1), 16);
+  if (g('e_author')) e.author = { name: g('e_author') };
+  if (g('e_footer')) e.footer = { text: g('e_footer') };
+  if (g('e_img')) e.image = { url: g('e_img') };
+  if (g('e_thumb')) e.thumbnail = { url: g('e_thumb') };
+  const fs = [...$('e_fields').children].map(d => ({ name: d.children[0].value.trim(), value: d.children[1].value.trim(), inline: d.children[2].firstChild.checked })).filter(f => f.name || f.value);
+  if (fs.length) e.fields = fs;
+  e.timestamp = new Date().toISOString();
+  return e;
+}
+function embPreview() { $('e_prev').innerHTML = embedHTML(embBuild(), {}); }
+function openEmb() { if (!cid) return; $('e_fields').innerHTML = ''; addField(); embPreview(); $('embm').classList.add('on'); }
+$('embtn').onclick = openEmb;
+$('e_cancel').onclick = () => $('embm').classList.remove('on');
+$('e_addf').onclick = () => { if ($('e_fields').children.length < 25) addField(); };
+$('embm').addEventListener('input', embPreview);
+$('e_send').onclick = async () => {
+  try {
+    await api('send', { channel: cid, content: expandShortcodes($('box').value), replyTo: reply ? reply.id : '', embeds: [embBuild()] });
+    $('box').value = ''; setReply(null); $('embm').classList.remove('on');
+  } catch (e) { toast(e.message); }
+};
 </script>
 </body>
 </html>

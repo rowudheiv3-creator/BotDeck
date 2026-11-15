@@ -363,23 +363,31 @@ func (a *app) send(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var in struct {
-		Channel string `json:"channel"`
-		Content string `json:"content"`
-		ReplyTo string `json:"replyTo"`
+		Channel string           `json:"channel"`
+		Content string           `json:"content"`
+		ReplyTo string           `json:"replyTo"`
+		Embeds  []map[string]any `json:"embeds"`
 	}
 	if json.NewDecoder(r.Body).Decode(&in) != nil || !snowflake.MatchString(in.Channel) ||
 		(in.ReplyTo != "" && !snowflake.MatchString(in.ReplyTo)) {
 		errJSON(w, http.StatusBadRequest, "bad request")
 		return
 	}
+	embeds, eerr := cleanEmbeds(in.Embeds)
 	n := len([]rune(in.Content))
-	if strings.TrimSpace(in.Content) == "" || n > 2000 {
-		errJSON(w, http.StatusBadRequest, "ข้อความต้องมี 1–2000 ตัวอักษร")
+	if eerr != "" || n > 2000 || (strings.TrimSpace(in.Content) == "" && len(embeds) == 0) {
+		if eerr == "" {
+			eerr = "ข้อความต้องมี 1–2000 ตัวอักษร"
+		}
+		errJSON(w, http.StatusBadRequest, eerr)
 		return
 	}
 	body := map[string]any{
 		"content":          in.Content,
 		"allowed_mentions": map[string]any{"parse": []string{"users", "roles"}, "replied_user": true},
+	}
+	if len(embeds) > 0 {
+		body["embeds"] = embeds
 	}
 	if in.ReplyTo != "" {
 		body["message_reference"] = map[string]any{"message_id": in.ReplyTo, "fail_if_not_exists": false}
