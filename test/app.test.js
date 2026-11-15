@@ -14,7 +14,7 @@ withRig('login identifies with the right intents and fills the snapshot', {}, as
   assert.equal(json.snapshot.me.username, 'TestBot');
   const g = json.snapshot.guilds[0];
   assert.equal(g.name, 'Test Guild');
-  assert.deepEqual(g.channels.map((c) => c.name), ['general', 'random']);
+  assert.deepEqual(g.channels.map((c) => c.name), ['chat zone', 'general', 'random', 'Talk']);
   assert.deepEqual(g.emojis.map((e) => e.name), ['party']); // unavailable emoji dropped
   assert.equal(g.roles[0].name, 'Mod');
   const id = rig.f.identifies[0];

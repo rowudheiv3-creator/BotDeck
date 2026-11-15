@@ -2,7 +2,7 @@
 const usableEmoji = (e) => e && e.id && e.available !== false;
 const pickChannel = (c) => ({ id: c.id, name: c.name || '', type: c.type, parent_id: c.parent_id || null, position: c.position || 0, topic: c.topic || '' });
 const pickEmoji = (e) => ({ id: e.id, name: e.name, animated: !!e.animated });
-const pickRole = (r) => ({ id: r.id, name: r.name, color: r.color || 0, position: r.position || 0 });
+const pickRole = (r) => ({ id: r.id, name: r.name, color: r.color || 0, position: r.position || 0, hoist: !!r.hoist });
 
 export class Store {
   constructor() {

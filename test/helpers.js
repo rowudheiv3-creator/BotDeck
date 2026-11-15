@@ -38,7 +38,7 @@ export async function startFake() {
       if (path.endsWith('/typing')) { res.writeHead(204); return res.end(); }
       if (path === '/api/v10/users/@me/channels') return j(200, { id: '777', type: 1 });
       if (path.startsWith('/api/v10/guilds/403/members')) return j(403, { message: 'Missing Access' });
-      if (/^\/api\/v10\/guilds\/\d+\/members/.test(path)) return j(200, [{ user: { id: '5', username: 'ann' } }]);
+      if (/^\/api\/v10\/guilds\/\d+\/members/.test(path)) return j(200, [{ user: { id: '5', username: 'ann' }, roles: ['41'], nick: 'Annie' }, { user: { id: '6', username: 'bob' }, roles: [] }, { user: { id: '100', username: 'TestBot', bot: true }, roles: [] }]);
       return j(404, { message: 'Unknown' });
     });
   });
@@ -61,9 +61,9 @@ export async function startFake() {
         push(ws, 'READY', { user: { id: '100', username: 'TestBot', avatar: null }, session_id: 'sess1', resume_gateway_url: `ws://127.0.0.1:${wss.address().port}`, guilds: [{ id: '10', unavailable: true }] });
         push(ws, 'GUILD_CREATE', {
           id: '10', name: 'Test Guild', icon: null,
-          channels: [{ id: '21', name: 'general', type: 0, position: 0 }, { id: '22', name: 'random', type: 0, position: 1 }],
+          channels: [{ id: '20', name: 'chat zone', type: 4, position: 0 }, { id: '21', name: 'general', type: 0, position: 0, parent_id: '20' }, { id: '22', name: 'random', type: 0, position: 1, parent_id: '20' }, { id: '23', name: 'Talk', type: 2, position: 2, parent_id: '20' }],
           emojis: [{ id: '31', name: 'party', animated: false, available: true }, { id: '32', name: 'gone', available: false }],
-          roles: [{ id: '41', name: 'Mod', color: 255, position: 1 }],
+          roles: [{ id: '41', name: 'Mod', color: 255, position: 1, hoist: true }],
         });
       }
       if (m.op === 6) {
