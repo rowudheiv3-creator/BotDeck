@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BotDeck</title>
+<style>
+  :root { --bg0:#1e1f22; --bg1:#2b2d31; --bg2:#313338; --line:#3f4147; --txt:#f2f3f5; --mut:#b5bac1; --dim:#80848e; --acc:#5865f2; --ok:#57f287; --warn:#fee75c; --bad:#ed4245; }
+  * { box-sizing: border-box; }
+  html, body { height:100%; margin:0; }
+  body { background:var(--bg2); color:var(--txt); font:15px/1.45 "Segoe UI","Leelawadee UI",Tahoma,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; cursor:pointer; }
+  ::-webkit-scrollbar { width:10px; } ::-webkit-scrollbar-thumb { background:#1a1b1e; border-radius:5px; border:2px solid transparent; background-clip:content-box; }
+
+  /* login */
+  #login { height:100%; display:flex; align-items:center; justify-content:center; padding:16px; background:var(--bg0); }
+  .card { width:100%; max-width:420px; background:var(--bg1); border-radius:12px; padding:28px; box-shadow:0 8px 30px #0006; }
+  .card h1 { margin:0 0 4px; font-size:24px; } .card p { margin:0 0 16px; color:var(--mut); font-size:14px; }
+  label.f { display:block; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--mut); margin:12px 0 6px; }
+  input[type=password], input[type=text], textarea { width:100%; background:var(--bg0); border:1px solid transparent; border-radius:6px; color:var(--txt); padding:10px 12px; font:inherit; }
+  input:focus, textarea:focus { outline:none; border-color:var(--acc); }
+  .chk { display:flex; gap:8px; align-items:flex-start; margin-top:12px; color:var(--mut); font-size:13px; }
+  .btn { width:100%; margin-top:16px; background:var(--acc); border:0; border-radius:6px; padding:11px; font-weight:600; color:#fff; }
+  .btn:disabled { opacity:.5; cursor:wait; }
+  .err { color:var(--bad); font-size:14px; margin-top:10px; min-height:20px; }
+  .tiny { color:var(--dim); font-size:12px; margin-top:14px; }
+
+  /* app */
+  #app { height:100%; display:none; grid-template-columns:72px 240px 1fr; }
+  #guilds { background:var(--bg0); overflow-y:auto; padding:10px 0; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .g { width:48px; height:48px; border-radius:50%; background:var(--bg2); border:0; padding:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-weight:600; transition:border-radius .15s, background .15s; position:relative; flex:none; }
+  .g:hover, .g.sel { border-radius:16px; background:var(--acc); }
+  .g img { width:100%; height:100%; object-fit:cover; }
+  .g .dot { position:absolute; right:0; bottom:0; width:12px; height:12px; border-radius:50%; background:#fff; border:3px solid var(--bg0); }
+  #side { background:var(--bg1); display:flex; flex-direction:column; min-height:0; }
+  #gname { padding:14px 16px; font-weight:700; border-bottom:1px solid var(--bg0); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #chans { flex:1; overflow-y:auto; padding:8px; }
+  .cat { font-size:12px; font-weight:700; text-transform:uppercase; color:var(--dim); padding:14px 6px 4px; letter-spacing:.03em; }
+  .c { display:flex; align-items:center; gap:6px; width:100%; text-align:left; background:none; border:0; border-radius:5px; padding:6px 8px; color:var(--dim); }
+  .c:hover { background:#35373c; color:var(--mut); } .c.sel { background:#404249; color:#fff; }
+  .c.unread { color:#fff; font-weight:600; } .c.off { opacity:.5; cursor:default; }
+  .c .n { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #me { background:#232428; padding:8px 10px; display:flex; align-items:center; gap:8px; }
+  #me img { width:32px; height:32px; border-radius:50%; } #me .nm { flex:1; min-width:0; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #me button { background:none; border:1px solid var(--line); border-radius:5px; color:var(--mut); font-size:12px; padding:4px 8px; }
+  #st { width:9px; height:9px; border-radius:50%; background:var(--warn); flex:none; }
+  #st.ready { background:var(--ok); } #st.error { background:var(--bad); }
+
+  #main { display:flex; flex-direction:column; min-width:0; min-height:0; }
+  #head { padding:12px 16px; border-bottom:1px solid var(--bg0); font-weight:700; display:flex; gap:10px; align-items:baseline; min-height:48px; }
+  #head small { color:var(--dim); font-weight:400; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #msgs { flex:1; overflow-y:auto; padding:8px 0 12px; min-height:0; }
+  .empty { color:var(--dim); text-align:center; margin-top:60px; padding:0 20px; }
+  .more { display:block; margin:6px auto 10px; background:var(--bg1); border:0; border-radius:5px; padding:6px 14px; color:var(--mut); font-size:13px; }
+  .m { position:relative; display:grid; grid-template-columns:56px 1fr; padding:2px 16px 2px 0; }
+  .m:hover { background:#2e3035; }
+  .m.first { margin-top:14px; }
+  .m .av { padding:2px 0 0 14px; } .m .av img { width:38px; height:38px; border-radius:50%; }
+  .m .ts { color:var(--dim); font-size:11px; padding:5px 0 0 0; text-align:right; padding-right:8px; opacity:0; } .m:hover .ts { opacity:1; }
+  .m .who { font-weight:600; margin-right:8px; } .m .bot { background:var(--acc); color:#fff; font-size:10px; border-radius:3px; padding:1px 4px; margin-right:6px; vertical-align:2px; }
+  .m .time { color:var(--dim); font-size:12px; }
+  .m .body { word-wrap:break-word; overflow-wrap:anywhere; min-width:0; }
+  .m .rep { color:var(--dim); font-size:13px; margin-bottom:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .m .tools { position:absolute; right:16px; top:-14px; display:none; background:var(--bg1); border:1px solid var(--line); border-radius:6px; }
+  .m:hover .tools { display:flex; } .tools button { background:none; border:0; padding:4px 9px; color:var(--mut); font-size:13px; } .tools button:hover { color:#fff; background:#3a3c43; }
+  .m code { background:var(--bg0); border-radius:3px; padding:1px 5px; font-size:13px; }
+  .m pre { background:var(--bg0); border:1px solid var(--line); border-radius:5px; padding:8px 10px; margin:4px 0; overflow-x:auto; white-space:pre-wrap; font-size:13px; }
+  .m a { color:#00a8fc; text-decoration:none; } .m a:hover { text-decoration:underline; }
+  .mention { background:#5865f244; color:#c9cdfb; border-radius:3px; padding:0 3px; }
+  .emoji { height:22px; vertical-align:-5px; }
+  .att img, .emb img { max-width:min(420px,100%); max-height:320px; border-radius:6px; margin-top:4px; display:block; }
+  .att a { display:inline-block; margin-top:4px; }
+  .emb { border-left:4px solid var(--line); background:var(--bg1); border-radius:4px; padding:8px 12px; margin-top:4px; max-width:520px; }
+  .emb .t { font-weight:700; } .emb .d { color:var(--mut); font-size:14px; }
+  .rx { display:inline-flex; gap:4px; align-items:center; background:var(--bg1); border:1px solid var(--line); border-radius:6px; padding:1px 7px; margin:4px 4px 0 0; font-size:13px; }
+  .del { opacity:.45; text-decoration:line-through; }
+
+  #composer { padding:0 16px 18px; }
+  #replybar { display:none; background:var(--bg1); border-radius:8px 8px 0 0; padding:6px 12px; font-size:13px; color:var(--mut); justify-content:space-between; }
+  #replybar button { background:none; border:0; color:var(--mut); }
+  #box { width:100%; resize:none; background:#383a40; border-radius:8px; padding:11px 14px; max-height:200px; min-height:44px; }
+  #replybar.on + #box { border-radius:0 0 8px 8px; }
+  #toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#111214; border:1px solid var(--line); padding:9px 16px; border-radius:8px; display:none; max-width:90%; }
+  #banner { background:#f0b232; color:#000; padding:6px 14px; font-size:13px; display:none; }
+
+  /* round 1 additions */
+  .g.home { background:var(--acc); font-size:20px; } .g.home:not(.sel) { background:var(--bg2); }
+  .sep { height:1px; background:var(--line); width:32px; margin:2px 0; flex:none; }
+  .dsep { display:flex; align-items:center; gap:10px; color:var(--dim); font-size:12px; font-weight:600; margin:18px 16px 6px; }
+  .dsep::before, .dsep::after { content:""; flex:1; height:1px; background:var(--line); }
+  .m.me { background:#faa81a14; box-shadow:inset 3px 0 0 #faa81a; }
+  .m .edit { width:100%; }
+  .m .edit textarea { background:#383a40; }
+  .m .edit small { color:var(--dim); }
+  .rx { cursor:pointer; user-select:none; } .rx:hover { border-color:#5a5d66; } .rx.on { background:#5865f233; border-color:var(--acc); }
+  #picker { position:fixed; z-index:20; width:360px; max-width:96vw; height:380px; background:var(--bg1); border:1px solid var(--line); border-radius:10px; box-shadow:0 8px 28px #000a; display:none; flex-direction:column; }
+  #picker input { margin:10px; width:calc(100% - 20px); }
+  #pbody { flex:1; overflow-y:auto; padding:0 10px 10px; }
+  #pbody h4 { margin:10px 0 4px; font-size:12px; text-transform:uppercase; color:var(--dim); letter-spacing:.04em; }
+  .eg { display:flex; flex-wrap:wrap; gap:2px; } .eg button { background:none; border:0; border-radius:5px; padding:3px; font-size:22px; line-height:1; width:36px; height:36px; display:flex; align-items:center; justify-content:center; } .eg button:hover { background:#3a3c43; } .eg img { width:28px; height:28px; }
+  #ac { position:absolute; left:16px; right:16px; bottom:64px; background:var(--bg1); border:1px solid var(--line); border-radius:8px; display:none; max-height:220px; overflow-y:auto; z-index:15; }
+  #ac button { display:flex; gap:8px; align-items:center; width:100%; text-align:left; background:none; border:0; padding:6px 10px; } #ac button.sel, #ac button:hover { background:#3a3c43; } #ac img { width:22px; height:22px; } #ac small { color:var(--dim); margin-left:auto; }
+  #composer { position:relative; }
+  #row { display:flex; gap:8px; align-items:flex-end; background:#383a40; border-radius:8px; padding:0 6px; }
+  #row textarea { background:transparent; flex:1; }
+  #row button.ic { background:none; border:0; font-size:20px; padding:10px 6px; opacity:.75; } #row button.ic:hover { opacity:1; }
+  #replybar.on + #row { border-radius:0 0 8px 8px; }
+  #files { display:none; gap:8px; flex-wrap:wrap; padding:8px; background:var(--bg1); border-radius:8px 8px 0 0; }
+  #files span { background:var(--bg0); border-radius:6px; padding:4px 8px; font-size:13px; } #files b { cursor:pointer; margin-left:6px; color:var(--bad); }
+  #drop { position:fixed; inset:0; background:#5865f255; border:4px dashed var(--acc); display:none; align-items:center; justify-content:center; font-size:26px; font-weight:700; z-index:30; pointer-events:none; }
+  #mem { width:240px; background:var(--bg1); overflow-y:auto; padding:8px; display:none; }
+  #mem h4 { font-size:12px; text-transform:uppercase; color:var(--dim); margin:10px 6px 4px; }
+  .mb { display:flex; gap:10px; align-items:center; width:100%; background:none; border:0; padding:5px 6px; border-radius:5px; text-align:left; } .mb:hover { background:#35373c; } .mb img { width:32px; height:32px; border-radius:50%; } .mb span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #head .sp { flex:1; } #head button { background:none; border:0; font-size:18px; opacity:.7; } #head button:hover, #head button.on { opacity:1; }
+  .dmin { display:flex; gap:6px; padding:8px 2px; } .dmin input { padding:7px 9px; } .dmin button { background:var(--acc); border:0; border-radius:5px; color:#fff; padding:0 12px; }
+  #main { position:relative; }
+  #app.mem { grid-template-columns:72px 240px 1fr 240px; } #app.mem #mem { display:block; }
+  @media (max-width:760px){ #app{grid-template-columns:60px 1fr;} #side{display:none;} #app.showside{grid-template-columns:60px 1fr;} }
+</style>
+</head>
+<body>
+<div id="login">
+  <div class="card">
+    <h1>BotDeck</h1>
+    <p>ไคลเอนต์สำหรับบอท Discord — เบา เร็ว ทำงานบนเครื่องคุณ<br>A fast, light client for your Discord bot.</p>
+    <label class="f" for="tok">Bot token</label>
+    <input type="password" id="tok" autocomplete="off" spellcheck="false" placeholder="วางโทเคนบอทที่นี่ / paste bot token">
+    <label class="chk"><input type="checkbox" id="mc" checked> <span>ขอสิทธิ์อ่านเนื้อหาข้อความ (Message Content intent) — ต้องเปิดไว้ใน Developer Portal ก่อน ไม่งั้นให้ติ๊กออก / needs to be enabled in the Developer Portal; untick if you have not</span></label>
+    <label class="chk"><input type="checkbox" id="mb"> <span>แสดงรายชื่อสมาชิก (Server Members intent) — ต้องเปิดใน Developer Portal ก่อน / needs the Server Members intent enabled</span></label>
+    <button class="btn" id="go">เข้าสู่ระบบ / Log in</button>
+    <div class="err" id="lerr"></div>
+    <div class="tiny">โทเคนถูกเก็บในหน่วยความจำของโปรแกรมนี้เท่านั้น ไม่บันทึกลงดิสก์ และส่งไปที่ Discord เท่านั้น · The token stays in memory, is never written to disk, and is sent only to Discord.</div>
+  </div>
+</div>
+
+<div id="app">
+  <nav id="guilds"></nav>
+  <aside id="side">
+    <div id="gname"></div>
+    <div id="chans"></div>
+    <div id="me"><span id="st" title=""></span><img id="mav" alt=""><span class="nm" id="mnm"></span><button id="out">ออก / Log out</button></div>
+  </aside>
+  <section id="main">
+    <div id="banner"></div>
+    <div id="head"><span id="cname">BotDeck</span><small id="ctopic"></small><span class="sp"></span><button id="mtog" title="รายชื่อสมาชิก">👥</button></div>
+    <div id="msgs"><div class="empty">เลือกเซิร์ฟเวอร์และช่องทางซ้ายมือ<br>Pick a server and channel on the left.</div></div>
+    <div id="composer">
+      <div id="replybar"><span id="rtext"></span><button id="rx" title="ยกเลิก">✕</button></div>
+      <div id="files"></div>
+      <div id="row"><button class="ic" id="att" title="แนบไฟล์">📎</button>
+        <textarea id="box" rows="1" placeholder="พิมพ์ข้อความ… (Enter ส่ง, Shift+Enter ขึ้นบรรทัดใหม่, : ค้นหาอีโมจิ)" disabled></textarea>
+        <button class="ic" id="emo" title="อีโมจิ">😀</button><input type="file" id="fin" multiple hidden></div>
+      <div id="ac"></div>
+    </div>
+  </section>
+  <aside id="mem"></aside>
+</div>
+<div id="toast"></div>
+<div id="picker"><input type="text" id="psearch" placeholder="ค้นหาอีโมจิ / search emoji"><div id="pbody"></div></div>
+<div id="drop">วางไฟล์เพื่อแนบ / Drop to attach</div>
+
+<script>
+'use strict';
+const base = location.pathname;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let S = null;              // {me, guilds}
+let status = 'idle';
+let gid = null, cid = null; // gid 'home' = direct messages
+const cache = new Map();   // channelId -> {msgs:[oldest..newest], more:bool}
+const unread = new Set();
+const dms = new Map();     // channelId -> {id, name, userId, avatar}
+let reply = null, editing = null, pending = [], membersOn = false, memberIntent = false;
+let loadSeq = 0, lastTyping = 0;
+
+async function api(path, body) {
+  const opt = body === undefined ? {} : body instanceof FormData
+    ? { method: 'POST', headers: { 'X-BD': '1' }, body }
+    : { method: 'POST', headers: { 'X-BD': '1', 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
+  const r = await fetch(base + 'api/' + path, opt);
+  let j = null; try { j = await r.json(); } catch (e) {}
+  if (!r.ok) throw new Error((j && j.error) || ('HTTP ' + r.status));
+  return j;
+}
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = 'none', 4000); }
+const name = (u) => (u && (u.global_name || u.username)) || '?';
+
+/* ---------- login ---------- */
+async function doLogin() {
+  const b = $('go'); b.disabled = true; $('lerr').textContent = '';
+  try {
+    memberIntent = $('mb').checked;
+    await api('login', { token: $('tok').value, messageContent: $('mc').checked, members: memberIntent });
+    $('tok').value = '';
+    await refresh();
+  } catch (e) { $('lerr').textContent = e.message; }
+  b.disabled = false;
+}
+$('go').onclick = doLogin;
+$('tok').onkeydown = (e) => { if (e.key === 'Enter') doLogin(); };
+$('out').onclick = async () => { await api('logout', {}).catch(() => {}); cache.clear(); unread.clear(); dms.clear(); gid = cid = null; S = null; membersOn = false; show(); };
+
+function show() {
+  const inApp = status !== 'idle' && !(status === 'error' && (!S || !S.me.id));
+  $('login').style.display = inApp ? 'none' : 'flex';
+  $('app').style.display = inApp ? 'grid' : 'none';
+  const st = $('st'); st.className = status; st.title = status;
+  const bn = $('banner');
+  if (status === 'connecting') { bn.style.display = 'block'; bn.textContent = 'กำลังเชื่อมต่อ… / Connecting…'; }
+  else bn.style.display = 'none';
+}
+
+/* ---------- state ---------- */
+async function refresh() {
+  const j = await api('state');
+  status = j.status; S = j.snapshot;
+  if (status === 'error') {
+    $('lerr').textContent = j.error;
+    api('logout', {}).catch(() => {});
+    status = 'idle'; S = null;
+  }
+  if (S && S.me.id) { $('mnm').textContent = S.me.username; $('mav').src = avatar(S.me); }
+  if (gid && gid !== 'home' && !guild()) { gid = cid = null; }
+  if (!gid && S && S.guilds.length) gid = S.guilds[0].id;
+  show(); renderGuilds(); renderChans(); if (membersOn) loadMembers();
+}
+const guild = () => S && S.guilds.find(g => g.id === gid);
+const chan = () => {
+  if (gid === 'home') { const d = dms.get(cid); return d && { id: d.id, name: '@' + d.name, topic: '' }; }
+  const g = guild(); return g && g.channels.find(c => c.id === cid);
+};
+const allEmojis = () => S ? S.guilds.flatMap(g => g.emojis.map(e => Object.assign({ guild: g.name }, e))) : [];
+
+function avatar(u) {
+  if (u.avatar) return 'https://cdn.discordapp.com/avatars/' + u.id + '/' + u.avatar + '.png?size=64';
+  let i = 0; try { i = Number((BigInt(u.id) >> 22n) % 6n); } catch (e) {}
+  return 'https://cdn.discordapp.com/embed/avatars/' + i + '.png';
+}
+const emojiURL = (e, size) => 'https://cdn.discordapp.com/emojis/' + e.id + '.' + (e.animated ? 'gif' : 'png') + '?size=' + (size || 48);
+
+function renderGuilds() {
+  const el = $('guilds'); el.textContent = '';
+  if (!S) return;
+  const home = document.createElement('button');
+  home.className = 'g home' + (gid === 'home' ? ' sel' : ''); home.title = 'ข้อความส่วนตัว / Direct messages'; home.textContent = '💬';
+  if ([...dms.keys()].some(id => unread.has(id))) { const d = document.createElement('span'); d.className = 'dot'; home.appendChild(d); }
+  home.onclick = () => { gid = 'home'; cid = null; renderGuilds(); renderChans(); clearChat(); loadMembers(); };
+  el.appendChild(home);
+  const sp = document.createElement('div'); sp.className = 'sep'; el.appendChild(sp);
+  for (const g of S.guilds) {
+    const b = document.createElement('button');
+    b.className = 'g' + (g.id === gid ? ' sel' : ''); b.title = g.name;
+    if (g.icon) { const i = document.createElement('img'); i.src = 'https://cdn.discordapp.com/icons/' + g.id + '/' + g.icon + '.png?size=64'; i.alt = ''; b.appendChild(i); }
+    else b.textContent = g.name.split(/\s+/).map(w => w[0] || '').join('').slice(0, 3);
+    if (g.channels.some(c => unread.has(c.id))) { const d = document.createElement('span'); d.className = 'dot'; b.appendChild(d); }
+    b.onclick = () => { gid = g.id; cid = null; renderGuilds(); renderChans(); clearChat(); loadMembers(); };
+    el.appendChild(b);
+  }
+}
+
+function renderChans() {
+  const el = $('chans'); el.textContent = '';
+  if (gid === 'home') {
+    $('gname').textContent = 'ข้อความส่วนตัว / Direct Messages';
+    const f = document.createElement('div'); f.className = 'dmin';
+    f.innerHTML = '<input type="text" id="dmid" placeholder="User ID เพื่อเปิด DM" spellcheck="false"><button>เปิด</button>';
+    f.querySelector('button').onclick = async () => {
+      const v = f.querySelector('input').value.trim();
+      try { const c = await api('dm', { user: v }); addDM(c.id, (c.recipients && c.recipients[0] && name(c.recipients[0])) || v, v, c.recipients && c.recipients[0]); openChannel(c.id); }
+      catch (e) { toast(e.message); }
+    };
+    el.appendChild(f);
+    for (const d of dms.values()) {
+      const b = document.createElement('button');
+      b.className = 'c' + (d.id === cid ? ' sel' : '') + (unread.has(d.id) ? ' unread' : '');
+      b.innerHTML = '<span class="n">@ ' + esc(d.name) + '</span>';
+      b.onclick = () => openChannel(d.id);
+      el.appendChild(b);
+    }
+    if (!dms.size) { const e = document.createElement('div'); e.className = 'empty'; e.style.marginTop = '24px'; e.textContent = 'ยังไม่มี DM — มีคนทักบอท หรือใส่ User ID ด้านบน'; el.appendChild(e); }
+    return;
+  }
+  const g = guild(); $('gname').textContent = g ? g.name : '';
+  if (!g) return;
+  const cats = g.channels.filter(c => c.type === 4);
+  const groups = [{ name: '', items: g.channels.filter(c => c.type !== 4 && !c.parent_id) }];
+  for (const c of cats) groups.push({ name: c.name, items: g.channels.filter(x => x.type !== 4 && x.parent_id === c.id) });
+  for (const grp of groups) {
+    if (!grp.items.length) continue;
+    const rank = (c) => (c.type === 0 || c.type === 5) ? 0 : 1;
+    grp.items.sort((a, b) => rank(a) - rank(b) || a.position - b.position);
+    if (grp.name) { const h = document.createElement('div'); h.className = 'cat'; h.textContent = grp.name; el.appendChild(h); }
+    for (const c of grp.items) {
+      const readable = c.type === 0 || c.type === 5;
+      const b = document.createElement('button');
+      b.className = 'c' + (c.id === cid ? ' sel' : '') + (unread.has(c.id) ? ' unread' : '') + (readable ? '' : ' off');
+      const ico = c.type === 2 || c.type === 13 ? '🔊' : c.type === 5 ? '📢' : readable ? '#' : '•';
+      const n = document.createElement('span'); n.className = 'n'; n.textContent = ico + ' ' + c.name;
+      b.appendChild(n);
+      if (readable) b.onclick = () => openChannel(c.id);
+      else if (c.type === 2 || c.type === 13) b.onclick = () => toast('ห้องเสียง: กำลังพัฒนา (ต้องทำระบบเข้ารหัส DAVE ของ Discord) / Voice: not built yet');
+      else b.title = 'ช่องประเภทนี้ยังไม่รองรับ / not supported yet';
+      el.appendChild(b);
+    }
+  }
+}
+
+function addDM(id, nm, userId, u) {
+  if (!dms.has(id)) dms.set(id, { id, name: nm, userId, avatar: u });
+  if (gid === 'home') renderChans();
+}
+
+function clearChat() {
+  $('cname').textContent = 'BotDeck'; $('ctopic').textContent = '';
+  $('msgs').innerHTML = '<div class="empty">เลือกช่องทางซ้ายมือ<br>Pick a channel on the left.</div>';
+  $('box').disabled = true; setReply(null); setPending([]); stopEdit();
+}
+
+/* ---------- members ---------- */
+$('mtog').onclick = () => { membersOn = !membersOn; $('mtog').className = membersOn ? 'on' : ''; $('app').classList.toggle('mem', membersOn); loadMembers(); };
+async function loadMembers() {
+  const el = $('mem');
+  if (!membersOn) return;
+  if (gid === 'home' || !gid) { el.innerHTML = '<div class="empty" style="margin-top:20px">—</div>'; return; }
+  el.innerHTML = '<div class="empty" style="margin-top:20px">กำลังโหลด…</div>';
+  const g0 = gid;
+  try {
+    const list = await api('members?guild=' + gid);
+    if (g0 !== gid) return;
+    const g = guild(); const roles = new Map((g ? g.roles : []).map(r => [r.id, r]));
+    const rows = list.map(m => {
+      const rs = (m.roles || []).map(id => roles.get(id)).filter(r => r && r.color).sort((a, b) => b.position - a.position);
+      return { u: m.user, nick: m.nick, color: rs[0] ? '#' + rs[0].color.toString(16).padStart(6, '0') : '' };
+    }).sort((a, b) => (a.nick || name(a.u)).localeCompare(b.nick || name(b.u)));
+    el.textContent = '';
+    const h = document.createElement('h4'); h.textContent = 'สมาชิก / Members — ' + rows.length; el.appendChild(h);
+    for (const r of rows) {
+      const b = document.createElement('button'); b.className = 'mb'; b.title = 'เปิด DM / open DM';
+      b.innerHTML = '<img alt="" loading="lazy" src="' + esc(avatar(r.u)) + '"><span' + (r.color ? ' style="color:' + r.color + '"' : '') + '>' + esc(r.nick || name(r.u)) + (r.u.bot ? ' <small class="bot" style="background:var(--acc);color:#fff;border-radius:3px;padding:0 4px;font-size:10px">BOT</small>' : '') + '</span>';
+      b.onclick = async () => { try { const c = await api('dm', { user: r.u.id }); addDM(c.id, name(r.u), r.u.id, r.u); gid = 'home'; renderGuilds(); renderChans(); loadMembers(); openChannel(c.id); } catch (e) { toast(e.message); } };
+      el.appendChild(b);
+    }
+  } catch (e) { el.innerHTML = '<div class="empty" style="margin-top:20px">' + esc(e.message) + '</div>'; }
+}
+
+/* ---------- messages ---------- */
+async function openChannel(id) {
+  cid = id; unread.delete(id); setReply(null); stopEdit();
+  const c = chan(); $('cname').textContent = (gid === 'home' ? '' : '# ') + (c ? c.name : ''); $('ctopic').textContent = (c && c.topic) || '';
+  $('box').disabled = false; $('box').focus();
+  renderChans(); renderGuilds();
+  const seq = ++loadSeq;
+  if (!cache.has(id)) {
+    $('msgs').innerHTML = '<div class="empty">กำลังโหลด… / Loading…</div>';
+    try {
+      const arr = await api('messages?channel=' + id);
+      if (seq !== loadSeq) return;
+      cache.set(id, { msgs: arr.reverse(), more: arr.length >= 50 });
+    } catch (e) {
+      if (seq !== loadSeq) return;
+      $('msgs').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; return;
+    }
+  }
+  renderMsgs(true);
+}
+
+async function loadOlder() {
+  const e = cache.get(cid); if (!e || !e.msgs.length) return;
+  const id = cid, el = $('msgs'), prevH = el.scrollHeight;
+  try {
+    const arr = await api('messages?channel=' + id + '&before=' + e.msgs[0].id);
+    e.more = arr.length >= 50; e.msgs = arr.reverse().concat(e.msgs);
+    if (id !== cid) return;
+    renderMsgs(false); el.scrollTop = el.scrollHeight - prevH;
+  } catch (err) { toast(err.message); }
+}
+
+function userName(m, id) { const u = (m.mentions || []).find(x => x.id === id); return u ? name(u) : id; }
+
+function md(text, m) {
+  const keep = [], hold = (h) => '\u0000' + (keep.push(h) - 1) + '\u0000';
+  let s = esc(text);
+  s = s.replace(/```(?:[a-z0-9]+\n)?([\s\S]*?)```/gi, (_, c) => hold('<pre>' + c + '</pre>'));
+  s = s.replace(/`([^`\n]+)`/g, (_, c) => hold('<code>' + c + '</code>'));
+  s = s.replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)\]'"]/g, u => hold('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + u + '</a>'));
+  s = s.replace(/&lt;(a?):(\w+):(\d+)&gt;/g, (_, an, n, id) => hold('<img class="emoji" alt=":' + n + ':" title=":' + n + ':" src="https://cdn.discordapp.com/emojis/' + id + '.' + (an ? 'gif' : 'png') + '?size=48">'));
+  s = s.replace(/&lt;@!?(\d+)&gt;/g, (_, id) => hold('<span class="mention">@' + esc(userName(m, id)) + '</span>'));
+  s = s.replace(/&lt;@&amp;(\d+)&gt;/g, () => hold('<span class="mention">@role</span>'));
+  s = s.replace(/&lt;#(\d+)&gt;/g, (_, id) => { const g = guild(); const c = g && g.channels.find(x => x.id === id); return hold('<span class="mention">#' + esc(c ? c.name : id) + '</span>'); });
+  s = s.replace(/\*\*([\s\S]+?)\*\*/g, '<b>$1</b>').replace(/__([\s\S]+?)__/g, '<u>$1</u>')
+       .replace(/\*([^*\n]+)\*/g, '<i>$1</i>').replace(/~~([\s\S]+?)~~/g, '<s>$1</s>');
+  s = s.replace(/\n/g, '<br>');
+  return s.replace(/\u0000(\d+)\u0000/g, (_, i) => keep[+i]);
+}
+
+const safeUrl = (u) => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } };
+const emojiKey = (e) => e.id ? e.name + ':' + e.id : e.name;
+
+function reactionsHTML(m) {
+  if (!(m.reactions || []).length) return '';
+  return '<div>' + m.reactions.map((r, i) => '<span class="rx' + (r.me ? ' on' : '') + '" data-i="' + i + '" title="' + esc(r.emoji.name || '') + '">' +
+    (r.emoji.id ? '<img class="emoji" alt="" src="' + esc(emojiURL(r.emoji, 32)) + '">' : esc(r.emoji.name || '')) + ' ' + r.count + '</span>').join('') + '</div>';
+}
+
+function msgHTML(m, grouped) {
+  const t = new Date(m.timestamp), hhmm = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const a = m.author || {};
+  let h = '';
+  if (grouped) h += '<div class="ts">' + hhmm + '</div>';
+  else h += '<div class="av"><img alt="" loading="lazy" src="' + esc(avatar(a)) + '"></div>';
+  h += '<div class="body">';
+  if (!grouped) h += '<div><span class="who">' + esc(name(a)) + '</span>' + (a.bot ? '<span class="bot">BOT</span>' : '') + '<span class="time">' + t.toLocaleString() + '</span></div>';
+  if (m.referenced_message) { const r = m.referenced_message; h += '<div class="rep">↪ ' + esc(name(r.author)) + ': ' + esc((r.content || '').slice(0, 90)) + '</div>'; }
+  if (editing === m.id) h += '<div class="edit"><textarea rows="2" id="ed"></textarea><small>Enter = บันทึก · Esc = ยกเลิก</small></div>';
+  else if (m.content) h += '<div>' + md(m.content, m) + (m.edited_timestamp ? ' <span class="time">(แก้ไข)</span>' : '') + '</div>';
+  for (const f of (m.attachments || [])) {
+    const u = safeUrl(f.url);
+    if (!u) continue;
+    if ((f.content_type || '').startsWith('image/')) h += '<div class="att"><img loading="lazy" alt="' + esc(f.filename) + '" src="' + esc(u) + '"></div>';
+    else h += '<div class="att"><a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">📎 ' + esc(f.filename) + '</a></div>';
+  }
+  for (const e of (m.embeds || [])) {
+    const col = e.color != null ? '#' + e.color.toString(16).padStart(6, '0') : 'var(--line)';
+    h += '<div class="emb" style="border-left-color:' + col + '">';
+    if (e.title) h += '<div class="t">' + esc(e.title) + '</div>';
+    if (e.description) h += '<div class="d">' + md(e.description, m) + '</div>';
+    for (const f of (e.fields || [])) h += '<div class="d"><b>' + esc(f.name) + '</b><br>' + md(f.value, m) + '</div>';
+    const img = safeUrl((e.image && e.image.url) || (e.thumbnail && e.thumbnail.url) || '');
+    if (img) h += '<img loading="lazy" alt="" src="' + esc(img) + '">';
+    h += '</div>';
+  }
+  h += reactionsHTML(m) + '</div>';
+  return h;
+}
+
+function renderMsgs(bottom) {
+  const e = cache.get(cid), el = $('msgs');
+  if (!e) return;
+  const near = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+  const frag = document.createDocumentFragment();
+  if (e.more) { const b = document.createElement('button'); b.className = 'more'; b.textContent = 'โหลดข้อความเก่ากว่า / Load older'; b.onclick = loadOlder; frag.appendChild(b); }
+  if (!e.msgs.length) { const d = document.createElement('div'); d.className = 'empty'; d.textContent = 'ยังไม่มีข้อความ / No messages yet'; frag.appendChild(d); }
+  let prev = null;
+  const meId = S && S.me && S.me.id;
+  for (const m of e.msgs) {
+    const day = new Date(m.timestamp).toDateString();
+    let newDay = !prev || new Date(prev.timestamp).toDateString() !== day;
+    if (newDay) { const s = document.createElement('div'); s.className = 'dsep'; s.textContent = new Date(m.timestamp).toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' }); frag.appendChild(s); }
+    const grouped = !newDay && prev && prev.author && m.author && prev.author.id === m.author.id && !m.referenced_message &&
+      (new Date(m.timestamp) - new Date(prev.timestamp)) < 7 * 60 * 1000;
+    const d = document.createElement('div');
+    const mentioned = meId && (m.mentions || []).some(u => u.id === meId);
+    d.className = 'm' + (grouped ? '' : ' first') + (mentioned ? ' me' : ''); d.dataset.id = m.id;
+    const own = m.author && m.author.id === meId;
+    d.innerHTML = msgHTML(m, grouped) +
+      '<div class="tools"><button data-a="x">😀</button><button data-a="r">↩</button>' + (own ? '<button data-a="e">✏️</button>' : '') + '<button data-a="d">🗑</button></div>';
+    frag.appendChild(d); prev = m;
+  }
+  el.textContent = ''; el.appendChild(frag);
+  if (editing) { const ed = $('ed'); const mm = e.msgs.find(x => x.id === editing); if (ed && mm) { ed.value = mm.content; ed.focus(); ed.onkeydown = editKey; } }
+  if (bottom || near) el.scrollTop = el.scrollHeight;
+}
+
+const msgOf = (row) => { const e = cache.get(cid); return e && e.msgs.find(x => x.id === row.dataset.id); };
+
+$('msgs').onclick = (ev) => {
+  const chip = ev.target.closest('.rx');
+  if (chip) { const m = msgOf(chip.closest('.m')); if (m) toggleReaction(m, m.reactions[+chip.dataset.i].emoji); return; }
+  const b = ev.target.closest('button[data-a]'); if (!b) return;
+  const m = msgOf(b.closest('.m'));
+  if (!m) return;
+  const a = b.dataset.a;
+  if (a === 'r') setReply(m);
+  else if (a === 'x') openPicker(b, { react: m });
+  else if (a === 'e') { editing = m.id; renderMsgs(false); }
+  else if (a === 'd' && confirm('ลบข้อความนี้? / Delete this message?')) api('delete', { channel: cid, id: m.id }).catch(err => toast(err.message));
+};
+
+/* ---------- reactions ---------- */
+function applyReaction(m, emoji, userId, add) {
+  const k = emojiKey(emoji), me = S && S.me && userId === S.me.id;
+  m.reactions = m.reactions || [];
+  let r = m.reactions.find(x => emojiKey(x.emoji) === k);
+  if (add) {
+    if (!r) { r = { emoji: { id: emoji.id || null, name: emoji.name, animated: !!emoji.animated }, count: 0, me: false }; m.reactions.push(r); }
+    if (me && r.me) return;
+    r.count++; if (me) r.me = true;
+  } else if (r) {
+    if (me && !r.me) return;
+    r.count--; if (me) r.me = false;
+    if (r.count <= 0) m.reactions = m.reactions.filter(x => x !== r);
+  }
+}
+async function toggleReaction(m, emoji) {
+  const r = (m.reactions || []).find(x => emojiKey(x.emoji) === emojiKey(emoji));
+  const on = !(r && r.me), cidNow = cid;
+  applyReaction(m, emoji, S.me.id, on); renderMsgs(false);
+  try { await api('react', { channel: cidNow, id: m.id, emoji: emojiKey(emoji), on }); }
+  catch (e) { applyReaction(m, emoji, S.me.id, !on); if (cidNow === cid) renderMsgs(false); toast(e.message); }
+}
+
+/* ---------- edit / reply ---------- */
+function stopEdit() { if (editing) { editing = null; if (cache.has(cid)) renderMsgs(false); } }
+async function editKey(ev) {
+  if (ev.key === 'Escape') { stopEdit(); return; }
+  if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) {
+    ev.preventDefault();
+    const id = editing, text = ev.target.value;
+    if (!text.trim()) return;
+    try { await api('edit', { channel: cid, id, content: text }); editing = null; } catch (e) { toast(e.message); }
+  }
+}
+function setReply(m) {
+  reply = m; const bar = $('replybar');
+  bar.style.display = m ? 'flex' : 'none'; bar.className = m ? 'on' : '';
+  if (m) { $('rtext').textContent = 'ตอบ ' + name(m.author) + ': ' + (m.content || '').slice(0, 60); $('box').focus(); }
+}
+$('rx').onclick = () => setReply(null);
+
+/* ---------- composer: shortcodes, files, typing ---------- */
+function expandShortcodes(text) {
+  const list = allEmojis(); if (!list.length) return text;
+  const by = new Map(); for (const e of list) if (!by.has(e.name.toLowerCase())) by.set(e.name.toLowerCase(), e);
+  // leave code spans alone
+  return text.split(/(```[\s\S]*?```|`[^`\n]*`)/g).map((seg, i) => i % 2 ? seg :
+    seg.replace(/(^|[^<\w]):([A-Za-z0-9_]{2,32}):/g, (all, pre, n) => { const e = by.get(n.toLowerCase()); return e ? pre + '<' + (e.animated ? 'a' : '') + ':' + e.name + ':' + e.id + '>' : all; })).join('');
+}
+
+function setPending(files) {
+  pending = files.slice(0, 10);
+  const el = $('files'); el.textContent = ''; el.style.display = pending.length ? 'flex' : 'none';
+  pending.forEach((f, i) => { const s = document.createElement('span'); s.textContent = '📎 ' + f.name + ' (' + Math.max(1, Math.round(f.size / 1024)) + ' KB)'; const x = document.createElement('b'); x.textContent = '✕'; x.onclick = () => setPending(pending.filter((_, j) => j !== i)); s.appendChild(x); el.appendChild(s); });
+}
+$('att').onclick = () => $('fin').click();
+$('fin').onchange = (e) => { setPending(pending.concat([...e.target.files])); e.target.value = ''; $('box').focus(); };
+$('box').addEventListener('paste', (e) => { const fs = [...(e.clipboardData ? e.clipboardData.files : [])]; if (fs.length) { e.preventDefault(); setPending(pending.concat(fs)); } });
+let dragN = 0;
+addEventListener('dragenter', (e) => { if (cid && e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { dragN++; $('drop').style.display = 'flex'; } });
+addEventListener('dragleave', () => { dragN = Math.max(0, dragN - 1); if (!dragN) $('drop').style.display = 'none'; });
+addEventListener('dragover', (e) => e.preventDefault());
+addEventListener('drop', (e) => { e.preventDefault(); dragN = 0; $('drop').style.display = 'none'; if (cid && e.dataTransfer.files.length) setPending(pending.concat([...e.dataTransfer.files])); });
+
+async function send() {
+  const box = $('box'), text = expandShortcodes(box.value);
+  if ((!text.trim() && !pending.length) || !cid) return;
+  box.disabled = true;
+  try {
+    if (pending.length) {
+      const fd = new FormData(); fd.append('channel', cid); fd.append('content', text); fd.append('replyTo', reply ? reply.id : '');
+      for (const f of pending) fd.append('files', f, f.name);
+      await api('upload', fd);
+    } else await api('send', { channel: cid, content: text, replyTo: reply ? reply.id : '' });
+    box.value = ''; box.style.height = ''; setReply(null); setPending([]); hideAC();
+  } catch (e) { toast(e.message); }
+  box.disabled = false; box.focus();
+}
+
+/* autocomplete for :name */
+let acItems = [], acSel = 0;
+function hideAC() { $('ac').style.display = 'none'; acItems = []; }
+function updateAC() {
+  const box = $('box'), pos = box.selectionStart, m = /(?:^|\s):([A-Za-z0-9_]{2,32})$/.exec(box.value.slice(0, pos));
+  if (!m) return hideAC();
+  const q = m[1].toLowerCase();
+  acItems = allEmojis().filter(e => e.name.toLowerCase().includes(q)).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1)).slice(0, 10);
+  if (!acItems.length) return hideAC();
+  acSel = 0; renderAC();
+}
+function renderAC() {
+  const el = $('ac'); el.style.display = 'block'; el.textContent = '';
+  acItems.forEach((e, i) => { const b = document.createElement('button'); b.className = i === acSel ? 'sel' : ''; b.innerHTML = '<img alt="" src="' + esc(emojiURL(e, 32)) + '"> :' + esc(e.name) + ': <small>' + esc(e.guild) + '</small>'; b.onmousedown = (ev) => { ev.preventDefault(); pickAC(i); }; el.appendChild(b); });
+}
+function pickAC(i) {
+  const e = acItems[i]; if (!e) return;
+  const box = $('box'), pos = box.selectionStart, before = box.value.slice(0, pos).replace(/:([A-Za-z0-9_]{2,32})$/, '');
+  const ins = '<' + (e.animated ? 'a' : '') + ':' + e.name + ':' + e.id + '> ';
+  box.value = before + ins + box.value.slice(pos); box.selectionStart = box.selectionEnd = before.length + ins.length; hideAC(); box.focus();
+}
+$('box').onkeydown = (e) => {
+  if (acItems.length) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); acSel = (acSel + 1) % acItems.length; return renderAC(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); acSel = (acSel + acItems.length - 1) % acItems.length; return renderAC(); }
+    if (e.key === 'Tab' || e.key === 'Enter') { e.preventDefault(); return pickAC(acSel); }
+    if (e.key === 'Escape') return hideAC();
+  }
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); }
+};
+$('box').oninput = (e) => {
+  const b = e.target; b.style.height = 'auto'; b.style.height = Math.min(b.scrollHeight, 200) + 'px'; updateAC();
+  if (cid && b.value && Date.now() - lastTyping > 8000) { lastTyping = Date.now(); api('typing', { channel: cid }).catch(() => {}); }
+};
+
+/* ---------- emoji picker ---------- */
+const UNI = {
+  'ยิ้ม / Smileys': '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😍 🥰 😘 😋 😛 😜 🤪 🤔 🤨 😐 😑 😶 🙄 😏 😣 😥 😮 🤐 😯 😪 😫 🥱 😴 😌 😎 🤓 🥳 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😓 🤗 🫡 🤫 🤭 🫠',
+  'มือ / Hands': '👍 👎 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ ✋ 🖐️ 👋 🤝 🙏 👏 🙌 💪 ✍️',
+  'หัวใจ / Hearts': '❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💞 💓 💗 💖 💘 💝',
+  'สัญลักษณ์ / Symbols': '🔥 ✨ ⭐ 🌟 💫 💥 💯 ✅ ❌ ⚠️ ❓ ❗ 🎉 🎊 🎁 🏆 🥇 🔔 💬 👀 🚀 💡 🔒 🔑 ⚡ 🌈 ☀️ 🌙',
+  'สัตว์/อาหาร / Misc': '🐶 🐱 🐭 🐰 🦊 🐻 🐼 🐸 🐵 🐔 🦄 🐢 🍎 🍕 🍔 🍟 🍣 🍜 🍩 🍪 🍺 ☕ 🎮 🎧 🎵 ⚽ 🏀'
+};
+let pickerMode = null;
+function openPicker(anchor, mode) {
+  pickerMode = mode;
+  const p = $('picker'), r = anchor.getBoundingClientRect();
+  p.style.display = 'flex';
+  p.style.left = Math.max(8, Math.min(innerWidth - 368, r.right - 360)) + 'px';
+  p.style.top = Math.max(8, Math.min(innerHeight - 388, r.top - 390 > 8 ? r.top - 390 : r.bottom + 6)) + 'px';
+  $('psearch').value = ''; renderPicker(''); $('psearch').focus();
+}
+function closePicker() { $('picker').style.display = 'none'; pickerMode = null; }
+function renderPicker(q) {
+  q = q.trim().toLowerCase();
+  const body = $('pbody'); body.textContent = '';
+  const byGuild = new Map();
+  for (const e of allEmojis()) { if (q && !e.name.toLowerCase().includes(q)) continue; if (!byGuild.has(e.guild)) byGuild.set(e.guild, []); byGuild.get(e.guild).push(e); }
+  for (const [gname, list] of byGuild) {
+    const h = document.createElement('h4'); h.textContent = gname; body.appendChild(h);
+    const g = document.createElement('div'); g.className = 'eg';
+    for (const e of list) { const b = document.createElement('button'); b.title = ':' + e.name + ':'; b.innerHTML = '<img alt="" loading="lazy" src="' + esc(emojiURL(e, 48)) + '">'; b.onclick = () => choose({ id: e.id, name: e.name, animated: e.animated }); g.appendChild(b); }
+    body.appendChild(g);
+  }
+  if (!q) for (const [cat, str] of Object.entries(UNI)) {
+    const h = document.createElement('h4'); h.textContent = cat; body.appendChild(h);
+    const g = document.createElement('div'); g.className = 'eg';
+    for (const ch of str.split(' ')) { const b = document.createElement('button'); b.textContent = ch; b.onclick = () => choose({ id: null, name: ch }); g.appendChild(b); }
+    body.appendChild(g);
+  }
+  if (!body.children.length) { const d = document.createElement('div'); d.className = 'empty'; d.style.marginTop = '30px'; d.textContent = 'ไม่พบ / nothing found'; body.appendChild(d); }
+}
+function choose(e) {
+  const mode = pickerMode; closePicker();
+  if (mode && mode.react) toggleReaction(mode.react, e);
+  else { const box = $('box'); const ins = e.id ? '<' + (e.animated ? 'a' : '') + ':' + e.name + ':' + e.id + '> ' : e.name; const pos = box.selectionStart; box.value = box.value.slice(0, pos) + ins + box.value.slice(pos); box.selectionStart = box.selectionEnd = pos + ins.length; box.focus(); }
+}
+$('emo').onclick = (ev) => { ev.stopPropagation(); if ($('picker').style.display === 'flex') closePicker(); else openPicker($('emo'), {}); };
+$('psearch').oninput = (e) => renderPicker(e.target.value);
+addEventListener('mousedown', (e) => { if ($('picker').style.display === 'flex' && !e.target.closest('#picker') && !e.target.closest('#emo') && !e.target.closest('.tools')) closePicker(); });
+addEventListener('keydown', (e) => { if (e.key === 'Escape') closePicker(); });
+
+/* ---------- live events ---------- */
+function onEvent(ev) {
+  const { t, d } = ev;
+  if (t === 'status') { status = d.status; if (status === 'error') refresh(); else { show(); if (status === 'ready') refresh(); } return; }
+  if (t === 'state') { refresh(); return; }
+  if (!d || !d.channel_id) return;
+  const e = cache.get(d.channel_id);
+  if (t === 'MESSAGE_CREATE') {
+    if (!d.guild_id && d.author && S && S.me && d.author.id !== S.me.id) { addDM(d.channel_id, name(d.author), d.author.id, d.author); }
+    if (e) { if (!e.msgs.some(x => x.id === d.id)) e.msgs.push(d); }
+    if (d.channel_id === cid) renderMsgs(false);
+    else if (S && S.me && d.author && d.author.id !== S.me.id) { unread.add(d.channel_id); renderChans(); renderGuilds(); }
+  } else if (e) {
+    const i = e.msgs.findIndex(x => x.id === (d.id || d.message_id));
+    if (i < 0) return;
+    if (t === 'MESSAGE_UPDATE') e.msgs[i] = Object.assign({}, e.msgs[i], d);
+    else if (t === 'MESSAGE_DELETE') e.msgs.splice(i, 1);
+    else if (t === 'MESSAGE_REACTION_ADD') applyReaction(e.msgs[i], d.emoji, d.user_id, true);
+    else if (t === 'MESSAGE_REACTION_REMOVE') applyReaction(e.msgs[i], d.emoji, d.user_id, false);
+    if (d.channel_id === cid && !(editing && editing === e.msgs[i].id)) renderMsgs(false);
+  }
+}
+
+function connect() {
+  const es = new EventSource(base + 'api/events');
+  es.onmessage = (m) => { try { onEvent(JSON.parse(m.data)); } catch (e) {} };
+  es.onopen = () => { cache.clear(); refresh().then(() => { if (cid) openChannel(cid); }).catch(() => {}); };
+}
+refresh().catch(() => {}); connect();
+</script>
+</body>
+</html>
