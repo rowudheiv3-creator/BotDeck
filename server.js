@@ -1,9 +1,13 @@
 import http from 'node:http';
 import { App } from './src/app.js';
+import { loadEnvFile } from './src/dotenv.js';
+
+loadEnvFile(new URL('./.env', import.meta.url));
 
 const password = process.env.BOTDECK_PASSWORD || '';
 if (password.length < 10) {
   console.error('BOTDECK_PASSWORD must be set to at least 10 characters');
+  console.error('Set it in the panel\'s environment variables, or create a file named .env next to server.js containing:\nBOTDECK_PASSWORD=your-long-password\nBOTDECK_ALLOW_HTTP=1   (only if your host has no HTTPS)');
   process.exit(1);
 }
 const port = Number(process.env.BOTDECK_PORT || process.env.PORT || process.env.SERVER_PORT || 8080);

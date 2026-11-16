@@ -88,3 +88,9 @@ test('security headers are set', async () => {
     assert.equal(r.headers.get('x-content-type-options'), 'nosniff');
   } finally { await s.close(); }
 });
+
+import { parseEnv } from '../src/dotenv.js';
+test('.env parser handles quotes, comments and export', () => {
+  const e = parseEnv('# c\nBOTDECK_PASSWORD="a long password"\nexport BOTDECK_ALLOW_HTTP=1 # trailing\nBAD LINE\nPORT=\'8081\'\n');
+  assert.deepEqual(e, { BOTDECK_PASSWORD: 'a long password', BOTDECK_ALLOW_HTTP: '1', PORT: '8081' });
+});
