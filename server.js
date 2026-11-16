@@ -5,11 +5,12 @@ import { loadEnvFile } from './src/dotenv.js';
 loadEnvFile(new URL('./.env', import.meta.url));
 
 const password = process.env.BOTDECK_PASSWORD || '';
-if (password.length < 10) {
-  console.error('BOTDECK_PASSWORD must be set to at least 10 characters');
+if (password.length < 6) {
+  console.error('BOTDECK_PASSWORD must be set to at least 6 characters');
   console.error('Set it in the panel\'s environment variables, or create a file named .env next to server.js containing:\nBOTDECK_PASSWORD=your-long-password\nBOTDECK_ALLOW_HTTP=1   (only if your host has no HTTPS)');
   process.exit(1);
 }
+if (password.length < 10) console.warn('WARNING: BOTDECK_PASSWORD is short; anyone who guesses it controls your bot. 10+ characters is recommended.');
 const port = Number(process.env.BOTDECK_PORT || process.env.PORT || process.env.SERVER_PORT || 8080);
 const allowHttp = process.env.BOTDECK_ALLOW_HTTP === '1';
 
