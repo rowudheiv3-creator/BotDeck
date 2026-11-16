@@ -21,7 +21,7 @@ Needs Node.js 18.17 or newer. Open `http://<host>:8080`, sign in, paste the bot 
 | `BOTDECK_TOKEN` | Optional. Start the bot session at boot so the token is never typed into the page |
 | `BOTDECK_MESSAGE_CONTENT=1` | With `BOTDECK_TOKEN`: request the Message Content intent (enable it in the Developer Portal first) |
 | `BOTDECK_MEMBERS=1` | With `BOTDECK_TOKEN`: request the Server Members intent (privileged) |
-| `BOTDECK_ALLOW_HTTP=1` | Allow password login over plain HTTP. Only for hosts without HTTPS; the password then crosses the network in clear text |
+| `BOTDECK_ALLOW_HTTP` | Plain-HTTP login is allowed by default (hosting panels give `http://ip:port`; the password then crosses the network in clear text). Set `0` to require HTTPS |
 
 ### Hosting panels (Wispbyte, Pterodactyl, ...)
 Upload the repository (or `git clone` it), set the startup command to `npm ci --omit=dev && npm start`, and set the variables above.
@@ -29,7 +29,7 @@ Upload the repository (or `git clone` it), set the startup command to `npm ci --
 ## Security model
 - One password gate in front of everything; 12 h sessions; HttpOnly + SameSite=Strict cookies (Secure behind HTTPS)
 - 8 wrong passwords lock logins for 10 minutes
-- Login is refused over plain HTTP unless `BOTDECK_ALLOW_HTTP=1`
+- Login over plain HTTP can be refused with `BOTDECK_ALLOW_HTTP=0` (allowed by default so panels without HTTPS work)
 - The bot token is kept in memory only and never sent back to the browser or written to disk
 - State-changing requests need a custom header, so other sites cannot trigger them
 - Strict CSP; messages are escaped before rendering; embeds are rebuilt from a whitelist before being sent
