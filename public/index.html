@@ -1114,7 +1114,7 @@ function drawVoice() {
   $('mic').firstElementChild.firstElementChild.setAttribute('href', VC.mic ? '#i-mic' : '#i-mic-off');
   $('deaf').classList.toggle('off', !VC.listen);
   $('deaf').firstElementChild.firstElementChild.setAttribute('href', VC.listen ? '#i-headphones' : '#i-headphone-off');
-  if (!vcReady()) vcDown();
+  if (!vcReady()) { if (VC.ws || VC.want) vcDown(); } // a mic armed before joining stays armed
   else vcUp();
 }
 async function voiceJoin(guildId, channelId) {
@@ -1190,13 +1190,25 @@ async function vcMic(on) {
     if (VC.micStream) { VC.micStream.getTracks().forEach(t => t.stop()); VC.micStream = null; }
     VC.mic = false; return drawVoice();
   }
-  if (!vcReady()) return toast('เข้าห้องเสียงก่อน / join a voice channel first');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return toast('ต้องใช้ HTTPS หรือ localhost เพื่อใช้ไมค์ / the microphone needs HTTPS or localhost');
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    // Browsers only offer the microphone on HTTPS. The same port also speaks HTTPS (self-signed).
+    if (location.protocol === 'http:' && confirm('ไมค์ใช้ได้เฉพาะหน้า HTTPS\nจะพาไปหน้า HTTPS ของเซิร์ฟเวอร์นี้ (เบราว์เซอร์จะเตือนเรื่องใบรับรอง: กด "ขั้นสูง" แล้ว "ดำเนินการต่อ" แล้วล็อกอินอีกครั้ง) ไปเลยไหม?\n\nThe microphone only works on HTTPS. Go to this server\'s HTTPS page now? (Accept the certificate warning once, then log in again.)')) { location.href = 'https://' + location.host + location.pathname; return; }
+    return toast('ต้องใช้ HTTPS หรือ localhost เพื่อใช้ไมค์ / the microphone needs HTTPS or localhost');
+  }
   try {
-    const ctx = vcCtx();
+    const ctx = vcCtx(); if (ctx.state === 'suspended') await ctx.resume();
+    // This call is what makes the browser show its "Allow microphone?" prompt.
     VC.micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
     VC.micSrc = ctx.createMediaStreamSource(VC.micStream); VC.micSrc.connect(VC.mix); VC.mic = true;
-  } catch (e) { toast('เปิดไมค์ไม่ได้ / cannot open the microphone: ' + (e.message || e.name)); VC.mic = false; }
+    toast(vcReady() ? 'เปิดไมค์แล้ว / microphone on' : 'เปิดไมค์แล้ว เสียงจะถูกส่งเมื่อเข้าห้องเสียง / microphone ready, it is sent once you join a voice channel');
+  } catch (e) {
+    VC.mic = false;
+    const n = e && e.name;
+    toast(n === 'NotAllowedError' || n === 'SecurityError' ? 'ไมค์ถูกบล็อก: กดไอคอนกุญแจข้างที่อยู่เว็บ แล้วเลือก อนุญาตไมค์ / microphone blocked: tap the lock icon by the address bar and allow the microphone'
+      : n === 'NotFoundError' || n === 'OverconstrainedError' ? 'ไม่พบไมค์ในอุปกรณ์นี้ / no microphone found'
+      : n === 'NotReadableError' ? 'ไมค์ถูกโปรแกรมอื่นใช้อยู่ / the microphone is in use by another app'
+      : 'เปิดไมค์ไม่ได้ / cannot open the microphone: ' + ((e && (e.message || e.name)) || e));
+  }
   drawVoice();
 }
 $('mic').onclick = () => vcMic(!VC.mic);

@@ -108,3 +108,23 @@ test('cross-site POSTs and missing hardening headers are rejected', async () => 
     assert.ok(!body.includes(GOOD_TOKEN), 'state never contains the bot token');
   } finally { await rig.close(); }
 });
+
+import { spawn } from 'node:child_process';
+import https from 'node:https';
+test('server.js answers both HTTP and HTTPS (self-signed) on one port', async () => {
+  const { mkdtempSync, cpSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const dir = mkdtempSync(join(tmpdir(), 'bd-'));
+  for (const f of ['server.js', 'src', 'public', 'package.json', 'node_modules']) cpSync(new URL('../' + f, import.meta.url), join(dir, f), { recursive: true });
+  const port = 20000 + Math.floor(Math.random() * 20000);
+  const child = spawn(process.execPath, ['server.js'], { cwd: dir, env: { ...process.env, PORT: String(port), BOTDECK_PASSWORD: 'long-enough-pw', BOTDECK_PORT: '', BOTDECK_TOKEN: '' } });
+  try {
+    await new Promise((res, rej) => { const t = setTimeout(() => rej(new Error('no start')), 8000); child.stdout.on('data', (d) => { if (String(d).includes('listening')) { clearTimeout(t); res(); } }); child.on('exit', () => rej(new Error('exited'))); });
+    const plain = await fetch(`http://127.0.0.1:${port}/healthz`);
+    assert.equal(plain.status, 200);
+    const sec = await new Promise((res, rej) => https.get({ host: '127.0.0.1', port, path: '/healthz', rejectUnauthorized: false }, (r) => { r.resume(); res({ status: r.statusCode, encrypted: r.socket.encrypted }); }).on('error', rej));
+    assert.equal(sec.status, 200);
+    assert.equal(sec.encrypted, true);
+  } finally { child.kill(); }
+});

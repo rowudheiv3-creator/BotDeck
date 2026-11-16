@@ -63,3 +63,7 @@ The browser is the audio device: your microphone and soundpad clips are streamed
 - **Best on plain-HTTP hosts:** put `BOTDECK_TOKEN=your-token` (and optionally `BOTDECK_MESSAGE_CONTENT=1`, `BOTDECK_MEMBERS=1`) in the server's `.env`. Then the token never crosses the network at all. Keep `.env` private (it is in `.gitignore`; never commit it).
 - Typing the token into the page over `http://` sends it unencrypted. Put the server behind HTTPS (a Cloudflare Tunnel, or your host's proxy) if you can.
 - If a token ever leaks, regenerate it in the Discord Developer Portal (Bot -> Reset Token) right away.
+
+## HTTPS and the microphone
+
+The same port answers both `http://` and `https://`. The HTTPS side uses a certificate the server creates for itself (`.botdeck-cert.json`, git-ignored), so browsers show a warning the first time: tap **Advanced -> Proceed**. After that the page is a secure context, the browser will ask to allow the microphone, and the password and token are encrypted on the wire. Pressing the microphone button on a plain `http://` page offers to take you there. Set `BOTDECK_HTTPS=0` to turn this off, or `BOTDECK_PUBLIC_HOST=your.domain` to put a name in the certificate. A self-signed certificate does not prove who the server is; use a real certificate (Cloudflare Tunnel, a reverse proxy) for that.

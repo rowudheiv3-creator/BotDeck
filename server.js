@@ -1,6 +1,9 @@
 import http from 'node:http';
+import https from 'node:https';
 import { App } from './src/app.js';
 import { loadEnvFile } from './src/dotenv.js';
+import { loadOrCreateCert } from './src/tls.js';
+import { createFrontServer } from './src/front.js';
 
 loadEnvFile(new URL('./.env', import.meta.url));
 
@@ -38,13 +41,23 @@ const port = Number(process.env.BOTDECK_PORT || process.env.PORT || process.env.
 const allowHttp = process.env.BOTDECK_ALLOW_HTTP !== '0';
 
 const app = new App({ password, allowHttp });
-const server = http.createServer(app.handler());
-app.attach(server);
-server.headersTimeout = 15000;
-server.requestTimeout = 0; // SSE and uploads are long-lived; bodies are size-limited instead
+const handler = app.handler();
+const servers = [];
+const httpServer = http.createServer(handler);
+servers.push(httpServer);
+let httpsServer = null;
+if (process.env.BOTDECK_HTTPS !== '0') {
+  try {
+    const cert = loadOrCreateCert(new URL('./.botdeck-cert.json', import.meta.url), [process.env.BOTDECK_PUBLIC_HOST]);
+    httpsServer = https.createServer({ key: cert.key, cert: cert.cert, minVersion: 'TLSv1.2' }, handler);
+    servers.push(httpsServer);
+  } catch (e) { console.error('HTTPS disabled (could not create a certificate):', e.message); }
+}
+for (const sv of servers) { app.attach(sv); sv.headersTimeout = 15000; sv.requestTimeout = 0; /* SSE and uploads are long-lived; bodies are size-limited instead */ }
 
-server.listen(port, '0.0.0.0', () => {
-  console.log(`BotDeck listening on 0.0.0.0:${port}`);
+const front = createFrontServer(httpServer, httpsServer);
+front.listen(port, '0.0.0.0', () => {
+  console.log(`BotDeck listening on 0.0.0.0:${port}  (http://  and ${httpsServer ? 'https://  — self-signed, accept the browser warning once to use the microphone' : 'no https'})`);
   if (allowHttp) console.log('WARNING: plain HTTP allowed; the password can be read on the network');
 });
 
@@ -58,4 +71,4 @@ if (process.env.BOTDECK_TOKEN) {
 }
 
 process.on('unhandledRejection', (e) => console.error('unhandled rejection:', e && e.message));
-for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { app.stop(); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 2000).unref(); });
+for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { app.stop(); front.close(() => process.exit(0)); setTimeout(() => process.exit(0), 2000).unref(); });
