@@ -225,3 +225,17 @@ withRig('voice: validation, gateway wiring, failure handling, member list and th
   // soundboard validates ids and relays the call
   assert.equal((await rig.api('soundboard/play', { channel: 'x', sound: '1' })).status, 400);
 });
+
+withRig('profile returns whitelisted user and member fields only', { login: true }, async (rig) => {
+  const r = await rig.api('profile?user=5&guild=10');
+  assert.equal(r.status, 200);
+  assert.equal(r.json.user.global_name, 'Ann');
+  assert.equal(r.json.user.public_flags, 4194304 + 65536);
+  assert.equal(r.json.user.email, undefined, 'unknown fields are dropped');
+  assert.equal(r.json.member.nick, 'Annie');
+  assert.deepEqual(r.json.member.roles, ['41'], 'non-snowflake role ids dropped');
+  assert.equal((await rig.api('profile?user=x')).status, 400);
+  assert.equal((await rig.api('profile?user=5&guild=zz')).status, 400);
+  assert.equal((await rig.api('profile?user=404')).status, 404);
+  assert.equal((await rig.api('profile?user=5')).json.member, null);
+});

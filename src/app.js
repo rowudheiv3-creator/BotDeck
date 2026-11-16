@@ -26,6 +26,8 @@ const validEmoji = (e) => {
 
 const CSP = "default-src 'self'; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net https://images-ext-1.discordapp.net; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
 
+const parseJson = (buf) => { try { const v = JSON.parse(buf.toString()); return v && typeof v === 'object' ? v : {}; } catch { return {}; } };
+
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
@@ -54,6 +56,7 @@ export class App {
     get('messages', (ctx) => this.messages(ctx));
     get('members', (ctx) => this.members(ctx));
     get('reactors', (ctx) => this.reactors(ctx));
+    get('profile', (ctx) => this.profile(ctx));
     get('pins', (ctx) => this.pins(ctx));
     post('pin', (ctx) => this.pin(ctx));
     post('login', (ctx) => this.login(ctx));
@@ -414,6 +417,27 @@ export class App {
     const b = await readJson(req);
     if (!isSnowflake(b.user)) throw new HttpError(400, 'bad request');
     await this.relay(res, dc, dc.do('POST', '/users/@me/channels', { json: { recipient_id: b.user } }));
+  }
+
+  /** Public profile of a user, plus their server membership when a guild is given. Whitelisted fields only. */
+  async profile({ res, url }) {
+    const dc = this.client();
+    const u = url.searchParams.get('user') || '', g = url.searchParams.get('guild') || '';
+    if (!isSnowflake(u) || (g && !isSnowflake(g))) throw new HttpError(400, 'bad id');
+    const call = (path) => dc.do('GET', path).catch((e) => { throw new HttpError(502, sanitizeErr(e, dc.token)); });
+    const [ur, mr] = await Promise.all([call(`/users/${u}`), g ? call(`/guilds/${g}/members/${u}`) : Promise.resolve(null)]);
+    if (ur.status === 404) throw new HttpError(404, 'ไม่พบผู้ใช้ / user not found');
+    if (ur.status >= 400) throw new HttpError(502, 'Discord ' + ur.status);
+    const x = parseJson(ur.body);
+    const user = { id: x.id, username: x.username, global_name: x.global_name || null, avatar: x.avatar || null, banner: x.banner || null,
+      accent_color: Number.isInteger(x.accent_color) ? x.accent_color : null, bot: !!x.bot, public_flags: Number(x.public_flags) || 0 };
+    let member = null;
+    if (mr && mr.status === 200) {
+      const m = parseJson(mr.body);
+      member = { nick: m.nick || null, avatar: m.avatar || null, roles: Array.isArray(m.roles) ? m.roles.filter(isSnowflake).slice(0, 250) : [],
+        joined_at: m.joined_at || null, premium_since: m.premium_since || null, timeout_until: m.communication_disabled_until || null };
+    }
+    this.json(res, 200, { user, member });
   }
 
   async members({ res, url }) {

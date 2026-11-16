@@ -241,11 +241,28 @@
     #qs { padding-top:8vh; } #pinm .card2, #padm .card2, #setm .card2 { max-height:86dvh; }
   }
   @media (hover:none) { .m:hover .tools { display:none; } .m.tap .tools { display:flex; } }
+  /* ---------- profile popout, speaking rings, hover polish ---------- */
+  [data-uid] { cursor:pointer; } .who:hover, .mention[data-uid]:hover { text-decoration:underline; } .av img[data-uid]:hover { filter:brightness(1.12); }
+  button, .c, .mb, .vu, .g, .rx, .tools button, .m, .ib, .pd, #qs .li, #ac button, #chans .cat { transition:background-color .12s ease, color .12s ease, border-color .12s ease, filter .12s ease, box-shadow .12s ease, border-radius .15s ease; }
+  .m:hover { background:rgba(255,255,255,.03); } .mb:hover, .vu:hover { background:rgba(255,255,255,.06); color:var(--txt); } .mb:active, .c:active { background:rgba(255,255,255,.09); }
+  .g:hover { filter:brightness(1.08); } .ib:hover, #head button:hover { background:rgba(255,255,255,.08); border-radius:6px; } .rx:hover { background:#34343b; }
+  :root[data-theme=light] .m:hover { background:rgba(0,0,0,.035); } :root[data-theme=light] .mb:hover, :root[data-theme=light] .vu:hover { background:rgba(0,0,0,.06); }
+  .ring { box-shadow:0 0 0 2px var(--bg1), 0 0 0 4px transparent; border-radius:50%; transition:box-shadow .1s; } .ring.sp { box-shadow:0 0 0 2px var(--bg1), 0 0 0 4px #23a559; }
+  #vppl { display:flex; flex-wrap:wrap; gap:10px; padding:10px 10px 4px; } #vppl:empty { display:none; } #vppl .pp { display:grid; justify-items:center; gap:3px; width:52px; font-size:11px; color:var(--mut); } #vppl .pp img { width:40px; height:40px; border-radius:50%; background:#2a2a30; } #vppl .pp span { max-width:52px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #prof { display:none; position:fixed; z-index:36; width:min(340px, calc(100vw - 16px)); max-height:calc(100dvh - 16px); overflow:auto; background:var(--bg1); border-radius:10px; box-shadow:0 8px 30px #000b; border:1px solid var(--line); } #prof.on { display:block; }
+  #prof .pb { height:100px; background:#5865f2 center/cover; border-radius:10px 10px 0 0; } #prof .pa { position:relative; margin:-44px 0 0 16px; width:88px; height:88px; } #prof .pa img { width:88px; height:88px; border-radius:50%; border:6px solid var(--bg1); background:#2a2a30; }
+  #prof .pc { padding:6px 16px 16px; } #prof .pn { font-size:20px; font-weight:700; } #prof .pu { color:var(--mut); font-size:14px; } #prof .pr { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+  #prof .tag { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; border-radius:5px; padding:2px 7px; background:#2a2a30; border:1px solid var(--line); } #prof .tag svg.i { width:14px; height:14px; }
+  #prof .box { background:var(--bg0); border-radius:8px; padding:10px 12px; margin-top:10px; } #prof h5 { margin:0 0 6px; font-size:12px; text-transform:uppercase; color:var(--dim); letter-spacing:.02em; } #prof .kv { display:flex; justify-content:space-between; gap:10px; font-size:13px; padding:2px 0; } #prof .kv span:first-child { color:var(--mut); }
+  #prof .role { display:inline-flex; align-items:center; gap:5px; font-size:12px; background:#2a2a30; border-radius:6px; padding:2px 8px; } #prof .role i { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  #prof .act { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; } #prof .act button { background:var(--acc); border:0; border-radius:6px; color:#fff; padding:7px 12px; cursor:pointer; font:inherit; font-size:13px; } #prof .act button.alt { background:#3a3c43; } #prof .act button:hover { filter:brightness(1.12); }
+  :root[data-theme=light] #prof .tag, :root[data-theme=light] #prof .role { background:#e3e5e8; }
+  @media (max-width:760px) { #prof { left:8px !important; right:8px; bottom:8px; top:auto !important; width:auto; } }
 </style>
 </head>
 <body>
 <!-- Icons: Lucide (https://lucide.dev), ISC License, Copyright (c) Lucide Contributors; portions MIT (c) Cole Bemis 2013-2022 (Feather) -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <path d="M8 14s1.5 2 4 2 4-2 4-2" /> <line x1="9" x2="9.01" y1="9" y2="9" /> <line x1="15" x2="15.01" y1="9" y2="9" /></symbol><symbol id="i-reply" viewBox="0 0 24 24"><polyline points="9 17 4 12 9 7" /> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /> <path d="m15 5 4 4" /></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5" /> <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" /></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol><symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M3 6h18" /> <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /> <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /> <line x1="10" x2="10" y1="11" y2="17" /> <line x1="14" x2="14" y1="11" y2="17" /></symbol><symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M13.234 20.252 21 12.3" /> <path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486" /></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z" /></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> <path d="M12 7v5l4 2" /></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" /></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /> <circle cx="12" cy="12" r="3" /></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></symbol><symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></symbol><symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M10 8h.01" /> <path d="M12 12h.01" /> <path d="M14 8h.01" /> <path d="M16 12h.01" /> <path d="M18 8h.01" /> <path d="M6 8h.01" /> <path d="M7 16h10" /> <path d="M8 12h.01" /> <rect width="20" height="16" x="2" y="4" rx="2" /></symbol><symbol id="i-volume-2" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <path d="M16 9a5 5 0 0 1 0 6" /> <path d="M19.364 18.364a9 9 0 0 0 0-12.728" /></symbol><symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z" /> <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /></symbol><symbol id="i-hash" viewBox="0 0 24 24"><line x1="4" x2="20" y1="9" y2="9" /> <line x1="4" x2="20" y1="15" y2="15" /> <line x1="10" x2="8" y1="3" y2="21" /> <line x1="16" x2="14" y1="3" y2="21" /></symbol><symbol id="i-corner-up-left" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4" /> <path d="M20 20v-7a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.3-4.3" /></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /> <path d="M14 2v4a2 2 0 0 0 2 2h4" /></symbol><symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol><symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol><symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-mic-off" viewBox="0 0 24 24"><line x1="2" x2="22" y1="2" y2="22" /> <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" /> <path d="M5 10v2a7 7 0 0 0 12 5" /> <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" /> <path d="M9 9v3a3 3 0 0 0 5.12 2.12" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol><symbol id="i-headphone-off" viewBox="0 0 24 24"><path d="M21 14h-1.343" /> <path d="M9.128 3.47A9 9 0 0 1 21 12v3.343" /> <path d="m2 2 20 20" /> <path d="M20.414 20.414A2 2 0 0 1 19 21h-1a2 2 0 0 1-2-2v-3" /> <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 2.636-6.364" /></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14" /> <path d="M12 5v14" /></symbol><symbol id="i-phone-off" viewBox="0 0 24 24"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" /> <line x1="22" x2="2" y1="2" y2="22" /></symbol><symbol id="i-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /> <polyline points="16 17 21 12 16 7" /> <line x1="21" x2="9" y1="12" y2="12" /></symbol><symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13" /> <circle cx="6" cy="18" r="3" /> <circle cx="18" cy="16" r="3" /></symbol><symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /></symbol><symbol id="i-volume-x" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <line x1="22" x2="16" y1="9" y2="15" /> <line x1="16" x2="22" y1="9" y2="15" /></symbol><symbol id="i-menu" viewBox="0 0 24 24"><line x1="4" x2="20" y1="12" y2="12" /> <line x1="4" x2="20" y1="6" y2="6" /> <line x1="4" x2="20" y1="18" y2="18" /></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /> <path d="m21.854 2.147-10.94 10.939" /></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <path d="M8 14s1.5 2 4 2 4-2 4-2" /> <line x1="9" x2="9.01" y1="9" y2="9" /> <line x1="15" x2="15.01" y1="9" y2="9" /></symbol><symbol id="i-reply" viewBox="0 0 24 24"><polyline points="9 17 4 12 9 7" /> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /> <path d="m15 5 4 4" /></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5" /> <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" /></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol><symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M3 6h18" /> <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /> <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /> <line x1="10" x2="10" y1="11" y2="17" /> <line x1="14" x2="14" y1="11" y2="17" /></symbol><symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M13.234 20.252 21 12.3" /> <path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486" /></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z" /></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> <path d="M12 7v5l4 2" /></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" /></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /> <circle cx="12" cy="12" r="3" /></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></symbol><symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></symbol><symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M10 8h.01" /> <path d="M12 12h.01" /> <path d="M14 8h.01" /> <path d="M16 12h.01" /> <path d="M18 8h.01" /> <path d="M6 8h.01" /> <path d="M7 16h10" /> <path d="M8 12h.01" /> <rect width="20" height="16" x="2" y="4" rx="2" /></symbol><symbol id="i-volume-2" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <path d="M16 9a5 5 0 0 1 0 6" /> <path d="M19.364 18.364a9 9 0 0 0 0-12.728" /></symbol><symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z" /> <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /></symbol><symbol id="i-hash" viewBox="0 0 24 24"><line x1="4" x2="20" y1="9" y2="9" /> <line x1="4" x2="20" y1="15" y2="15" /> <line x1="10" x2="8" y1="3" y2="21" /> <line x1="16" x2="14" y1="3" y2="21" /></symbol><symbol id="i-corner-up-left" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4" /> <path d="M20 20v-7a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.3-4.3" /></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /> <path d="M14 2v4a2 2 0 0 0 2 2h4" /></symbol><symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol><symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol><symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-mic-off" viewBox="0 0 24 24"><line x1="2" x2="22" y1="2" y2="22" /> <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" /> <path d="M5 10v2a7 7 0 0 0 12 5" /> <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" /> <path d="M9 9v3a3 3 0 0 0 5.12 2.12" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol><symbol id="i-headphone-off" viewBox="0 0 24 24"><path d="M21 14h-1.343" /> <path d="M9.128 3.47A9 9 0 0 1 21 12v3.343" /> <path d="m2 2 20 20" /> <path d="M20.414 20.414A2 2 0 0 1 19 21h-1a2 2 0 0 1-2-2v-3" /> <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 2.636-6.364" /></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14" /> <path d="M12 5v14" /></symbol><symbol id="i-phone-off" viewBox="0 0 24 24"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" /> <line x1="22" x2="2" y1="2" y2="22" /></symbol><symbol id="i-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /> <polyline points="16 17 21 12 16 7" /> <line x1="21" x2="9" y1="12" y2="12" /></symbol><symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13" /> <circle cx="6" cy="18" r="3" /> <circle cx="18" cy="16" r="3" /></symbol><symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /></symbol><symbol id="i-volume-x" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <line x1="22" x2="16" y1="9" y2="15" /> <line x1="16" x2="22" y1="9" y2="15" /></symbol><symbol id="i-menu" viewBox="0 0 24 24"><line x1="4" x2="20" y1="12" y2="12" /> <line x1="4" x2="20" y1="6" y2="6" /> <line x1="4" x2="20" y1="18" y2="18" /></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /> <path d="m21.854 2.147-10.94 10.939" /></symbol><symbol id="i-badge-check" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" /> <path d="m9 12 2 2 4-4" /></symbol><symbol id="i-bug" viewBox="0 0 24 24"><path d="m8 2 1.88 1.88" /> <path d="M14.12 3.88 16 2" /> <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1" /> <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6" /> <path d="M12 20v-9" /> <path d="M6.53 9C4.6 8.8 3 7.1 3 5" /> <path d="M6 13H2" /> <path d="M3 21c0-2.1 1.7-3.9 3.8-4" /> <path d="M20.97 5c0 2.1-1.6 3.8-3.5 4" /> <path d="M22 13h-4" /> <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4" /></symbol><symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6" /> <polyline points="8 6 2 12 8 18" /></symbol><symbol id="i-crown" viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /> <path d="M5 21h14" /></symbol><symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9Z" /> <path d="M11 3 8 9l4 13 4-13-3-6" /> <path d="M2 9h20" /></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></symbol><symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="m9 12 2 2 4-4" /></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></symbol><symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8" /> <rect width="16" height="12" x="4" y="8" rx="2" /> <path d="M2 14h2" /> <path d="M20 14h2" /> <path d="M15 13v2" /> <path d="M9 13v2" /></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4" /> <path d="M16 2v4" /> <rect width="18" height="18" x="3" y="4" rx="2" /> <path d="M3 10h18" /></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol><symbol id="i-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3" /> <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" /> <path d="m21 3 1 11h-2" /> <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" /> <path d="M3 4h8" /></symbol><symbol id="i-swords" viewBox="0 0 24 24"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" /> <line x1="13" x2="19" y1="19" y2="13" /> <line x1="16" x2="20" y1="16" y2="20" /> <line x1="19" x2="21" y1="21" y2="19" /> <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" /> <line x1="5" x2="9" y1="14" y2="18" /> <line x1="7" x2="4" y1="17" y2="20" /> <line x1="3" x2="5" y1="19" y2="21" /></symbol><symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /> <path d="M9 18h6" /> <path d="M10 22h4" /></symbol><symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /> <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /> <path d="M7 21h10" /> <path d="M12 3v18" /> <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" /></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <polyline points="12 6 12 12 16 14" /></symbol><symbol id="i-at-sign" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /> <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" /></symbol><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /></symbol></defs></svg>
 <div id="login">
   <div class="card">
     <h1>BotDeck</h1>
@@ -266,7 +283,7 @@
   <aside id="side">
     <div id="gname"></div>
     <div id="chans"></div>
-    <div id="vpanel"><div class="vtop"><div class="vtxt"><div class="vst" id="vst"></div><div class="vch" id="vch"></div></div><button class="ib" id="vpad" title="Soundpad"><svg class="i"><use href="#i-music"/></svg></button><button class="ib" id="vleave" title="ออกจากห้องเสียง / disconnect"><svg class="i"><use href="#i-phone-off"/></svg></button></div></div>
+    <div id="vpanel"><div id="vppl"></div><div class="vtop"><div class="vtxt"><div class="vst" id="vst"></div><div class="vch" id="vch"></div></div><button class="ib" id="vpad" title="Soundpad"><svg class="i"><use href="#i-music"/></svg></button><button class="ib" id="vleave" title="ออกจากห้องเสียง / disconnect"><svg class="i"><use href="#i-phone-off"/></svg></button></div></div>
     <div id="me"><div class="uav"><img id="mav" class="ava" alt=""><span id="st" title=""></span></div><div class="unm"><div class="nm" id="mnm"></div><div class="usub" id="msub">บอท / Bot</div></div><button class="ib" id="mic" title="ไมค์ / mic (คลิกเพื่อเปิด)"><svg class="i"><use href="#i-mic-off"/></svg></button><button class="ib" id="deaf" title="ฟัง / listen"><svg class="i"><use href="#i-headphone-off"/></svg></button><button class="ib" id="setb" title="ตั้งค่า / settings"><svg class="i"><use href="#i-settings"/></svg></button></div>
   </aside>
   <section id="main">
@@ -296,6 +313,7 @@
   <div id="e_prev" style="margin-top:10px"></div>
   <div class="btns"><button type="button" id="e_cancel">ยกเลิก</button><button type="button" id="e_send">ส่ง Embed</button></div>
 </div></div>
+<div id="prof"></div>
 <div id="lb"><img alt=""></div>
 <div id="qs"><div class="card2"><input id="qsi" type="text" placeholder="ไปที่ช่อง… / jump to a channel (Ctrl+K)" autocomplete="off"><div id="qsl"></div></div></div>
 <div id="setm"><div class="card2">
@@ -484,7 +502,7 @@ function renderChans() {
       else if (isVoice) b.onclick = () => voiceJoin(g.id, c.id);
       else b.title = 'ช่องประเภทนี้ยังไม่รองรับ / not supported yet';
       el.appendChild(b);
-      if (isVoice) for (const v of (g.voice || [])) if (v.channel_id === c.id) { const u = document.createElement('div'); u.className = 'vu' + (speaking.has(v.user_id) ? ' sp' : ''); u.innerHTML = '<img class="ava" alt="" src="' + esc(avatar({ id: v.user_id, avatar: v.avatar })) + '"><span>' + esc(v.name || v.user_id) + '</span>'; el.appendChild(u); }
+      if (isVoice) for (const v of (g.voice || [])) if (v.channel_id === c.id) { const u = document.createElement('div'); u.className = 'vu' + (speaking.has(v.user_id) ? ' sp' : ''); u.dataset.uid = v.user_id; u.innerHTML = '<img class="ava" alt="" src="' + esc(avatar({ id: v.user_id, avatar: v.avatar })) + '"><span>' + esc(v.name || v.user_id) + '</span>'; el.appendChild(u); }
     }
   }
 }
@@ -537,9 +555,8 @@ async function loadMembers() {
     for (const [gn, grp] of [...groups].sort((a, b) => b[1].pos - a[1].pos)) {
       const h = document.createElement('h4'); h.textContent = gn + ' — ' + grp.list.length; el.appendChild(h);
       for (const r of grp.list.sort((a, b) => (a.nick || name(a.u)).localeCompare(b.nick || name(b.u)))) {
-        const b = document.createElement('button'); b.className = 'mb'; b.title = 'เปิด DM / open DM';
+        const b = document.createElement('button'); b.className = 'mb'; b.dataset.uid = r.u.id; b.title = 'ดูโปรไฟล์ / view profile';
         b.innerHTML = '<img alt="" class="ava" loading="lazy" src="' + esc(avatar(r.u)) + '"><span' + (r.color ? ' style="color:' + r.color + '"' : '') + '>' + esc(r.nick || name(r.u)) + (r.u.bot ? ' <small class="bot" style="background:var(--acc);color:#fff;border-radius:4px;padding:1px 5px;font-size:11px;font-weight:600">BOT</small>' : '') + '</span>';
-        b.onclick = async () => { try { const c = await api('dm', { user: r.u.id }); addDM(c.id, name(r.u), r.u.id, r.u); gid = 'home'; renderGuilds(); renderChans(); loadMembers(); openChannel(c.id); } catch (e) { toast(e.message); } };
         el.appendChild(b);
       }
     }
@@ -594,7 +611,7 @@ function md(text, m) {
   s = s.replace(/\[([^\]\n]{1,200})\]\((https?:\/\/[^\s)]+)\)/g, (_, t, u) => hold('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + t + '</a>'));
   s = s.replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)\]'"]/g, u => hold('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + u + '</a>'));
   s = s.replace(/&lt;(a?):(\w+):(\d+)&gt;/g, (_, an, n, id) => hold('<img class="emoji" alt=":' + n + ':" title=":' + n + ':" src="https://cdn.discordapp.com/emojis/' + id + '.' + (an ? 'gif' : 'png') + '?size=48">'));
-  s = s.replace(/&lt;@!?(\d+)&gt;/g, (_, id) => hold('<span class="mention">@' + esc(userName(m, id)) + '</span>'));
+  s = s.replace(/&lt;@!?(\d+)&gt;/g, (_, id) => hold('<span class="mention" data-uid="' + id + '">@' + esc(userName(m, id)) + '</span>'));
   s = s.replace(/&lt;@&amp;(\d+)&gt;/g, (_, id) => { const g = guild(); const r = g && (g.roles || []).find(x => x.id === id); return hold('<span class="mention"' + (r && r.color ? ' style="color:#' + r.color.toString(16).padStart(6, '0') + '"' : '') + '>@' + esc(r ? r.name : 'role') + '</span>'); });
   s = s.replace(/&lt;t:(-?\d{1,12})(?::([tTdDfFR]))?&gt;/g, (_, n, f) => hold('<span class="mention" title="' + esc(new Date(n * 1000).toLocaleString()) + '">' + esc(fmtStamp(+n, f || 'f')) + '</span>'));
   s = s.replace(/@(everyone|here)\b/g, (x) => hold('<span class="mention">' + x + '</span>'));
@@ -660,10 +677,10 @@ function msgHTML(m, grouped) {
   const a = m.author || {};
   let h = '';
   if (grouped) h += '<div class="ts">' + hhmm + '</div>';
-  else h += '<div class="av"><img alt="" loading="lazy" src="' + esc(avatar(a)) + '"></div>';
+  else h += '<div class="av"><img alt="" loading="lazy" data-uid="' + esc(a.id || '') + '" src="' + esc(avatar(a)) + '"></div>';
   h += '<div class="body">';
   if (m.referenced_message) { const r = m.referenced_message; h += '<div class="rep" data-ref="' + esc(r.id || '') + '"><img class="rav ava" alt="" src="' + esc(avatar(r.author || {})) + '"><b' + (nameColor(r.author) ? ' style="color:' + nameColor(r.author) + '"' : '') + '>@' + esc(memberName(r.author || {})) + '</b><span class="rt">' + esc((r.content || (r.attachments && r.attachments.length ? 'แนบไฟล์ / attachment' : '')).slice(0, 120)) + '</span></div>'; }
-  if (!grouped) h += '<div><span class="who"' + (nameColor(a) ? ' style="color:' + nameColor(a) + '"' : '') + '>' + esc(memberName(a)) + '</span>' + (a.bot ? '<span class="bot">BOT</span>' : '') + '<span class="time">' + t.toLocaleString() + '</span></div>';
+  if (!grouped) h += '<div><span class="who" data-uid="' + esc(a.id || '') + '"' + (nameColor(a) ? ' style="color:' + nameColor(a) + '"' : '') + '>' + esc(memberName(a)) + '</span>' + (a.bot ? '<span class="bot">BOT</span>' : '') + '<span class="time">' + t.toLocaleString() + '</span></div>';
   if (editing === m.id) h += '<div class="edit"><textarea rows="2" id="ed"></textarea><small>Enter = บันทึก · Esc = ยกเลิก</small></div>';
   else if (m.content) h += '<div>' + md(m.content, m) + (m.edited_timestamp ? ' <span class="time"' + ((m.history || []).length ? ' title="' + esc(m.history.join('\n— ก่อนหน้า / before —\n')) + '"' : '') + '>(แก้ไข)</span>' : '') + (m.deleted ? '<span class="delb">ถูกลบ / deleted</span>' : '') + '</div>';
   for (const f of (m.attachments || [])) {
@@ -1110,6 +1127,7 @@ function drawVoice() {
     st.textContent = voice.status === 'ready' ? 'เชื่อมต่อเสียงแล้ว / Voice connected' : voice.status === 'error' ? 'เชื่อมต่อไม่สำเร็จ / failed' : 'กำลังเชื่อมต่อ… / connecting…';
     $('vch').textContent = voice.status === 'error' ? voice.error : (c ? c.name : '') + (g ? ' / ' + g.name : '');
   }
+  drawPeople();
   $('mic').classList.toggle('live', VC.mic); $('mic').classList.toggle('off', !VC.mic);
   $('mic').firstElementChild.firstElementChild.setAttribute('href', VC.mic ? '#i-mic' : '#i-mic-off');
   $('deaf').classList.toggle('off', !VC.listen);
@@ -1164,7 +1182,7 @@ function vcUp() {
     if (typeof ev.data === 'string') {
       let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
       if (m.t === 'src') VC.srcs.set(m.slot, m.id);
-      else if (m.t === 'speaking') { if (m.on) speaking.add(m.id); else speaking.delete(m.id); renderChans(); }
+      else if (m.t === 'speaking') { if (m.on) speaking.add(m.id); else speaking.delete(m.id); renderChans(); drawPeople(); }
       return;
     }
     if (!VC.ctx || !VC.listen) return;
@@ -1188,7 +1206,7 @@ async function vcMic(on) {
   if (!on) {
     if (VC.micSrc) { try { VC.micSrc.disconnect(); } catch (e) {} VC.micSrc = null; }
     if (VC.micStream) { VC.micStream.getTracks().forEach(t => t.stop()); VC.micStream = null; }
-    VC.mic = false; return drawVoice();
+    VC.mic = false; setTimeout(watchSelfMic, 0); return drawVoice();
   }
   if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     // Browsers only offer the microphone on HTTPS. The same port also speaks HTTPS (self-signed).
@@ -1199,7 +1217,7 @@ async function vcMic(on) {
     const ctx = vcCtx(); if (ctx.state === 'suspended') await ctx.resume();
     // This call is what makes the browser show its "Allow microphone?" prompt.
     VC.micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
-    VC.micSrc = ctx.createMediaStreamSource(VC.micStream); VC.micSrc.connect(VC.mix); VC.mic = true;
+    VC.micSrc = ctx.createMediaStreamSource(VC.micStream); VC.micSrc.connect(VC.mix); VC.mic = true; setTimeout(watchSelfMic, 0);
     toast(vcReady() ? 'เปิดไมค์แล้ว / microphone on' : 'เปิดไมค์แล้ว เสียงจะถูกส่งเมื่อเข้าห้องเสียง / microphone ready, it is sent once you join a voice channel');
   } catch (e) {
     VC.mic = false;
@@ -1288,6 +1306,89 @@ $('msgs').addEventListener('click', (ev) => {
 });
 
 try { if (location.protocol === 'http:' && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) $('httpwarn').style.display = 'block'; } catch (e) {}
+
+/* ---------- profiles ---------- */
+const BADGES = [
+  [1, 'Discord Staff', 'shield-check', '#5865f2'], [2, 'Partnered Server Owner', 'handshake', '#5865f2'], [4, 'HypeSquad Events', 'star', '#f0b132'],
+  [8, 'Bug Hunter', 'bug', '#23a559'], [64, 'HypeSquad Bravery', 'swords', '#9c84ef'], [128, 'HypeSquad Brilliance', 'lightbulb', '#f4876c'],
+  [256, 'HypeSquad Balance', 'scale', '#45ddc0'], [512, 'Early Supporter', 'heart', '#7289da'], [16384, 'Bug Hunter Gold', 'bug', '#f0b132'],
+  [131072, 'Early Verified Bot Developer', 'code', '#5865f2'], [262144, 'Certified Moderator', 'shield-check', '#3ba55d'], [4194304, 'Active Developer', 'code', '#23a559'],
+];
+const snowTime = (id) => { try { return new Date(Number((BigInt(id) >> 22n) + 1420070400000n)); } catch (e) { return null; } };
+const fmtDate = (d) => d ? d.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+const tagI = (n) => '<svg class="i"><use href="#i-' + n + '"/></svg>';
+let profSeq = 0;
+async function openProfile(uid, anchor) {
+  if (!/^\d{1,25}$/.test(uid || "")) return;
+  const seq = ++profSeq, box = $('prof'), g = (gid && gid !== 'home') ? guild() : null;
+  box.innerHTML = '<div class="pc" style="padding:24px">…</div>'; place(box, anchor); box.classList.add('on');
+  let d; try { d = await api('profile?user=' + uid + (g ? '&guild=' + g.id : '')); } catch (e) { if (seq === profSeq) { box.innerHTML = '<div class="pc">' + esc(e.message) + '</div>'; } return; }
+  if (seq !== profSeq) return;
+  const u = d.user, m = d.member, roles = [];
+  if (m && g) for (const id of m.roles) { const r = (g.roles || []).find(x => x.id === id); if (r) roles.push(r); }
+  roles.sort((a, b) => b.position - a.position);
+  const top = roles.find(r => r.color), color = top ? '#' + top.color.toString(16).padStart(6, '0') : '';
+  const av = m && m.avatar && g ? 'https://cdn.discordapp.com/guilds/' + g.id + '/users/' + u.id + '/avatars/' + m.avatar + '.png?size=256' : u.avatar ? 'https://cdn.discordapp.com/avatars/' + u.id + '/' + u.avatar + '.png?size=256' : avatar(u);
+  const bn = u.banner ? 'background-image:url(https://cdn.discordapp.com/banners/' + u.id + '/' + u.banner + '.png?size=480)' : u.accent_color != null ? 'background:#' + u.accent_color.toString(16).padStart(6, '0') : '';
+  let tags = '';
+  if (u.bot) tags += '<span class="tag" style="background:#5865f2;color:#fff;border-color:transparent" title="' + ((u.public_flags & 65536) ? 'Verified bot' : 'Bot') + '">' + ((u.public_flags & 65536) ? tagI('badge-check') : tagI('bot')) + 'BOT</span>';
+  if (g && g.owner_id === u.id) tags += '<span class="tag" style="color:#f0b132" title="Server owner">' + tagI('crown') + 'Owner</span>';
+  if (m && m.premium_since) tags += '<span class="tag" style="color:#f47fff" title="Boosting since ' + esc(fmtDate(new Date(m.premium_since))) + '">' + tagI('gem') + 'Booster</span>';
+  if (m && m.timeout_until && new Date(m.timeout_until) > new Date()) tags += '<span class="tag" style="color:#f23f43" title="Timed out">' + tagI('clock') + 'Timed out</span>';
+  for (const [bit, label, icon, c] of BADGES) if (u.public_flags & bit) tags += '<span class="tag" style="color:' + c + '" title="' + esc(label) + '">' + tagI(icon) + esc(label) + '</span>';
+  const nm = (m && m.nick) || u.global_name || u.username;
+  box.innerHTML = '<div class="pb" style="' + bn + '"></div><div class="pa"><img alt="" src="' + esc(av) + '"></div><div class="pc">'
+    + '<div class="pn"' + (color ? ' style="color:' + color + '"' : '') + '>' + esc(nm) + '</div><div class="pu">' + esc(u.username) + (u.global_name && u.global_name !== nm ? ' · ' + esc(u.global_name) : '') + '</div>'
+    + (tags ? '<div class="pr">' + tags + '</div>' : '')
+    + '<div class="box"><h5>ข้อมูลสมาชิก / About</h5><div class="kv"><span>เข้าร่วม Discord / Discord member since</span><span>' + esc(fmtDate(snowTime(u.id))) + '</span></div>'
+    + (m && m.joined_at ? '<div class="kv"><span>เข้าร่วมเซิร์ฟเวอร์ / Joined server</span><span>' + esc(fmtDate(new Date(m.joined_at))) + '</span></div>' : '') + '</div>'
+    + (roles.length ? '<div class="box"><h5>ยศ / Roles — ' + roles.length + '</h5><div class="pr" style="margin:0">' + roles.map(r => '<span class="role"><i style="background:' + (r.color ? '#' + r.color.toString(16).padStart(6, '0') : '#99aab5') + '"></i>' + esc(r.name) + '</span>').join('') + '</div></div>' : '')
+    + '<div class="act">' + (u.bot || (S && S.me && S.me.id === u.id) ? '' : '<button data-a="dm">' + tagI('at-sign') + ' ส่งข้อความ / Message</button>') + '<button class="alt" data-a="id">' + tagI('copy') + ' คัดลอก ID / Copy ID</button></div></div>';
+  place(box, anchor);
+  box.querySelector('[data-a="id"]').onclick = () => { (navigator.clipboard ? navigator.clipboard.writeText(u.id) : Promise.reject()).then(() => toast('คัดลอกแล้ว / copied'), () => toast(u.id)); };
+  const dm = box.querySelector('[data-a="dm"]');
+  if (dm) dm.onclick = async () => { try { const c = await api('dm', { user: u.id }); addDM(c.id, u.global_name || u.username, u.id, u); box.classList.remove('on'); gid = 'home'; renderGuilds(); renderChans(); loadMembers(); openChannel(c.id); } catch (e) { toast(e.message); } };
+}
+function place(box, anchor) {
+  if (isMobile()) { box.style.left = box.style.top = ''; return; }
+  const r = anchor.getBoundingClientRect(), w = box.offsetWidth || 340, h = box.offsetHeight || 300;
+  let x = r.right + 10; if (x + w > innerWidth - 8) x = Math.max(8, r.left - w - 10);
+  let y = Math.min(Math.max(8, r.top - 20), Math.max(8, innerHeight - h - 8));
+  box.style.left = x + 'px'; box.style.top = y + 'px';
+}
+document.addEventListener('click', (e) => {
+  const t = e.target.closest && e.target.closest('[data-uid]');
+  if (t && !e.target.closest('#prof')) { e.stopPropagation(); openProfile(t.dataset.uid, t); return; }
+  if (!e.target.closest('#prof')) $('prof').classList.remove('on');
+}, true);
+addEventListener('keydown', (e) => { if (e.key === 'Escape') $('prof').classList.remove('on'); });
+
+/* ---------- who is in the call (with green speaking rings) ---------- */
+function drawPeople() {
+  const el = $('vppl'); if (!el) return; el.textContent = '';
+  if (!voice || voice.status === 'idle') return;
+  const g = S && S.guilds.find(x => x.id === voice.guild); if (!g) return;
+  for (const v of (g.voice || [])) if (v.channel_id === voice.channel) {
+    const p = document.createElement('div'); p.className = 'pp'; p.dataset.uid = v.user_id;
+    p.innerHTML = '<img class="ring' + (speaking.has(v.user_id) ? ' sp' : '') + '" alt="" src="' + esc(avatar({ id: v.user_id, avatar: v.avatar })) + '"><span>' + esc(v.name || v.user_id) + '</span>';
+    el.appendChild(p);
+  }
+}
+/* the bot's own speaking: measure the microphone level */
+let selfTimer = null, selfAn = null;
+function watchSelfMic() {
+  clearInterval(selfTimer); selfTimer = null;
+  if (!VC.mic || !VC.micSrc || !VC.ctx) { if (S && S.me && speaking.delete(S.me.id)) { renderChans(); drawPeople(); } return; }
+  selfAn = VC.ctx.createAnalyser(); selfAn.fftSize = 512; VC.micSrc.connect(selfAn);
+  const buf = new Uint8Array(selfAn.fftSize); let hold = 0;
+  selfTimer = setInterval(() => {
+    if (!S || !S.me) return;
+    selfAn.getByteTimeDomainData(buf); let peak = 0; for (const b of buf) peak = Math.max(peak, Math.abs(b - 128));
+    const talking = peak > 8 && vcReady(); hold = talking ? 6 : Math.max(0, hold - 1);
+    const on = hold > 0, was = speaking.has(S.me.id);
+    if (on !== was) { if (on) speaking.add(S.me.id); else speaking.delete(S.me.id); renderChans(); drawPeople(); }
+  }, 100);
+}
 </script>
 </body>
 </html>

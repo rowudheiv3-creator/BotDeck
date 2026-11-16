@@ -17,6 +17,8 @@ export async function startFake() {
       f.calls.push(`${req.method} ${path}`);
       const j = (code, obj) => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); };
       if (req.headers.authorization !== `Bot ${GOOD}`) return j(401, { message: '401: Unauthorized' });
+      if (/^\/api\/v10\/users\/\d+$/.test(path)) return path.endsWith('/404') ? j(404, {}) : j(200, { id: path.split('/').pop(), username: 'ann', global_name: 'Ann', avatar: null, banner: null, accent_color: 255, bot: false, public_flags: 4194304 + 65536, email: 'secret@x' });
+      if (/^\/api\/v10\/guilds\/10\/members\/\d+$/.test(path)) return j(200, { nick: 'Annie', roles: ['41', 'zzz'], joined_at: '2024-01-02T00:00:00.000000+00:00', premium_since: null, deaf: false, user: { id: '5' } });
       if (path === '/api/v10/users/@me') return j(200, { id: '100', username: 'TestBot', avatar: null });
       if (req.method === 'GET' && path.startsWith('/api/v10/channels/403/')) return j(403, { message: 'Missing Access' });
       if (req.method === 'GET' && /^\/api\/v10\/channels\/\d+\/messages(\?|$)/.test(path)) {
