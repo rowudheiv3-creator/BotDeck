@@ -188,14 +188,20 @@ withRig('voice: validation, gateway wiring, failure handling, member list and th
   assert.equal((await rig.api('voice/join', { guild: 'x', channel: '23' })).status, 400);
   assert.equal((await rig.api('voice/join', { guild: '10', channel: '23' }, { 'X-BD': '0' })).status, 403);
   const st = (await rig.api('state')).json;
-  assert.equal(st.voiceAvailable, true, 'optional voice packages load: ' + st.voiceReason);
-  // joining asks Discord for the channel; nobody answers, so it times out cleanly and leaves again
-  const r = await rig.api('voice/join', { guild: '10', channel: '23' });
-  assert.equal(r.status, 502);
-  assert.match(r.json.error, /UDP|voice/);
-  assert.ok(rig.f.voiceOps.some((o) => o.guild_id === '10' && o.channel_id === '23'), 'sent op 4 join');
-  assert.ok(rig.f.voiceOps.some((o) => o.guild_id === '10' && o.channel_id === null), 'sent op 4 leave after failing');
-  assert.equal((await rig.api('state')).json.voice.status, 'error');
+  if (!st.voiceAvailable) {
+    // Node < 22.12 (or the optional packages are missing): the rest of the app must keep working.
+    const r = await rig.api('voice/join', { guild: '10', channel: '23' });
+    assert.equal(r.status, 502);
+    assert.match(r.json.error, /unavailable/);
+  } else {
+    // joining asks Discord for the channel; nobody answers, so it times out cleanly and leaves again
+    const r = await rig.api('voice/join', { guild: '10', channel: '23' });
+    assert.equal(r.status, 502);
+    assert.match(r.json.error, /UDP|voice/);
+    assert.ok(rig.f.voiceOps.some((o) => o.guild_id === '10' && o.channel_id === '23'), 'sent op 4 join');
+    assert.ok(rig.f.voiceOps.some((o) => o.guild_id === '10' && o.channel_id === null), 'sent op 4 leave after failing');
+    assert.equal((await rig.api('state')).json.voice.status, 'error');
+  }
   assert.equal((await rig.api('voice/leave', {})).status, 200);
   assert.equal((await rig.api('state')).json.voice.status, 'idle');
   // who is in voice shows up in the snapshot
