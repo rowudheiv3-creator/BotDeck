@@ -56,3 +56,10 @@ The browser is the audio device: your microphone and soundpad clips are streamed
 - The bot needs the **Connect** and **Speak** permissions in the channel. Playing a server soundboard sound also needs the bot to be in that voice channel.
 - Soundpad clips are stored only in your browser (IndexedDB); nothing is uploaded anywhere except into the voice call when you press a pad.
 - Bots cannot Go Live / share a screen; that is a Discord limit.
+
+## Keeping the bot token safe
+
+- The token is only ever held in the server's memory. It is never written to disk, never sent back to the browser, never logged (errors are scrubbed), and the web server serves no files other than the app page.
+- **Best on plain-HTTP hosts:** put `BOTDECK_TOKEN=your-token` (and optionally `BOTDECK_MESSAGE_CONTENT=1`, `BOTDECK_MEMBERS=1`) in the server's `.env`. Then the token never crosses the network at all. Keep `.env` private (it is in `.gitignore`; never commit it).
+- Typing the token into the page over `http://` sends it unencrypted. Put the server behind HTTPS (a Cloudflare Tunnel, or your host's proxy) if you can.
+- If a token ever leaks, regenerate it in the Discord Developer Portal (Bot -> Reset Token) right away.

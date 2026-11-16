@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import { App } from '../src/app.js';
 import { Gate } from '../src/gate.js';
-import { startRig, PASSWORD } from './helpers.js';
+import { startRig, PASSWORD, GOOD } from './helpers.js';
+const GOOD_TOKEN = GOOD;
 
 async function plainServer(opts = {}) {
   const app = new App({ password: PASSWORD, ...opts });
@@ -93,4 +94,17 @@ import { parseEnv } from '../src/dotenv.js';
 test('.env parser handles quotes, comments and export', () => {
   const e = parseEnv('# c\nBOTDECK_PASSWORD="a long password"\nexport BOTDECK_ALLOW_HTTP=1 # trailing\nBAD LINE\nPORT=\'8081\'\n');
   assert.deepEqual(e, { BOTDECK_PASSWORD: 'a long password', BOTDECK_ALLOW_HTTP: '1', PORT: '8081' });
+});
+
+test('cross-site POSTs and missing hardening headers are rejected', async () => {
+  const rig = await startRig({ login: true });
+  try {
+    const r = await rig.api('typing', { channel: '21' }, { 'Sec-Fetch-Site': 'cross-site' });
+    assert.equal(r.status, 403);
+    const h = await fetch(rig.origin + '/app/', { headers: { Cookie: rig.cookie } });
+    assert.match(h.headers.get('permissions-policy'), /microphone=\(self\)/);
+    assert.equal(h.headers.get('cross-origin-opener-policy'), 'same-origin');
+    const body = await (await fetch(rig.origin + '/app/api/state', { headers: { Cookie: rig.cookie } })).text();
+    assert.ok(!body.includes(GOOD_TOKEN), 'state never contains the bot token');
+  } finally { await rig.close(); }
 });

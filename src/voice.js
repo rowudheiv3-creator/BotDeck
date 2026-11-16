@@ -10,6 +10,10 @@ let libPromise;
 
 export function loadVoiceLib() {
   libPromise ||= (async () => {
+    const [maj, min] = process.versions.node.split('.').map(Number);
+    if (maj < 22 || (maj === 22 && min < 12)) {
+      return { error: `Node ${process.versions.node} is too old for voice; it needs Node 22.12 or newer (choose a newer Node version in your host's startup settings)` };
+    }
     try {
       const lib = await import('@discordjs/voice');
       const prism = (await import('prism-media')).default;

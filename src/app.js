@@ -169,6 +169,9 @@ export class App {
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('Content-Security-Policy', CSP);
     res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Permissions-Policy', 'microphone=(self), camera=(), geolocation=(), payment=(), usb=(), interest-cohort=()');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
     const path = url.pathname;
 
     if (path === '/login') {
@@ -206,6 +209,9 @@ export class App {
     if (!route) return this.json(res, 404, { error: 'not found' });
     // POST needs a custom header, which other websites cannot send cross-origin.
     if (req.method === 'POST' && req.headers['x-bd'] !== '1') return this.json(res, 403, { error: 'forbidden' });
+    // Defence in depth: browsers tell us when a request comes from another site.
+    const site = req.headers['sec-fetch-site'];
+    if (req.method === 'POST' && site && site !== 'same-origin' && site !== 'none') return this.json(res, 403, { error: 'forbidden' });
     await route({ req, res, url });
   }
 
