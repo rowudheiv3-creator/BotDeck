@@ -4,6 +4,11 @@ const pickChannel = (c) => ({ id: c.id, name: c.name || '', type: c.type, parent
 const pickEmoji = (e) => ({ id: e.id, name: e.name, animated: !!e.animated });
 const pickRole = (r) => ({ id: r.id, name: r.name, color: r.color || 0, position: r.position || 0, hoist: !!r.hoist });
 
+const pickVoice = (v) => {
+  const u = (v.member && v.member.user) || {};
+  return { user_id: v.user_id, channel_id: v.channel_id, name: (v.member && v.member.nick) || u.global_name || u.username || '', avatar: u.avatar || null, bot: !!u.bot };
+};
+
 export class Store {
   constructor() {
     this.reset({});
@@ -22,6 +27,7 @@ export class Store {
       channels: [...g.channels.values()].sort((a, b) => a.position - b.position || (a.id < b.id ? -1 : 1)),
       emojis: g.emojis,
       roles: g.roles,
+      voice: [...g.voice.values()],
     }));
     guilds.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
     return { me: this.me, guilds };
@@ -44,7 +50,19 @@ export class Store {
           channels: new Map((d.channels || []).map((c) => [c.id, pickChannel(c)])),
           emojis: (d.emojis || []).filter(usableEmoji).map(pickEmoji),
           roles: (d.roles || []).map(pickRole),
+          voice: new Map((d.voice_states || []).filter((v) => v.channel_id).map((v) => [v.user_id, pickVoice(v)])),
         });
+        return true;
+      }
+      case 'VOICE_STATE_UPDATE': {
+        const g = this.guilds.get(d.guild_id);
+        if (!g || !d.user_id) return false;
+        const had = g.voice.get(d.user_id);
+        if (!d.channel_id) return g.voice.delete(d.user_id);
+        const next = pickVoice(d);
+        if (!next.name && had) next.name = had.name;
+        if (had && had.channel_id === next.channel_id && had.name === next.name) return false; // mute/deafen changes: nothing to show
+        g.voice.set(d.user_id, next);
         return true;
       }
       case 'GUILD_EMOJIS_UPDATE': {

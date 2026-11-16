@@ -179,3 +179,43 @@ withRig('presence is validated and sent over the gateway; typing events reach th
   ctl.abort();
   assert.ok(seen.includes('TYPING_START'));
 });
+
+withRig('voice: validation, gateway wiring, failure handling, member list and the audio socket', { login: true }, async (rig) => {
+  const { config } = await import('../src/config.js');
+  const { default: WebSocket } = await import('ws');
+  config.voiceTimeout = 400;
+  assert.equal((await rig.api('voice/join', { guild: '10', channel: '21' })).status, 400, 'text channel refused');
+  assert.equal((await rig.api('voice/join', { guild: 'x', channel: '23' })).status, 400);
+  assert.equal((await rig.api('voice/join', { guild: '10', channel: '23' }, { 'X-BD': '0' })).status, 403);
+  const st = (await rig.api('state')).json;
+  assert.equal(st.voiceAvailable, true, 'optional voice packages load: ' + st.voiceReason);
+  // joining asks Discord for the channel; nobody answers, so it times out cleanly and leaves again
+  const r = await rig.api('voice/join', { guild: '10', channel: '23' });
+  assert.equal(r.status, 502);
+  assert.match(r.json.error, /UDP|voice/);
+  assert.ok(rig.f.voiceOps.some((o) => o.guild_id === '10' && o.channel_id === '23'), 'sent op 4 join');
+  assert.ok(rig.f.voiceOps.some((o) => o.guild_id === '10' && o.channel_id === null), 'sent op 4 leave after failing');
+  assert.equal((await rig.api('state')).json.voice.status, 'error');
+  assert.equal((await rig.api('voice/leave', {})).status, 200);
+  assert.equal((await rig.api('state')).json.voice.status, 'idle');
+  // who is in voice shows up in the snapshot
+  for (const ws of rig.f.sockets) ws.send(JSON.stringify({ op: 0, s: 60, t: 'VOICE_STATE_UPDATE', d: { guild_id: '10', channel_id: '23', user_id: '5', member: { user: { id: '5', username: 'ann' } } } }));
+  await rig.waitFor(async () => (await rig.api('state')).json.snapshot.guilds[0].voice.length === 1);
+  assert.equal((await rig.api('state')).json.snapshot.guilds[0].voice[0].name, 'ann');
+  for (const ws of rig.f.sockets) ws.send(JSON.stringify({ op: 0, s: 61, t: 'VOICE_STATE_UPDATE', d: { guild_id: '10', channel_id: null, user_id: '5' } }));
+  await rig.waitFor(async () => (await rig.api('state')).json.snapshot.guilds[0].voice.length === 0);
+  // audio socket: needs the session cookie and a same-origin Origin header
+  const url = rig.origin.replace('http', 'ws') + '/app/api/voice';
+  const tryWs = (headers) => new Promise((resolve) => {
+    const ws = new WebSocket(url, { headers });
+    ws.on('message', (m) => { resolve('open:' + JSON.parse(m.toString()).t); ws.close(); });
+    ws.on('unexpected-response', (_q, res) => resolve('http:' + res.statusCode));
+    ws.on('error', () => {});
+  });
+  assert.equal(await tryWs({ Origin: rig.origin }), 'http:403', 'no cookie');
+  assert.equal(await tryWs({ Cookie: rig.cookie }), 'http:403', 'no origin');
+  assert.equal(await tryWs({ Cookie: rig.cookie, Origin: 'http://evil.example' }), 'http:403', 'foreign origin');
+  assert.equal(await tryWs({ Cookie: rig.cookie, Origin: rig.origin }), 'open:hello');
+  // soundboard validates ids and relays the call
+  assert.equal((await rig.api('soundboard/play', { channel: 'x', sound: '1' })).status, 400);
+});

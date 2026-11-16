@@ -11,6 +11,7 @@ const allowHttp = process.env.BOTDECK_ALLOW_HTTP === '1';
 
 const app = new App({ password, allowHttp });
 const server = http.createServer(app.handler());
+app.attach(server);
 server.headersTimeout = 15000;
 server.requestTimeout = 0; // SSE and uploads are long-lived; bodies are size-limited instead
 

@@ -45,3 +45,14 @@ npm test        # fake Discord (REST + gateway) - no network needed
 Layout: `server.js` (entry) · `src/` (app, gateway, REST, store, gate, embeds) · `public/index.html` (UI) · `test/`.
 
 The previous Electron-based fork lives at the tag `electron-fork-archive`.
+
+## Voice, microphone and soundpad
+
+The browser is the audio device: your microphone and soundpad clips are streamed to the server, which sends them into the Discord voice channel; other people's voices come back the same way.
+
+- Needs **Node 22.12+** on the host (the optional `@discordjs/voice` package requires it). On older Node the rest of the app still works and voice shows as unavailable.
+- Needs the host to allow **outbound UDP** (Discord voice runs over UDP).
+- The browser only lets pages use the microphone over **HTTPS** (or `localhost`).
+- The bot needs the **Connect** and **Speak** permissions in the channel. Playing a server soundboard sound also needs the bot to be in that voice channel.
+- Soundpad clips are stored only in your browser (IndexedDB); nothing is uploaded anywhere except into the voice call when you press a pad.
+- Bots cannot Go Live / share a screen; that is a Discord limit.

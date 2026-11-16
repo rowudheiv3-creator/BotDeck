@@ -5,6 +5,7 @@ export const config = {
   gatewayQuery: '/?v=10&encoding=json',
   reconnectBase: 1000,
   maxReconnectBackoff: 30000,
+  voiceTimeout: 20000,
 };
 
 export const SNOWFLAKE = /^[0-9]{1,20}$/;

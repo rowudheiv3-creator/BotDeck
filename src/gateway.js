@@ -17,6 +17,7 @@ export const INTENTS = {
   guilds: 1 << 0,
   members: 1 << 1, // privileged
   guildMessages: 1 << 9,
+  voiceStates: 1 << 7,
   guildReactions: 1 << 10,
   dms: (1 << 12) | (1 << 13),
   messageContent: 1 << 15, // privileged
@@ -32,6 +33,13 @@ export class Gateway {
     this.ws = null;
     this.presence = null;
     this.wake = null;
+  }
+
+  /** Sends a raw gateway op (used by voice for the voice-state update). */
+  sendOp(op, d) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return false;
+    this.ws.send(JSON.stringify({ op, d }));
+    return true;
   }
 
   /** Sets the bot's status/activity; remembered across reconnects. */

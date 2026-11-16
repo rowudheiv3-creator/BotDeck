@@ -146,6 +146,18 @@
   #row button.ic svg.i { width:24px; height:24px; } .tools svg.i { width:16px; height:16px; vertical-align:middle; } #head button svg.i { width:20px; height:20px; vertical-align:middle; }
   .g svg.i { width:26px; height:26px; } .c .n svg.i, .rep svg.i { width:1em; height:1em; opacity:.8; } #lb img { background:#0000; }
 
+  /* ===== voice ===== */
+  #vpanel { display:none; background:#141417; border-top:1px solid #0006; padding:8px; } #vpanel.on { display:block; }
+  #vpanel .vtop { display:flex; align-items:center; gap:4px; } .vtxt { flex:1; min-width:0; } .vst { font-size:13px; font-weight:700; color:#57f287; } .vst.bad { color:#f23f43; } .vst.wait { color:var(--warn); }
+  .vch { font-size:12px; color:var(--mut); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #vpanel .ib { width:32px; height:32px; border:0; border-radius:6px; background:none; color:var(--mut); display:grid; place-items:center; } #vpanel .ib:hover { background:#ffffff14; color:#fff; }
+  .c.live .n, .c.live .n svg.i { color:#57f287; }
+  .vu { display:flex; align-items:center; gap:8px; padding:3px 8px 3px 34px; font-size:14px; color:var(--mut); } .vu img { width:24px; height:24px; border-radius:50%; box-shadow:0 0 0 2px transparent; } .vu.sp img { box-shadow:0 0 0 2px #23a559; } .vu span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #padm { display:none; position:fixed; inset:0; background:#000a; z-index:30; align-items:center; justify-content:center; } #padm.on { display:flex; }
+  #padm .card2 { background:var(--bg1); width:min(560px,94vw); max-height:88vh; overflow:auto; border-radius:10px; padding:16px; display:grid; gap:10px; } #padm .row2 { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  #padm button { background:var(--acc); border:0; border-radius:6px; color:#fff; padding:7px 12px; cursor:pointer; } #padm label { font-size:13px; color:var(--mut); display:flex; gap:6px; align-items:center; } #padm input[type=range] { width:100%; }
+  #pad_grid, #sb_grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:8px; } #pad_grid .pd, #sb_grid .pd { position:relative; background:#2e2e34; min-height:52px; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px 22px 6px 8px; word-break:break-word; font-size:13px; } #pad_grid .pd:hover, #sb_grid .pd:hover { background:var(--acc); }
+  #pad_grid .pd.on { background:#23a559; } #pad_grid .pd .x { position:absolute; top:2px; right:2px; width:20px; height:20px; display:grid; place-items:center; border-radius:4px; opacity:.6; } #pad_grid .pd .x:hover { opacity:1; background:#da373c; }
   /* ===== skin 2 ===== */
   :root { --bg0:#0f0f11; --bg1:#1a1a1e; --bg2:#222226; --line:#34343a; --dim:#8b8f98; }
   body { font:16px/1.375 "Noto Sans Thai","Noto Sans","Leelawadee UI","Segoe UI",system-ui,sans-serif; }
@@ -209,7 +221,7 @@
 </head>
 <body>
 <!-- Icons: Lucide (https://lucide.dev), ISC License, Copyright (c) Lucide Contributors; portions MIT (c) Cole Bemis 2013-2022 (Feather) -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <path d="M8 14s1.5 2 4 2 4-2 4-2" /> <line x1="9" x2="9.01" y1="9" y2="9" /> <line x1="15" x2="15.01" y1="9" y2="9" /></symbol><symbol id="i-reply" viewBox="0 0 24 24"><polyline points="9 17 4 12 9 7" /> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /> <path d="m15 5 4 4" /></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5" /> <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" /></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol><symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M3 6h18" /> <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /> <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /> <line x1="10" x2="10" y1="11" y2="17" /> <line x1="14" x2="14" y1="11" y2="17" /></symbol><symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M13.234 20.252 21 12.3" /> <path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486" /></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z" /></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> <path d="M12 7v5l4 2" /></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" /></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /> <circle cx="12" cy="12" r="3" /></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></symbol><symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></symbol><symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M10 8h.01" /> <path d="M12 12h.01" /> <path d="M14 8h.01" /> <path d="M16 12h.01" /> <path d="M18 8h.01" /> <path d="M6 8h.01" /> <path d="M7 16h10" /> <path d="M8 12h.01" /> <rect width="20" height="16" x="2" y="4" rx="2" /></symbol><symbol id="i-volume-2" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <path d="M16 9a5 5 0 0 1 0 6" /> <path d="M19.364 18.364a9 9 0 0 0 0-12.728" /></symbol><symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z" /> <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /></symbol><symbol id="i-hash" viewBox="0 0 24 24"><line x1="4" x2="20" y1="9" y2="9" /> <line x1="4" x2="20" y1="15" y2="15" /> <line x1="10" x2="8" y1="3" y2="21" /> <line x1="16" x2="14" y1="3" y2="21" /></symbol><symbol id="i-corner-up-left" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4" /> <path d="M20 20v-7a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.3-4.3" /></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /> <path d="M14 2v4a2 2 0 0 0 2 2h4" /></symbol><symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol><symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol><symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-mic-off" viewBox="0 0 24 24"><line x1="2" x2="22" y1="2" y2="22" /> <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" /> <path d="M5 10v2a7 7 0 0 0 12 5" /> <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" /> <path d="M9 9v3a3 3 0 0 0 5.12 2.12" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol><symbol id="i-headphone-off" viewBox="0 0 24 24"><path d="M21 14h-1.343" /> <path d="M9.128 3.47A9 9 0 0 1 21 12v3.343" /> <path d="m2 2 20 20" /> <path d="M20.414 20.414A2 2 0 0 1 19 21h-1a2 2 0 0 1-2-2v-3" /> <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 2.636-6.364" /></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14" /> <path d="M12 5v14" /></symbol><symbol id="i-phone-off" viewBox="0 0 24 24"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" /> <line x1="22" x2="2" y1="2" y2="22" /></symbol><symbol id="i-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /> <polyline points="16 17 21 12 16 7" /> <line x1="21" x2="9" y1="12" y2="12" /></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <path d="M8 14s1.5 2 4 2 4-2 4-2" /> <line x1="9" x2="9.01" y1="9" y2="9" /> <line x1="15" x2="15.01" y1="9" y2="9" /></symbol><symbol id="i-reply" viewBox="0 0 24 24"><polyline points="9 17 4 12 9 7" /> <path d="M20 18v-2a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /> <path d="m15 5 4 4" /></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5" /> <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" /></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol><symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M3 6h18" /> <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /> <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /> <line x1="10" x2="10" y1="11" y2="17" /> <line x1="14" x2="14" y1="11" y2="17" /></symbol><symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M13.234 20.252 21 12.3" /> <path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486" /></symbol><symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z" /></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> <path d="M12 7v5l4 2" /></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" /></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /> <circle cx="12" cy="12" r="3" /></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></symbol><symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></symbol><symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M10 8h.01" /> <path d="M12 12h.01" /> <path d="M14 8h.01" /> <path d="M16 12h.01" /> <path d="M18 8h.01" /> <path d="M6 8h.01" /> <path d="M7 16h10" /> <path d="M8 12h.01" /> <rect width="20" height="16" x="2" y="4" rx="2" /></symbol><symbol id="i-volume-2" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <path d="M16 9a5 5 0 0 1 0 6" /> <path d="M19.364 18.364a9 9 0 0 0 0-12.728" /></symbol><symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z" /> <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /></symbol><symbol id="i-hash" viewBox="0 0 24 24"><line x1="4" x2="20" y1="9" y2="9" /> <line x1="4" x2="20" y1="15" y2="15" /> <line x1="10" x2="8" y1="3" y2="21" /> <line x1="16" x2="14" y1="3" y2="21" /></symbol><symbol id="i-corner-up-left" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4" /> <path d="M20 20v-7a4 4 0 0 0-4-4H4" /></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.3-4.3" /></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /> <path d="M14 2v4a2 2 0 0 0 2 2h4" /></symbol><symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol><symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol><symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-mic-off" viewBox="0 0 24 24"><line x1="2" x2="22" y1="2" y2="22" /> <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" /> <path d="M5 10v2a7 7 0 0 0 12 5" /> <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" /> <path d="M9 9v3a3 3 0 0 0 5.12 2.12" /> <line x1="12" x2="12" y1="19" y2="22" /></symbol><symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol><symbol id="i-headphone-off" viewBox="0 0 24 24"><path d="M21 14h-1.343" /> <path d="M9.128 3.47A9 9 0 0 1 21 12v3.343" /> <path d="m2 2 20 20" /> <path d="M20.414 20.414A2 2 0 0 1 19 21h-1a2 2 0 0 1-2-2v-3" /> <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 2.636-6.364" /></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14" /> <path d="M12 5v14" /></symbol><symbol id="i-phone-off" viewBox="0 0 24 24"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" /> <line x1="22" x2="2" y1="2" y2="22" /></symbol><symbol id="i-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /> <polyline points="16 17 21 12 16 7" /> <line x1="21" x2="9" y1="12" y2="12" /></symbol><symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13" /> <circle cx="6" cy="18" r="3" /> <circle cx="18" cy="16" r="3" /></symbol><symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /></symbol><symbol id="i-volume-x" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /> <line x1="22" x2="16" y1="9" y2="15" /> <line x1="16" x2="22" y1="9" y2="15" /></symbol></defs></svg>
 <div id="login">
   <div class="card">
     <h1>BotDeck</h1>
@@ -229,6 +241,7 @@
   <aside id="side">
     <div id="gname"></div>
     <div id="chans"></div>
+    <div id="vpanel"><div class="vtop"><div class="vtxt"><div class="vst" id="vst"></div><div class="vch" id="vch"></div></div><button class="ib" id="vpad" title="Soundpad"><svg class="i"><use href="#i-music"/></svg></button><button class="ib" id="vleave" title="ออกจากห้องเสียง / disconnect"><svg class="i"><use href="#i-phone-off"/></svg></button></div></div>
     <div id="me"><div class="uav"><img id="mav" class="ava" alt=""><span id="st" title=""></span></div><div class="unm"><div class="nm" id="mnm"></div><div class="usub" id="msub">บอท / Bot</div></div><button class="ib" id="mic" title="ไมค์ / mic (คลิกเพื่อเปิด)"><svg class="i"><use href="#i-mic-off"/></svg></button><button class="ib" id="deaf" title="ฟัง / listen"><svg class="i"><use href="#i-headphone-off"/></svg></button><button class="ib" id="setb" title="ตั้งค่า / settings"><svg class="i"><use href="#i-settings"/></svg></button></div>
   </aside>
   <section id="main">
@@ -270,6 +283,16 @@
   <button id="s_ap">ใช้สถานะ / Apply status</button>
   <button id="out" style="background:#da373c"><svg class="i"><use href="#i-log-out"/></svg> ออกจากระบบ / Log out</button>
 </div></div>
+<div id="padm"><div class="card2">
+  <div style="display:flex;justify-content:space-between;align-items:center"><b>Soundpad</b><button id="padx" style="background:none;color:inherit"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="row2"><label style="flex:1">เสียง / Volume <input type="range" id="pad_vol" min="0" max="150" value="80"></label><label class="row2"><input type="checkbox" id="pad_mon" checked> ฟังในเครื่องด้วย / monitor</label></div>
+  <div class="row2"><button id="pad_add"><svg class="i"><use href="#i-plus"/></svg> เพิ่มเสียง / Add sounds</button><button id="pad_stop" style="background:#da373c"><svg class="i"><use href="#i-square"/></svg> หยุด / Stop all</button><input type="file" id="pad_file" accept="audio/*" multiple hidden></div>
+  <div id="pad_grid"></div>
+  <hr style="border:0;border-top:1px solid var(--line);width:100%">
+  <div class="row2"><b style="flex:1;font-size:13px">เสียงจากเซิร์ฟเวอร์ / Server soundboard</b><button id="sb_load">โหลด / Load</button></div>
+  <div id="sb_grid"></div>
+  <small id="pad_note" style="color:var(--dim)">ไฟล์เสียงเก็บในเบราว์เซอร์นี้เท่านั้น / sounds are stored only in this browser</small>
+</div></div>
 <div id="pinm"><div class="card2"><div style="display:flex;justify-content:space-between"><b>Pins</b><button id="pinx" style="background:none;border:0;color:inherit;cursor:pointer"><svg class="i"><use href="#i-x"/></svg></button></div><div id="pinl"></div></div></div>
 <div id="toast"></div>
 <div id="picker"><input type="text" id="psearch" placeholder="ค้นหาอีโมจิ / search emoji"><div id="pbody"></div><label id="psup"><input type="checkbox" id="psuper"> <svg class="i"><use href="#i-zap"/></svg> Super reaction</label></div>
@@ -282,6 +305,8 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let S = null;              // {me, guilds}
 let status = 'idle';
+let voice = null, voiceAvail = true, voiceReason = '';
+const speaking = new Set();
 let gid = null, cid = null; // gid 'home' = direct messages
 const cache = new Map();   // channelId -> {msgs:[oldest..newest], more:bool}
 const unread = new Set();
@@ -318,7 +343,7 @@ async function doLogin() {
 }
 $('go').onclick = doLogin;
 $('tok').onkeydown = (e) => { if (e.key === 'Enter') doLogin(); };
-$('out').onclick = async () => { await api('logout', {}).catch(() => {}); cache.clear(); unread.clear(); dms.clear(); gid = cid = null; S = null; membersOn = false; autoMem = false; membersLoaded.clear(); memberInfo.clear(); $('app').classList.remove('mem'); $('setm').classList.remove('on'); show(); };
+$('out').onclick = async () => { await api('logout', {}).catch(() => {}); cache.clear(); unread.clear(); dms.clear(); gid = cid = null; S = null; membersOn = false; autoMem = false; voice = null; vcDown(); membersLoaded.clear(); memberInfo.clear(); $('app').classList.remove('mem'); $('setm').classList.remove('on'); show(); };
 
 function show() {
   const inApp = status !== 'idle' && !(status === 'error' && (!S || !S.me.id));
@@ -333,7 +358,7 @@ function show() {
 /* ---------- state ---------- */
 async function refresh() {
   const j = await api('state');
-  status = j.status; S = j.snapshot;
+  status = j.status; S = j.snapshot; voice = j.voice; voiceAvail = j.voiceAvailable !== false; voiceReason = j.voiceReason || ''; drawVoice();
   if (status === 'error') {
     $('lerr').textContent = j.error;
     api('logout', {}).catch(() => {});
@@ -421,16 +446,17 @@ function renderChans() {
     if (grp.name) { const h = document.createElement('div'); h.className = 'cat'; h.innerHTML = '<svg class="i"><use href="#i-' + (closed ? 'chevron-right' : 'chevron-down') + '"/></svg> ' + esc(grp.name); h.onclick = () => { if (collapsed.has(grp.id)) collapsed.delete(grp.id); else collapsed.add(grp.id); renderChans(); }; el.appendChild(h); }
     for (const c of grp.items) {
       if (closed && c.id !== cid && !unread.has(c.id)) continue;
-      const readable = c.type === 0 || c.type === 5;
+      const readable = c.type === 0 || c.type === 5, isVoice = c.type === 2 || c.type === 13;
       const b = document.createElement('button');
-      b.className = 'c' + (c.id === cid ? ' sel' : '') + (unread.has(c.id) ? ' unread' : '') + (readable ? '' : ' off');
+      b.className = 'c' + (c.id === cid ? ' sel' : '') + (unread.has(c.id) ? ' unread' : '') + (readable || isVoice ? '' : ' off') + (voice && voice.channel === c.id && voice.status === 'ready' ? ' live' : '');
       const ico = c.type === 2 || c.type === 13 ? 'volume-2' : c.type === 5 ? 'megaphone' : readable ? 'hash' : 'lock';
       const n = document.createElement('span'); n.className = 'n'; n.innerHTML = '<svg class="i"><use href="#i-' + ico + '"/></svg> ' + esc(c.name);
       b.appendChild(n);
       if (readable) b.onclick = () => openChannel(c.id);
-      else if (c.type === 2 || c.type === 13) b.onclick = () => toast('ห้องเสียง: กำลังพัฒนา (ต้องทำระบบเข้ารหัส DAVE ของ Discord) / Voice: not built yet');
+      else if (isVoice) b.onclick = () => voiceJoin(g.id, c.id);
       else b.title = 'ช่องประเภทนี้ยังไม่รองรับ / not supported yet';
       el.appendChild(b);
+      if (isVoice) for (const v of (g.voice || [])) if (v.channel_id === c.id) { const u = document.createElement('div'); u.className = 'vu' + (speaking.has(v.user_id) ? ' sp' : ''); u.innerHTML = '<img class="ava" alt="" src="' + esc(avatar({ id: v.user_id, avatar: v.avatar })) + '"><span>' + esc(v.name || v.user_id) + '</span>'; el.appendChild(u); }
     }
   }
 }
@@ -870,6 +896,7 @@ function onEvent(ev) {
   const { t, d } = ev;
   if (t === 'status') { status = d.status; if (status === 'error') refresh(); else { show(); if (status === 'ready') refresh(); } return; }
   if (t === 'state') { refresh(); return; }
+  if (t === 'voice') { voice = d; drawVoice(); renderChans(); return; }
   if (!d || !d.channel_id) return;
   if (t === 'TYPING_START') { noteTyping(d); return; }
   const e = cache.get(d.channel_id);
@@ -1022,6 +1049,7 @@ $('qsi').onkeydown = (e) => {
 };
 $('qs').onclick = (e) => { if (e.target === $('qs')) $('qs').classList.remove('on'); };
 addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') $('padm').classList.remove('on');
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); qsOpen(); }
   else if (e.key === 'Escape') { $('qs').classList.remove('on'); $('lb').click(); $('setm').classList.remove('on'); }
 });
@@ -1041,6 +1069,170 @@ $('s_ntf').onchange = async (e) => {
 };
 $('s_ap').onclick = async () => { try { await api('presence', { status: $('s_st').value, type: +$('s_ty').value, text: $('s_tx').value }); toast('ตั้งสถานะแล้ว / status set'); } catch (e) { toast(e.message); } };
 setInterval(drawTyping, 2000);
+
+/* ---------- voice (browser mic / soundpad / listening <-> server) ---------- */
+const VC = { ws: null, ctx: null, mix: null, proc: null, sink: null, micStream: null, micSrc: null, micGain: null, padGain: null, monGain: null, lstGain: null, listen: true, mic: false, buf: new Int16Array(1920), fill: 0, hang: 0, nextAt: new Map(), srcs: new Map(), active: new Set(), want: false };
+const vcReady = () => voice && voice.status === 'ready';
+function drawVoice() {
+  const on = voice && voice.status !== 'idle';
+  $('vpanel').classList.toggle('on', !!on);
+  if (on) {
+    const g = S && S.guilds.find(x => x.id === voice.guild), c = g && g.channels.find(x => x.id === voice.channel);
+    const st = $('vst'); st.className = 'vst' + (voice.status === 'error' ? ' bad' : voice.status === 'ready' ? '' : ' wait');
+    st.textContent = voice.status === 'ready' ? 'เชื่อมต่อเสียงแล้ว / Voice connected' : voice.status === 'error' ? 'เชื่อมต่อไม่สำเร็จ / failed' : 'กำลังเชื่อมต่อ… / connecting…';
+    $('vch').textContent = voice.status === 'error' ? voice.error : (c ? c.name : '') + (g ? ' / ' + g.name : '');
+  }
+  $('mic').classList.toggle('live', VC.mic); $('mic').classList.toggle('off', !VC.mic);
+  $('mic').firstElementChild.firstElementChild.setAttribute('href', VC.mic ? '#i-mic' : '#i-mic-off');
+  $('deaf').classList.toggle('off', !VC.listen);
+  $('deaf').firstElementChild.firstElementChild.setAttribute('href', VC.listen ? '#i-headphones' : '#i-headphone-off');
+  if (!vcReady()) vcDown();
+  else vcUp();
+}
+async function voiceJoin(guildId, channelId) {
+  if (!voiceAvail) return toast('ระบบเสียงใช้ไม่ได้บนโฮสต์นี้ / voice unavailable: ' + voiceReason);
+  if (vcReady() && voice.channel === channelId) return;
+  vcCtx(); // created inside the click so the browser lets it play audio
+  voice = { status: 'connecting', guild: guildId, channel: channelId, error: '' }; drawVoice(); renderChans();
+  try { voice = await api('voice/join', { guild: guildId, channel: channelId }); }
+  catch (e) { toast(e.message); try { voice = (await api('state')).voice; } catch (x) { voice = null; } }
+  drawVoice(); renderChans();
+}
+$('vleave').onclick = async () => { try { await api('voice/leave', {}); } catch (e) { toast(e.message); } };
+
+function vcCtx() {
+  if (!VC.ctx) {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) throw new Error('no WebAudio');
+    const ctx = VC.ctx = new AC({ sampleRate: 48000 });
+    VC.mix = ctx.createGain(); VC.padGain = ctx.createGain(); VC.padGain.gain.value = 0.8; VC.padGain.connect(VC.mix);
+    VC.monGain = ctx.createGain(); VC.monGain.gain.value = 0.8; VC.monGain.connect(ctx.destination);
+    VC.lstGain = ctx.createGain(); VC.lstGain.connect(ctx.destination); VC.lstGain.gain.value = VC.listen ? 1 : 0;
+    VC.proc = ctx.createScriptProcessor(2048, 2, 2); VC.sink = ctx.createGain(); VC.sink.gain.value = 0;
+    VC.mix.connect(VC.proc); VC.proc.connect(VC.sink); VC.sink.connect(ctx.destination);
+    VC.proc.onaudioprocess = (e) => {
+      if (!VC.ws || VC.ws.readyState !== 1 || !vcReady()) return;
+      const L = e.inputBuffer.getChannelData(0), R = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : L;
+      for (let i = 0; i < L.length; i++) {
+        VC.buf[VC.fill++] = Math.max(-1, Math.min(1, L[i])) * 32767; VC.buf[VC.fill++] = Math.max(-1, Math.min(1, R[i])) * 32767;
+        if (VC.fill >= 1920) {
+          let peak = 0; for (let k = 0; k < 1920; k += 8) peak = Math.max(peak, Math.abs(VC.buf[k]));
+          if (peak > 80) VC.hang = Date.now() + 300;
+          if (Date.now() < VC.hang && VC.ws.bufferedAmount < 65536) VC.ws.send(VC.buf.slice(0, 1920).buffer);
+          VC.fill = 0;
+        }
+      }
+    };
+  }
+  if (VC.ctx.state === 'suspended') VC.ctx.resume();
+  return VC.ctx;
+}
+function vcUp() {
+  VC.want = true;
+  if (VC.ws && VC.ws.readyState <= 1) return;
+  const ws = VC.ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + base + 'api/voice');
+  ws.binaryType = 'arraybuffer';
+  ws.onopen = () => ws.send(JSON.stringify({ t: 'listen', on: VC.listen }));
+  ws.onmessage = (ev) => {
+    if (typeof ev.data === 'string') {
+      let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+      if (m.t === 'src') VC.srcs.set(m.slot, m.id);
+      else if (m.t === 'speaking') { if (m.on) speaking.add(m.id); else speaking.delete(m.id); renderChans(); }
+      return;
+    }
+    if (!VC.ctx || !VC.listen) return;
+    const dv = new DataView(ev.data); if (dv.byteLength < 7 || dv.getUint8(0) !== 1) return;
+    const slot = (dv.getUint8(1) << 8) | dv.getUint8(2), n = (dv.byteLength - 3) >> 2;
+    const buf = VC.ctx.createBuffer(2, n, 48000), l = buf.getChannelData(0), r = buf.getChannelData(1);
+    for (let i = 0; i < n; i++) { l[i] = dv.getInt16(3 + i * 4, true) / 32768; r[i] = dv.getInt16(5 + i * 4, true) / 32768; }
+    const src = VC.ctx.createBufferSource(); src.buffer = buf; src.connect(VC.lstGain);
+    const t = Math.max(VC.ctx.currentTime + 0.08, VC.nextAt.get(slot) || 0); src.start(t); VC.nextAt.set(slot, t + buf.duration);
+  };
+  ws.onclose = () => { if (VC.ws === ws) VC.ws = null; if (VC.want && vcReady()) setTimeout(() => { if (vcReady()) vcUp(); }, 1500); };
+}
+function vcDown() {
+  VC.want = false;
+  if (VC.ws) { try { VC.ws.close(); } catch (e) {} VC.ws = null; }
+  if (VC.mic) vcMic(false);
+  vcStopPads(); speaking.clear(); VC.nextAt.clear(); VC.srcs.clear();
+}
+async function vcMic(on) {
+  if (on === VC.mic) return;
+  if (!on) {
+    if (VC.micSrc) { try { VC.micSrc.disconnect(); } catch (e) {} VC.micSrc = null; }
+    if (VC.micStream) { VC.micStream.getTracks().forEach(t => t.stop()); VC.micStream = null; }
+    VC.mic = false; return drawVoice();
+  }
+  if (!vcReady()) return toast('เข้าห้องเสียงก่อน / join a voice channel first');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return toast('ต้องใช้ HTTPS หรือ localhost เพื่อใช้ไมค์ / the microphone needs HTTPS or localhost');
+  try {
+    const ctx = vcCtx();
+    VC.micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+    VC.micSrc = ctx.createMediaStreamSource(VC.micStream); VC.micSrc.connect(VC.mix); VC.mic = true;
+  } catch (e) { toast('เปิดไมค์ไม่ได้ / cannot open the microphone: ' + (e.message || e.name)); VC.mic = false; }
+  drawVoice();
+}
+$('mic').onclick = () => vcMic(!VC.mic);
+$('deaf').onclick = () => {
+  VC.listen = !VC.listen; if (VC.lstGain) VC.lstGain.gain.value = VC.listen ? 1 : 0;
+  if (VC.ws && VC.ws.readyState === 1) VC.ws.send(JSON.stringify({ t: 'listen', on: VC.listen }));
+  drawVoice();
+};
+
+/* soundpad */
+const padBuf = new Map();
+const idb = () => new Promise((res, rej) => { try { const r = indexedDB.open('botdeck', 1); r.onupgradeneeded = () => r.result.createObjectStore('pads', { keyPath: 'id' }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } });
+const idbDo = async (mode, fn) => { const db = await idb(); return new Promise((res, rej) => { const tx = db.transaction('pads', mode), st = tx.objectStore('pads'), rq = fn(st); tx.oncomplete = () => res(rq && rq.result); tx.onerror = () => rej(tx.error); }); };
+async function padsDraw() {
+  const grid = $('pad_grid'); grid.textContent = '';
+  let list = []; try { list = (await idbDo('readonly', st => st.getAll())) || []; } catch (e) { grid.textContent = 'เบราว์เซอร์นี้เก็บไฟล์ไม่ได้ / storage unavailable'; return; }
+  list.sort((a, b) => a.added - b.added);
+  if (!list.length) grid.innerHTML = '<div class="empty" style="grid-column:1/-1;margin:10px 0">ยังไม่มีเสียง กด "เพิ่มเสียง" / no sounds yet</div>';
+  for (const p of list) {
+    const b = document.createElement('button'); b.className = 'pd'; b.title = p.name; b.dataset.id = p.id;
+    b.appendChild(document.createTextNode(p.name));
+    const x = document.createElement('span'); x.className = 'x'; x.innerHTML = '<svg class="i"><use href="#i-x"/></svg>';
+    x.onclick = async (ev) => { ev.stopPropagation(); await idbDo('readwrite', st => st.delete(p.id)).catch(() => {}); padBuf.delete(p.id); padsDraw(); };
+    b.appendChild(x); b.onclick = () => padPlay(p, b); grid.appendChild(b);
+  }
+}
+async function padPlay(p, btn) {
+  if (!vcReady()) return toast('เข้าห้องเสียงก่อน / join a voice channel first');
+  try {
+    const ctx = vcCtx(); let ab = padBuf.get(p.id);
+    if (!ab) { ab = await ctx.decodeAudioData(await p.blob.arrayBuffer()); padBuf.set(p.id, ab); }
+    const src = ctx.createBufferSource(); src.buffer = ab; src.connect(VC.padGain);
+    if ($('pad_mon').checked) src.connect(VC.monGain);
+    VC.active.add(src); btn.classList.add('on');
+    src.onended = () => { VC.active.delete(src); btn.classList.remove('on'); };
+    src.start();
+  } catch (e) { toast('เล่นไฟล์นี้ไม่ได้ / cannot play this file: ' + (e.message || 'decode error')); }
+}
+function vcStopPads() { for (const s of [...VC.active]) { try { s.stop(); } catch (e) {} } VC.active.clear(); document.querySelectorAll('#pad_grid .pd.on').forEach(b => b.classList.remove('on')); }
+$('vpad').onclick = () => { $('padm').classList.add('on'); padsDraw(); };
+$('padx').onclick = () => $('padm').classList.remove('on');
+$('pad_stop').onclick = vcStopPads;
+$('pad_vol').oninput = (e) => { const v = e.target.value / 100; if (VC.padGain) { VC.padGain.gain.value = v; VC.monGain.gain.value = v; } };
+$('pad_add').onclick = () => $('pad_file').click();
+$('pad_file').onchange = async (e) => {
+  for (const f of [...e.target.files].slice(0, 20)) {
+    if (f.size > 8 * 1024 * 1024) { toast(f.name + ': ใหญ่เกิน 8 MB / over 8 MB'); continue; }
+    try { await idbDo('readwrite', st => st.put({ id: Date.now() + '-' + Math.random().toString(36).slice(2, 8), name: f.name.replace(/\.[^.]+$/, '').slice(0, 40), blob: f, added: Date.now() })); } catch (x) { toast('บันทึกไม่ได้ / cannot store: ' + x.message); }
+  }
+  e.target.value = ''; padsDraw();
+};
+$('sb_load').onclick = async () => {
+  const grid = $('sb_grid'); grid.textContent = '…';
+  if (!voice || !voice.guild) { grid.textContent = 'เข้าห้องเสียงก่อน / join a voice channel first'; return; }
+  try {
+    const r = await api('soundboard?guild=' + voice.guild); const list = Array.isArray(r) ? r : (r.items || []);
+    grid.textContent = ''; if (!list.length) grid.textContent = 'ไม่มีเสียง / none';
+    for (const so of list) {
+      const b = document.createElement('button'); b.className = 'pd'; b.textContent = (so.emoji_name ? so.emoji_name + ' ' : '') + so.name;
+      b.onclick = () => api('soundboard/play', { channel: voice.channel, sound: so.sound_id, source: so.guild_id && so.guild_id !== voice.guild ? so.guild_id : '' }).catch(err => toast(err.message));
+      grid.appendChild(b);
+    }
+  } catch (e) { grid.textContent = e.message; }
+};
 </script>
 </body>
 </html>

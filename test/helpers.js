@@ -7,7 +7,7 @@ export const GOOD = 'test-token-not-a-real-discord-token-0123456789';
 export const PASSWORD = 'correct-horse-battery';
 
 export async function startFake() {
-  const f = { sent: [], deleted: [], calls: [], presences: [], identifies: [], resumes: [], beats: 0, sockets: new Set(), helloInterval: 40000, ackBeats: true, resumable: true, closeOnIdentify: 0 };
+  const f = { sent: [], deleted: [], calls: [], presences: [], voiceOps: [], identifies: [], resumes: [], beats: 0, sockets: new Set(), helloInterval: 40000, ackBeats: true, resumable: true, closeOnIdentify: 0 };
   const rest = http.createServer((req, res) => {
     const chunks = [];
     req.on('data', (c) => chunks.push(c));
@@ -54,6 +54,7 @@ export async function startFake() {
     ws.on('message', (raw) => {
       const m = JSON.parse(raw.toString());
       if (m.op === 3) f.presences.push(m.d);
+      if (m.op === 4) f.voiceOps.push(m.d);
       if (m.op === 1) { f.beats++; if (f.ackBeats) ws.send(JSON.stringify({ op: 11 })); }
       if (m.op === 2) {
         f.identifies.push(m.d);
@@ -87,6 +88,7 @@ export async function startRig({ login = false } = {}) {
   Object.assign(config, { apiBase: f.restUrl, gatewayUrl: f.wsUrl, reconnectBase: 30, maxReconnectBackoff: 100 });
   const app = new App({ password: PASSWORD, allowHttp: true });
   const server = http.createServer(app.handler());
+  app.attach(server);
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   const origin = `http://127.0.0.1:${server.address().port}`;
   const r = await fetch(origin + '/login', { method: 'POST', redirect: 'manual', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `password=${PASSWORD}` });

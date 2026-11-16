@@ -4,7 +4,9 @@
   "description": "BotDeck: a self-hosted web client for Discord bots (Node.js)",
   "type": "module",
   "main": "server.js",
-  "engines": { "node": ">=18.17" },
+  "engines": {
+    "node": ">=18.17"
+  },
   "scripts": {
     "start": "node server.js",
     "test": "node --test test/app.test.js test/gateway.test.js test/security.test.js"
@@ -14,5 +16,10 @@
     "ws": "^8.18.0"
   },
   "license": "MIT",
-  "private": true
+  "private": true,
+  "optionalDependencies": {
+    "@discordjs/voice": "^0.19.2",
+    "opusscript": "0.0.8",
+    "prism-media": "^1.3.5"
+  }
 }

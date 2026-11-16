@@ -7,6 +7,8 @@ import { Store } from './store.js';
 import { cleanEmbeds } from './embeds.js';
 import { isSnowflake } from './config.js';
 import { Gate, loginPage } from './gate.js';
+import { Voice, loadVoiceLib } from './voice.js';
+import { WebSocketServer } from 'ws';
 
 const indexHtml = readFileSync(fileURLToPath(new URL('../public/index.html', import.meta.url)));
 const BASE = '/app/';
@@ -63,6 +65,10 @@ export class App {
     post('react', (ctx) => this.react(ctx));
     post('typing', (ctx) => this.typing(ctx));
     post('presence', (ctx) => this.setPresence(ctx));
+    post('voice/join', (ctx) => this.voiceJoin(ctx));
+    post('voice/leave', (ctx) => this.voiceLeave(ctx));
+    get('soundboard', (ctx) => this.soundboard(ctx));
+    post('soundboard/play', (ctx) => this.soundboardPlay(ctx));
     post('dm', (ctx) => this.openDM(ctx));
     post('upload', (ctx) => this.upload(ctx));
   }
@@ -84,6 +90,8 @@ export class App {
   }
 
   stop() {
+    if (this.voice) this.voice.destroy();
+    this.voice = null;
     if (this.gw) this.gw.stop();
     this.gw = null;
     this.dc = null;
@@ -116,7 +124,7 @@ export class App {
     this.status = 'connecting';
     this.errMsg = '';
     this.store.reset(me);
-    let intents = INTENTS.guilds | INTENTS.guildMessages | INTENTS.guildReactions | INTENTS.dms;
+    let intents = INTENTS.voiceStates | INTENTS.guilds | INTENTS.guildMessages | INTENTS.guildReactions | INTENTS.dms;
     if (messageContent) intents |= INTENTS.messageContent;
     if (members) intents |= INTENTS.members;
     this.gw = new Gateway({
@@ -124,11 +132,13 @@ export class App {
       intents,
       onEvent: (t, d) => {
         if (gen !== this.gen) return;
+        if (t === 'VOICE_STATE_UPDATE' || t === 'VOICE_SERVER_UPDATE') { if (this.voice) this.voice.onGateway(t, d); }
         if (this.store.apply(t, d)) this.emit('state', null);
         if (['MESSAGE_CREATE', 'MESSAGE_UPDATE', 'MESSAGE_DELETE', 'MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE', 'TYPING_START'].includes(t)) this.emit(t, d);
       },
       onStatus: (s, m) => this.setStatus(gen, s, m),
     });
+    this.voice = new Voice({ botId: me.id, sendOp: (op, data) => this.gw && this.gw.sendOp(op, data), emit: (t, d) => { if (gen === this.gen) this.emit(t, d); } });
     this.gw.start();
     this.emit('status', { status: 'connecting', error: '' });
   }
@@ -200,8 +210,9 @@ export class App {
   }
 
   // ---- handlers ----
-  getState({ res }) {
-    this.json(res, 200, { status: this.status, error: this.errMsg, snapshot: this.store.snapshot() });
+  async getState({ res }) {
+    const L = await loadVoiceLib();
+    this.json(res, 200, { status: this.status, error: this.errMsg, snapshot: this.store.snapshot(), voice: this.voice ? this.voice.info() : null, voiceAvailable: !L.error, voiceReason: L.error || '' });
   }
 
   events({ req, res }) {
@@ -284,6 +295,55 @@ export class App {
     if (!isSnowflake(b.channel) || !isSnowflake(b.id) || !validEmoji(b.emoji)) throw new HttpError(400, 'bad request');
     const type = b.burst ? '?type=1' : ''; // 1 = super reaction
     await this.relay(res, dc, dc.do(b.on ? 'PUT' : 'DELETE', `/channels/${b.channel}/messages/${b.id}/reactions/${encodeURIComponent(b.emoji)}/@me${type}`));
+  }
+
+  // ---- voice ----
+  async voiceJoin({ req, res }) {
+    this.client();
+    const b = await readJson(req);
+    if (!isSnowflake(b.guild) || !isSnowflake(b.channel)) throw new HttpError(400, 'bad request');
+    const ch = this.store.guilds.get(b.guild) && this.store.guilds.get(b.guild).channels.get(b.channel);
+    if (!ch || (ch.type !== 2 && ch.type !== 13)) throw new HttpError(400, 'ไม่ใช่ห้องเสียง / not a voice channel');
+    if (!this.voice) throw new HttpError(409, 'ยังไม่เชื่อมต่อ');
+    try { await this.voice.join(b.guild, b.channel); } catch (e) { throw new HttpError(502, String((e && e.message) || e)); }
+    this.json(res, 200, this.voice.info());
+  }
+
+  async voiceLeave({ res }) {
+    this.client();
+    if (this.voice) this.voice.leave();
+    this.json(res, 200, { ok: true });
+  }
+
+  /** Browser audio socket: same-origin, signed-in browsers only. */
+  attach(server) {
+    const wss = new WebSocketServer({ noServer: true, maxPayload: 1 << 20 });
+    server.on('upgrade', (req, socket, head) => {
+      let ok = false;
+      try {
+        const origin = req.headers.origin ? new URL(req.headers.origin).host : '';
+        ok = new URL(req.url, 'http://x').pathname === BASE + 'api/voice' && this.gate.valid(req) && !!origin && origin === req.headers.host && !!this.voice;
+      } catch { ok = false; }
+      if (!ok) { socket.write('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n'); socket.destroy(); return; }
+      wss.handleUpgrade(req, socket, head, (ws) => this.voice.addClient(ws));
+    });
+  }
+
+  /** Server soundboard sounds (the bot must be in the voice channel to play one). */
+  async soundboard({ res, url }) {
+    const dc = this.client();
+    const g = url.searchParams.get('guild') || '';
+    if (!isSnowflake(g)) throw new HttpError(400, 'bad id');
+    await this.relay(res, dc, dc.do('GET', `/guilds/${g}/soundboard-sounds`));
+  }
+
+  async soundboardPlay({ req, res }) {
+    const dc = this.client();
+    const b = await readJson(req);
+    if (!isSnowflake(b.channel) || !isSnowflake(b.sound) || (b.source && !isSnowflake(b.source))) throw new HttpError(400, 'bad request');
+    const json = { sound_id: b.sound };
+    if (b.source) json.source_guild_id = b.source;
+    await this.relay(res, dc, dc.do('POST', `/channels/${b.channel}/send-soundboard-sound`, { json }));
   }
 
   /** Bot status (online/idle/dnd/invisible) and an optional "Playing/Watching/…" line. */
