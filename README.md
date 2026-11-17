@@ -67,3 +67,7 @@ The browser is the audio device: your microphone and soundpad clips are streamed
 ## HTTPS and the microphone
 
 The same port answers both `http://` and `https://`. The HTTPS side uses a certificate the server creates for itself (`.botdeck-cert.json`, git-ignored), so browsers show a warning the first time: tap **Advanced -> Proceed**. After that the page is a secure context, the browser will ask to allow the microphone, and the password and token are encrypted on the wire. Pressing the microphone button on a plain `http://` page offers to take you there. Set `BOTDECK_HTTPS=0` to turn this off, or `BOTDECK_PUBLIC_HOST=your.domain` to put a name in the certificate. A self-signed certificate does not prove who the server is; use a real certificate (Cloudflare Tunnel, a reverse proxy) for that.
+
+## Server administration
+
+Click the server name (top of the channel list) for settings: rename the server, create invite links, create/edit/delete roles (colour, hoist, mentionable, common permissions), and create/edit/delete channels or delete the latest N messages of a channel. Click a member's name for moderation: give or remove roles, set a nickname, timeout, kick, ban. The bot can only do what its own role allows; buttons are greyed out when a permission is missing, and Discord's own error is shown if it still refuses (for example a role above the bot's highest role). Kicks, bans and purges ask for confirmation first.

@@ -258,6 +258,22 @@
   #prof .act { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; } #prof .act button { background:var(--acc); border:0; border-radius:6px; color:#fff; padding:7px 12px; cursor:pointer; font:inherit; font-size:13px; } #prof .act button.alt { background:#3a3c43; } #prof .act button:hover { filter:brightness(1.12); }
   :root[data-theme=light] #prof .tag, :root[data-theme=light] #prof .role { background:#e3e5e8; }
   @media (max-width:760px) { #prof { left:8px !important; right:8px; bottom:8px; top:auto !important; width:auto; } }
+  /* ---------- server settings ---------- */
+  #gname { cursor:pointer; } #gname:hover { background:rgba(255,255,255,.06); }
+  #srvm { display:none; position:fixed; inset:0; background:#000a; z-index:34; align-items:center; justify-content:center; } #srvm.on { display:flex; }
+  #srvm .card3 { background:var(--bg1); width:min(760px,96vw); height:min(640px,92dvh); border-radius:12px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 10px 40px #000a; }
+  #srvm .sh { display:flex; justify-content:space-between; align-items:center; padding:14px 18px 6px; font-size:18px; } #srvm .sh button { background:none; border:0; color:inherit; cursor:pointer; }
+  #srvm .tabs { display:flex; gap:4px; padding:0 14px; border-bottom:1px solid var(--line); } #srvm .tabs button { background:none; border:0; border-bottom:2px solid transparent; color:var(--mut); padding:8px 12px; cursor:pointer; font:inherit; } #srvm .tabs button.on { color:var(--txt); border-color:var(--acc); }
+  #srvb { flex:1; overflow:auto; padding:16px 18px; display:grid; gap:12px; align-content:start; }
+  #srvb label { display:grid; gap:4px; font-size:12px; color:var(--mut); text-transform:uppercase; letter-spacing:.02em; } #srvb input[type=text], #srvb input[type=number], #srvb select { padding:8px 10px; background:var(--bg0); border:1px solid var(--line); border-radius:6px; color:var(--txt); font:inherit; text-transform:none; }
+  #srvb .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; } #srvb .row > input[type=text] { flex:1; min-width:140px; }
+  #srvb button.b { background:var(--acc); border:0; border-radius:6px; color:#fff; padding:8px 14px; cursor:pointer; font:inherit; font-size:13px; } #srvb button.b.alt { background:#3a3c43; } #srvb button.b.red { background:#da373c; } #srvb button.b:hover { filter:brightness(1.12); } #srvb button:disabled { opacity:.45; cursor:not-allowed; }
+  #srvb .note { font-size:13px; color:var(--mut); background:var(--bg0); border-radius:8px; padding:8px 10px; } #srvb .note.warn { border:1px solid #f2a93b; color:#f2c97a; }
+  #srvb .rl { display:grid; grid-template-columns:200px 1fr; gap:14px; } #srvb .rlist { display:grid; gap:2px; align-content:start; max-height:420px; overflow:auto; } #srvb .rlist button { display:flex; align-items:center; gap:8px; background:none; border:0; color:var(--txt); text-align:left; padding:6px 8px; border-radius:6px; cursor:pointer; font:inherit; } #srvb .rlist button:hover, #srvb .rlist button.on { background:rgba(255,255,255,.08); } #srvb .rlist i { width:12px; height:12px; border-radius:50%; flex:none; }
+  #srvb .perms { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:4px 12px; } #srvb .perms label { display:flex; align-items:center; gap:8px; text-transform:none; font-size:14px; color:var(--txt); letter-spacing:0; }
+  #srvb .ch { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; background:var(--bg0); } #srvb .ch .n { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } #srvb .ch small { color:var(--dim); } #srvb .chedit { background:var(--bg0); border-radius:8px; padding:10px; display:grid; gap:8px; margin:-6px 0 4px; }
+  #prof .mod { display:grid; gap:8px; } #prof .mod label.rc { display:flex; align-items:center; gap:8px; font-size:13px; } #prof .mod select, #prof .mod input[type=text] { padding:6px 8px; background:var(--bg1); border:1px solid var(--line); border-radius:6px; color:var(--txt); font:inherit; font-size:13px; } #prof .mod .row { display:flex; gap:6px; } #prof .mod .row input { flex:1; min-width:0; } #prof .mod button { background:#3a3c43; border:0; border-radius:6px; color:#fff; padding:6px 10px; cursor:pointer; font:inherit; font-size:13px; } #prof .mod button.red { background:#da373c; } #prof .mod button:disabled { opacity:.45; cursor:not-allowed; }
+  @media (max-width:760px) { #srvb .rl { grid-template-columns:1fr; } #srvm .card3 { height:96dvh; border-radius:12px 12px 0 0; align-self:flex-end; } #srvb input, #srvb select, #prof .mod input, #prof .mod select { font-size:16px; } }
 </style>
 </head>
 <body>
@@ -314,6 +330,7 @@
   <div class="btns"><button type="button" id="e_cancel">ยกเลิก</button><button type="button" id="e_send">ส่ง Embed</button></div>
 </div></div>
 <div id="prof"></div>
+<div id="srvm"><div class="card3"><div class="sh"><b id="srvt">Server</b><button id="srvx" title="ปิด / close"><svg class="i"><use href="#i-x"/></svg></button></div><div class="tabs" id="srvtabs"></div><div id="srvb"></div></div></div>
 <div id="lb"><img alt=""></div>
 <div id="qs"><div class="card2"><input id="qsi" type="text" placeholder="ไปที่ช่อง… / jump to a channel (Ctrl+K)" autocomplete="off"><div id="qsl"></div></div></div>
 <div id="setm"><div class="card2">
@@ -1344,7 +1361,8 @@ async function openProfile(uid, anchor) {
     + (m && m.joined_at ? '<div class="kv"><span>เข้าร่วมเซิร์ฟเวอร์ / Joined server</span><span>' + esc(fmtDate(new Date(m.joined_at))) + '</span></div>' : '') + '</div>'
     + (roles.length ? '<div class="box"><h5>ยศ / Roles — ' + roles.length + '</h5><div class="pr" style="margin:0">' + roles.map(r => '<span class="role"><i style="background:' + (r.color ? '#' + r.color.toString(16).padStart(6, '0') : '#99aab5') + '"></i>' + esc(r.name) + '</span>').join('') + '</div></div>' : '')
     + '<div class="act">' + (u.bot || (S && S.me && S.me.id === u.id) ? '' : '<button data-a="dm">' + tagI('at-sign') + ' ส่งข้อความ / Message</button>') + '<button class="alt" data-a="id">' + tagI('copy') + ' คัดลอก ID / Copy ID</button></div></div>';
-  place(box, anchor);
+  place(box, anchor); box._anchor = anchor;
+  addModTools(box, g, u, m, roles);
   box.querySelector('[data-a="id"]').onclick = () => { (navigator.clipboard ? navigator.clipboard.writeText(u.id) : Promise.reject()).then(() => toast('คัดลอกแล้ว / copied'), () => toast(u.id)); };
   const dm = box.querySelector('[data-a="dm"]');
   if (dm) dm.onclick = async () => { try { const c = await api('dm', { user: u.id }); addDM(c.id, u.global_name || u.username, u.id, u); box.classList.remove('on'); gid = 'home'; renderGuilds(); renderChans(); loadMembers(); openChannel(c.id); } catch (e) { toast(e.message); } };
@@ -1388,6 +1406,133 @@ function watchSelfMic() {
     const on = hold > 0, was = speaking.has(S.me.id);
     if (on !== was) { if (on) speaking.add(S.me.id); else speaking.delete(S.me.id); renderChans(); drawPeople(); }
   }, 100);
+}
+
+/* ---------- server administration ---------- */
+const PERMS = [['ADMINISTRATOR', 3n, 'ผู้ดูแลระบบ / Administrator'], ['MANAGE_GUILD', 5n, 'จัดการเซิร์ฟเวอร์ / Manage Server'], ['MANAGE_ROLES', 28n, 'จัดการยศ / Manage Roles'], ['MANAGE_CHANNELS', 4n, 'จัดการช่อง / Manage Channels'],
+  ['KICK', 1n, 'เตะสมาชิก / Kick Members'], ['BAN', 2n, 'แบนสมาชิก / Ban Members'], ['MODERATE', 40n, 'Timeout สมาชิก / Timeout Members'], ['NICKNAME', 27n, 'จัดการชื่อเล่น / Manage Nicknames'],
+  ['MANAGE_MESSAGES', 13n, 'จัดการข้อความ / Manage Messages'], ['MENTION_EVERYONE', 17n, '@everyone / @here'], ['VIEW', 10n, 'ดูช่อง / View Channels'], ['SEND', 11n, 'ส่งข้อความ / Send Messages'],
+  ['CONNECT', 20n, 'เชื่อมต่อเสียง / Connect'], ['SPEAK', 21n, 'พูด / Speak'], ['INVITE', 0n, 'สร้างคำเชิญ / Create Invite']];
+const permCache = new Map();
+async function getPerms(g, force) {
+  if (!force && permCache.has(g)) return permCache.get(g);
+  let p = null; try { p = await api('perms?guild=' + g); } catch (e) { p = null; }
+  permCache.set(g, p); setTimeout(() => permCache.delete(g), 60000); return p;
+}
+const hexc = (n) => '#' + (n || 0).toString(16).padStart(6, '0');
+const sv = { tab: 'overview', role: null, chan: null, perms: null };
+const srvTabs = [['overview', 'ภาพรวม / Overview'], ['roles', 'ยศ / Roles'], ['channels', 'ช่อง / Channels']];
+async function openSrv() {
+  if (!gid || gid === 'home' || !guild()) return;
+  sv.perms = null; sv.role = null; sv.chan = null; $('srvm').classList.add('on'); renderSrv();
+  sv.perms = await getPerms(gid, true); renderSrv();
+}
+async function srvAct(path, body, okMsg) {
+  try { const r = await api(path, body); toast(okMsg || 'สำเร็จ / done'); await refresh(); permCache.delete(gid); renderSrv(); return r; }
+  catch (e) { toast(e.message); return null; }
+}
+function renderSrv() {
+  const g = guild(); if (!g) { $('srvm').classList.remove('on'); return; }
+  $('srvt').textContent = g.name;
+  $('srvtabs').innerHTML = srvTabs.map(([k, l]) => '<button data-t="' + k + '" class="' + (sv.tab === k ? 'on' : '') + '">' + l + '</button>').join('');
+  const b = $('srvb'), p = sv.perms, can = (p && p.can) || {};
+  let h = p ? '' : '<div class="note">กำลังตรวจสิทธิ์ของบอท… / checking the bot\'s permissions…</div>';
+  if (sv.tab === 'overview') {
+    const texts = g.channels.filter(c => c.type === 0 || c.type === 5);
+    h += '<label>ชื่อเซิร์ฟเวอร์ / Server name<span class="row"><input type="text" id="sv_name" maxlength="100" value="' + esc(g.name) + '"><button class="b" data-a="gname"' + (can.guild ? '' : ' disabled') + '>บันทึก / Save</button></span></label>'
+      + '<label>ลิงก์เชิญ / Invite link<span class="row"><select id="sv_ich">' + texts.map(c => '<option value="' + c.id + '">#' + esc(c.name) + '</option>').join('') + '</select><select id="sv_iage"><option value="3600">1 ชม. / 1 h</option><option value="86400" selected>1 วัน / 1 day</option><option value="604800">7 วัน / 7 days</option><option value="0">ไม่หมดอายุ / never</option></select><button class="b" data-a="invite"' + (can.invite ? '' : ' disabled') + '>สร้าง / Create</button></span></label><div id="sv_inv"></div>';
+    if (p) h += '<div class="note">สิทธิ์ของบอทในเซิร์ฟเวอร์นี้ / Bot permissions here: ' + (p.admin ? '<b>Administrator</b>' : PERMS.filter(x => (BigInt(p.bits) >> x[1]) & 1n).map(x => esc(x[2].split(' / ')[1])).join(', ') || '—') + '</div>';
+  } else if (sv.tab === 'roles') {
+    const roles = [...(g.roles || [])].sort((a, b) => b.position - a.position), r = roles.find(x => x.id === sv.role);
+    h += '<div class="rl"><div class="rlist">' + roles.map(x => '<button data-role="' + x.id + '" class="' + (x.id === sv.role ? 'on' : '') + '"><i style="background:' + (x.color ? hexc(x.color) : '#99aab5') + '"></i><span>' + esc(x.name) + '</span></button>').join('')
+      + '<button data-a="rnew"' + (can.roles ? '' : ' disabled') + '>+ สร้างยศ / New role</button></div><div>';
+    if (!r) h += '<div class="note">เลือกยศทางซ้าย / pick a role on the left</div>';
+    else {
+      const low = !p || p.admin || r.position < p.top, ev = r.id === g.id, bits = BigInt(r.permissions || '0');
+      const dis = !can.roles || (!low && !ev) ? ' disabled' : '';
+      if (can.roles && !low && !ev) h += '<div class="note warn">ยศนี้สูงกว่าหรือเท่ากับยศของบอท แก้ไม่ได้ / this role is not below the bot\'s highest role, so it can\'t be edited</div>';
+      h += '<div style="display:grid;gap:10px">' + (ev ? '' : '<label>ชื่อ / Name<input type="text" id="r_name" maxlength="100" value="' + esc(r.name) + '"' + dis + '></label><label>สี / Colour<input type="color" id="r_col" value="' + hexc(r.color) + '"' + dis + '></label>'
+        + '<label class="rc" style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:14px;color:var(--txt)"><input type="checkbox" id="r_hoist"' + (r.hoist ? ' checked' : '') + dis + '> แยกกลุ่มในรายชื่อสมาชิก / Show separately</label><label style="display:flex;flex-direction:row;gap:8px;align-items:center;text-transform:none;font-size:14px;color:var(--txt)"><input type="checkbox" id="r_men"' + (r.mentionable ? ' checked' : '') + dis + '> ให้ทุกคน @mention ได้ / Mentionable</label>')
+        + '<div class="perms">' + PERMS.map(x => '<label><input type="checkbox" data-bit="' + x[1] + '"' + ((bits >> x[1]) & 1n ? ' checked' : '') + dis + '>' + esc(x[2]) + '</label>').join('') + '</div>'
+        + '<div class="row"><button class="b" data-a="rsave"' + dis + '>บันทึก / Save</button>' + (ev ? '' : '<button class="b red" data-a="rdel"' + dis + '>ลบยศ / Delete</button>') + '</div></div>';
+    }
+    h += '</div></div>';
+  } else {
+    const cats = g.channels.filter(c => c.type === 4);
+    h += '<div class="row"><input type="text" id="cc_name" maxlength="100" placeholder="ชื่อช่องใหม่ / new channel name"><select id="cc_type"><option value="0"># ข้อความ / Text</option><option value="2">เสียง / Voice</option><option value="5">ประกาศ / Announcement</option><option value="4">หมวดหมู่ / Category</option></select><select id="cc_par"><option value="">— ไม่มีหมวด / no category —</option>' + cats.map(c => '<option value="' + c.id + '">' + esc(c.name) + '</option>').join('') + '</select><button class="b" data-a="ccreate"' + (can.channels ? '' : ' disabled') + '>สร้าง / Create</button></div>';
+    for (const c of [...g.channels].sort((a, b) => (a.type === 4 ? -1 : 0) - (b.type === 4 ? -1 : 0) || a.position - b.position)) {
+      const kind = c.type === 4 ? 'หมวดหมู่' : c.type === 2 ? 'เสียง' : c.type === 5 ? 'ประกาศ' : 'ข้อความ';
+      h += '<div class="ch"><span class="n">' + (c.type === 4 ? '' : '# ') + esc(c.name) + '</span><small>' + kind + '</small><button class="b alt" data-edit="' + c.id + '"' + (can.channels ? '' : ' disabled') + '>แก้ไข</button>' + (c.type === 0 || c.type === 5 ? '<button class="b alt" data-purge="' + c.id + '"' + (can.messages ? '' : ' disabled') + '>ลบข้อความ</button>' : '') + '<button class="b red" data-del="' + c.id + '"' + (can.channels ? '' : ' disabled') + '>ลบ</button></div>';
+      if (sv.chan === c.id) h += '<div class="chedit"><label>ชื่อ / Name<input type="text" id="ce_name" maxlength="100" value="' + esc(c.name) + '"></label>' + (c.type === 0 || c.type === 5 ? '<label>หัวข้อ / Topic<input type="text" id="ce_topic" maxlength="1024" value="' + esc(c.topic || '') + '"></label><label>โหมดช้า (วินาที) / Slowmode (s)<input type="number" id="ce_slow" min="0" max="21600" value="' + (c.rate_limit_per_user || 0) + '"></label>' : '') + '<div class="row"><button class="b" data-a="csave" data-id="' + c.id + '">บันทึก / Save</button></div></div>';
+    }
+  }
+  b.innerHTML = h;
+}
+$('srvtabs').onclick = (e) => { const t = e.target.closest('[data-t]'); if (t) { sv.tab = t.dataset.t; renderSrv(); } };
+$('srvx').onclick = () => $('srvm').classList.remove('on');
+$('srvm').addEventListener('mousedown', (e) => { if (e.target === $('srvm')) $('srvm').classList.remove('on'); });
+$('gname').onclick = openSrv;
+$('srvb').onclick = async (e) => {
+  const t = e.target.closest('button'); if (!t || t.disabled) return;
+  const g = guild(), v = (id) => { const el = $(id); return el ? el.value : ''; };
+  if (t.dataset.role) { sv.role = t.dataset.role; return renderSrv(); }
+  if (t.dataset.edit) { sv.chan = sv.chan === t.dataset.edit ? null : t.dataset.edit; return renderSrv(); }
+  if (t.dataset.del) { const c = g.channels.find(x => x.id === t.dataset.del); if (c && confirm('ลบช่อง "' + c.name + '" ถาวร?\nDelete this channel permanently?')) srvAct('channel/delete', { channel: c.id, reason: 'BotDeck' }, 'ลบช่องแล้ว / channel deleted'); return; }
+  if (t.dataset.purge) { const n = parseInt(prompt('ลบข้อความล่าสุดกี่ข้อความ (1-100; เฉพาะที่ไม่เกิน 14 วัน)?\nHow many of the latest messages to delete (1-100, newer than 14 days)?', '10'), 10); if (n >= 1 && n <= 100 && confirm('ลบ ' + n + ' ข้อความ? / Delete ' + n + ' messages?')) { const r = await srvAct('purge', { channel: t.dataset.purge, count: n, reason: 'BotDeck purge' }, 'ลบแล้ว / deleted'); if (r) { cache.delete(t.dataset.purge); if (cid === t.dataset.purge) openChannel(cid); } } return; }
+  switch (t.dataset.a) {
+    case 'gname': return void srvAct('guild/edit', { guild: g.id, name: v('sv_name') }, 'เปลี่ยนชื่อแล้ว / renamed');
+    case 'invite': { const r = await api('invite', { channel: v('sv_ich'), maxAge: +v('sv_iage') }).catch(er => { toast(er.message); return null; }); if (r) $('sv_inv').innerHTML = '<div class="row"><input type="text" readonly value="' + esc(r.url) + '" onfocus="this.select()"><button class="b alt" data-a="copyinv" data-u="' + esc(r.url) + '">คัดลอก / Copy</button></div>'; return; }
+    case 'copyinv': return void ((navigator.clipboard ? navigator.clipboard.writeText(t.dataset.u) : Promise.reject()).then(() => toast('คัดลอกแล้ว / copied'), () => toast(t.dataset.u)));
+    case 'rnew': { const r = await srvAct('role/save', { guild: g.id, name: 'new role' }, 'สร้างยศแล้ว / role created'); if (r) { sv.role = r.id; renderSrv(); } return; }
+    case 'rsave': {
+      let bits = 0n; $('srvb').querySelectorAll('[data-bit]').forEach(i => { if (i.checked) bits |= 1n << BigInt(i.dataset.bit); });
+      const r = (g.roles || []).find(x => x.id === sv.role), keep = BigInt(r.permissions || '0'); let mask = 0n; PERMS.forEach(x => { mask |= 1n << x[1]; });
+      const body = { guild: g.id, role: sv.role, permissions: ((keep & ~mask) | bits).toString() };
+      if ($('r_name')) Object.assign(body, { name: v('r_name'), color: parseInt(v('r_col').slice(1), 16), hoist: $('r_hoist').checked, mentionable: $('r_men').checked });
+      return void srvAct('role/save', body, 'บันทึกแล้ว / saved');
+    }
+    case 'rdel': { const r = (g.roles || []).find(x => x.id === sv.role); if (r && confirm('ลบยศ "' + r.name + '"?\nDelete this role?')) { const x = await srvAct('role/delete', { guild: g.id, role: r.id, reason: 'BotDeck' }, 'ลบยศแล้ว / role deleted'); if (x) { sv.role = null; renderSrv(); } } return; }
+    case 'ccreate': return void srvAct('channel/create', { guild: g.id, name: v('cc_name'), type: +v('cc_type'), parent: v('cc_par') || undefined }, 'สร้างช่องแล้ว / channel created');
+    case 'csave': { const body = { channel: t.dataset.id, name: v('ce_name') }; if ($('ce_topic')) { body.topic = v('ce_topic'); body.slowmode = +v('ce_slow'); } const r = await srvAct('channel/edit', body, 'บันทึกแล้ว / saved'); if (r) { sv.chan = null; renderSrv(); } return; }
+  }
+};
+addEventListener('keydown', (e) => { if (e.key === 'Escape') $('srvm').classList.remove('on'); });
+/* moderation section inside the profile card */
+async function addModTools(box, g, u, m, roles) {
+  if (!g || !m || !S || (S.me && S.me.id === u.id)) return;
+  const p = await getPerms(g.id); if (!p || !box.isConnected) return;
+  const c = p.can, owner = g.owner_id === u.id;
+  if (!(c.roles || c.nick || c.timeout || c.kick || c.ban)) return;
+  const own = new Set(m.roles), all = (g.roles || []).filter(r => r.id !== g.id).sort((a, b) => b.position - a.position);
+  let h = '<h5>จัดการสมาชิก / Moderation</h5><div class="mod">';
+  if (owner) h += '<div style="font-size:12px;color:var(--dim)">เจ้าของเซิร์ฟเวอร์ — จัดการไม่ได้ / server owner, can\'t be moderated</div>';
+  else {
+    if (c.roles) h += '<div style="max-height:130px;overflow:auto;display:grid;gap:3px">' + all.map(r => '<label class="rc"><input type="checkbox" data-rid="' + r.id + '"' + (own.has(r.id) ? ' checked' : '') + (!p.admin && r.position >= p.top ? ' disabled' : '') + '><i style="width:10px;height:10px;border-radius:50%;background:' + (r.color ? hexc(r.color) : '#99aab5') + '"></i>' + esc(r.name) + '</label>').join('') + '</div>';
+    if (c.nick) h += '<div class="row"><input type="text" id="md_nick" maxlength="32" placeholder="ชื่อเล่น / nickname" value="' + esc(m.nick || '') + '"><button data-m="nick">บันทึก</button></div>';
+    if (c.timeout) h += '<div class="row"><select id="md_to"><option value="60">1 นาที / 1 min</option><option value="300">5 นาที</option><option value="600">10 นาที</option><option value="3600">1 ชม. / 1 h</option><option value="86400">1 วัน / 1 day</option><option value="604800">1 สัปดาห์ / 1 week</option><option value="0">ปลด timeout / remove</option></select><button data-m="timeout">Timeout</button></div>';
+    if (c.kick || c.ban) h += '<div class="row">' + (c.kick ? '<button class="red" data-m="kick">เตะ / Kick</button>' : '') + (c.ban ? '<button class="red" data-m="ban">แบน / Ban</button>' : '') + '</div>';
+  }
+  h += '</div>';
+  const sec = document.createElement('div'); sec.className = 'box'; sec.innerHTML = h;
+  const act = box.querySelector('.act'); act.parentNode.insertBefore(sec, act);
+  sec.onchange = async (e) => {
+    const cb = e.target.closest('[data-rid]'); if (!cb) return;
+    try { await api('member', { guild: g.id, user: u.id, action: cb.checked ? 'addrole' : 'delrole', role: cb.dataset.rid }); toast(cb.checked ? 'ให้ยศแล้ว / role added' : 'ถอดยศแล้ว / role removed'); }
+    catch (er) { cb.checked = !cb.checked; toast(er.message); }
+  };
+  sec.onclick = async (e) => {
+    const bt = e.target.closest('[data-m]'); if (!bt) return;
+    const act = bt.dataset.m, nm = u.global_name || u.username, base = { guild: g.id, user: u.id, action: act };
+    try {
+      if (act === 'nick') base.value = $('md_nick').value;
+      else if (act === 'timeout') base.seconds = +$('md_to').value;
+      else if (act === 'kick' && !confirm('เตะ ' + nm + ' ออกจากเซิร์ฟเวอร์?\nKick ' + nm + '?')) return;
+      else if (act === 'ban') { if (!confirm('แบน ' + nm + '?\nBan ' + nm + '?')) return; base.deleteSeconds = 0; }
+      await api('member', base); toast('สำเร็จ / done');
+      if (act === 'kick' || act === 'ban') $('prof').classList.remove('on');
+    } catch (er) { toast(er.message); }
+  };
+  place(box, box._anchor || box);
 }
 </script>
 </body>

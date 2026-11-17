@@ -2,7 +2,7 @@
 const usableEmoji = (e) => e && e.id && e.available !== false;
 const pickChannel = (c) => ({ id: c.id, name: c.name || '', type: c.type, parent_id: c.parent_id || null, position: c.position || 0, topic: c.topic || '' });
 const pickEmoji = (e) => ({ id: e.id, name: e.name, animated: !!e.animated });
-const pickRole = (r) => ({ id: r.id, name: r.name, color: r.color || 0, position: r.position || 0, hoist: !!r.hoist });
+const pickRole = (r) => ({ id: r.id, name: r.name, color: r.color || 0, position: r.position || 0, hoist: !!r.hoist, permissions: String(r.permissions || '0'), mentionable: !!r.mentionable });
 
 const pickVoice = (v) => {
   const u = (v.member && v.member.user) || {};
@@ -78,7 +78,23 @@ export class Store {
         if (!g) return false;
         g.name = d.name || g.name;
         g.icon = d.icon || null;
+        if (d.owner_id) g.owner_id = d.owner_id;
         return true;
+      }
+      case 'GUILD_ROLE_CREATE':
+      case 'GUILD_ROLE_UPDATE': {
+        const g = this.guilds.get(d.guild_id);
+        if (!g || !d.role || !d.role.id) return false;
+        const r = pickRole(d.role), i = g.roles.findIndex((x) => x.id === r.id);
+        if (i < 0) g.roles.push(r); else g.roles[i] = r;
+        return true;
+      }
+      case 'GUILD_ROLE_DELETE': {
+        const g = this.guilds.get(d.guild_id);
+        if (!g) return false;
+        const n = g.roles.length;
+        g.roles = g.roles.filter((x) => x.id !== d.role_id);
+        return g.roles.length !== n;
       }
       case 'GUILD_DELETE':
         if (d.unavailable) return false;

@@ -9,6 +9,7 @@ import { isSnowflake } from './config.js';
 import { Gate, loginPage } from './gate.js';
 import { Voice, loadVoiceLib } from './voice.js';
 import { WebSocketServer } from 'ws';
+import { installAdmin } from './admin.js';
 
 const indexHtml = readFileSync(fileURLToPath(new URL('../public/index.html', import.meta.url)));
 const BASE = '/app/';
@@ -57,6 +58,16 @@ export class App {
     get('members', (ctx) => this.members(ctx));
     get('reactors', (ctx) => this.reactors(ctx));
     get('profile', (ctx) => this.profile(ctx));
+    get('perms', (ctx) => this.myPerms(ctx));
+    post('member', (ctx) => this.memberAction(ctx));
+    post('guild/edit', (ctx) => this.guildEdit(ctx));
+    post('role/save', (ctx) => this.roleSave(ctx));
+    post('role/delete', (ctx) => this.roleDelete(ctx));
+    post('channel/create', (ctx) => this.channelCreate(ctx));
+    post('channel/edit', (ctx) => this.channelEdit(ctx));
+    post('channel/delete', (ctx) => this.channelDelete(ctx));
+    post('purge', (ctx) => this.purge(ctx));
+    post('invite', (ctx) => this.invite(ctx));
     get('pins', (ctx) => this.pins(ctx));
     post('pin', (ctx) => this.pin(ctx));
     post('login', (ctx) => this.login(ctx));
@@ -522,3 +533,5 @@ function readMultipart(req) {
     req.pipe(bb);
   });
 }
+
+installAdmin(App, { HttpError, readJson });

@@ -9,9 +9,10 @@ export class Discord {
   }
 
   /** Returns { status, body: Buffer }. A 429 is waited out once. */
-  async do(method, path, { json, form, signal } = {}) {
+  async do(method, path, { json, form, signal, reason } = {}) {
     for (let attempt = 0; ; attempt++) {
       const headers = { Authorization: `Bot ${this.token}`, 'User-Agent': 'DiscordBot (https://github.com/rowudheiv3-creator/BotDeck, 1.0)' };
+      if (reason) headers['X-Audit-Log-Reason'] = encodeURIComponent(String(reason).slice(0, 400));
       let body;
       if (json !== undefined) {
         headers['Content-Type'] = 'application/json';

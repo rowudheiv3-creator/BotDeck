@@ -44,3 +44,14 @@ withRig('fatal close codes stop retrying and explain why', {}, async (rig) => {
   await new Promise((r) => setTimeout(r, 250));
   assert.equal(rig.f.identifies.length, n, 'must not retry a fatal error');
 });
+
+import { Store } from '../src/store.js';
+test('store folds role create/update/delete events', () => {
+  const s = new Store();
+  s.apply('GUILD_CREATE', { id: '10', name: 'G', roles: [{ id: '41', name: 'Mod', permissions: '8' }] });
+  assert.equal(s.apply('GUILD_ROLE_CREATE', { guild_id: '10', role: { id: '42', name: 'VIP', color: 5, permissions: '1' } }), true);
+  assert.equal(s.apply('GUILD_ROLE_UPDATE', { guild_id: '10', role: { id: '42', name: 'VIP2', color: 6 } }), true);
+  assert.deepEqual(s.snapshot().guilds[0].roles.map((r) => r.name), ['Mod', 'VIP2']);
+  assert.equal(s.apply('GUILD_ROLE_DELETE', { guild_id: '10', role_id: '41' }), true);
+  assert.equal(s.snapshot().guilds[0].roles.length, 1);
+});
