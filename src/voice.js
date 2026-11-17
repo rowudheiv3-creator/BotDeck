@@ -2,7 +2,9 @@
 // to the server as raw 48 kHz stereo s16le PCM over a WebSocket and the server relays it into the
 // Discord voice connection; audio from other people in the channel travels back the same way.
 // Everything here is loaded lazily so a host without the voice packages still runs the rest of the app.
-import { PassThrough, pipeline } from 'node:stream';
+import { pipeline } from 'node:stream';
+import { createRequire } from 'node:module';
+import { Sender, SAMPLES } from './sender.js';
 import { config } from './config.js';
 
 export const FRAME = 3840; // 20 ms of 48 kHz, 2 channels, 16-bit
@@ -36,10 +38,9 @@ export class Voice {
   }
 
   reset() {
-    this.conn = null; this.adapter = null; this.player = null; this.pcm = null;
+    this.conn = null; this.adapter = null; this.sender = null;
     this.guildId = null; this.channelId = null; this.lastFrame = 0;
     this.hearing = new Set(); this.slots = new Map(); this.nextSlot = 1;
-    clearInterval(this.watchdog); this.watchdog = null;
   }
 
   info() {
@@ -108,8 +109,8 @@ export class Voice {
 
   leave(silent = false) {
     const conn = this.conn;
-    if (this.pcm) { try { this.pcm.end(); } catch { /* ignore */ } }
-    if (this.player) { try { this.player.stop(true); } catch { /* ignore */ } }
+    if (this.sender) this.sender.stop();
+    if (this.enc) { try { this.enc.delete(); } catch { /* ignore */ } this.enc = null; }
     this.reset();
     try { if (conn) conn.destroy(); } catch { /* already destroyed */ }
     if (!silent) this.setStatus('idle');
@@ -129,34 +130,25 @@ export class Voice {
   }
 
   setupAudio() {
-    const { lib } = this.L;
-    const { createAudioPlayer, NoSubscriberBehavior } = lib;
-    this.player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Play } });
-    this.player.on('error', () => { /* a bad frame must not take the process down */ });
-    this.conn.subscribe(this.player);
-    const rx = this.conn.receiver;
+    const Opus = createRequire(import.meta.url)('opusscript');
+    const enc = new Opus(48000, 2, Opus.Application.AUDIO);
+    try { enc.setBitrate(96000); } catch { /* default bitrate is fine */ }
+    const conn = this.conn;
+    this.sender = new Sender({
+      encode: (pcm) => Buffer.from(enc.encode(pcm, SAMPLES)),
+      send: (pkt) => { try { conn.playOpusPacket(pkt); } catch { /* connection closing */ } },
+      speaking: (on) => { try { conn.setSpeaking(on); } catch { /* connection closing */ } },
+    });
+    this.enc = enc;
+    const rx = conn.receiver;
     rx.speaking.on('start', (uid) => { this.json({ t: 'speaking', id: uid, on: true }); this.hear(uid); });
     rx.speaking.on('end', (uid) => this.json({ t: 'speaking', id: uid, on: false }));
-    // End the outgoing stream shortly after the browser goes quiet so the bot stops "speaking".
-    this.watchdog = setInterval(() => {
-      if (this.pcm && Date.now() - this.lastFrame > 400) { try { this.pcm.end(); } catch { /* ignore */ } this.pcm = null; }
-    }, 100);
-    this.watchdog.unref();
   }
 
   /** One 20 ms (or a few) of PCM from the browser. */
   push(buf) {
-    if (this.status !== 'ready' || !this.player) return;
-    if (!buf.length || buf.length > FRAME * 8 || buf.length % 4) return;
-    const { createAudioResource, StreamType } = this.L.lib;
-    if (!this.pcm || this.pcm.destroyed || this.player.state.status === 'idle') {
-      this.pcm = new PassThrough();
-      this.pcm.on('error', () => {});
-      this.player.play(createAudioResource(this.pcm, { inputType: StreamType.Raw }));
-    }
-    if (this.pcm.writableLength > FRAME * 25) return; // far behind: drop rather than build latency
-    this.lastFrame = Date.now();
-    this.pcm.write(buf);
+    if (this.status !== 'ready' || !this.sender) return;
+    this.sender.push(buf);
   }
 
   hear(uid) {

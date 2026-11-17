@@ -1170,21 +1170,40 @@ function vcCtx() {
     VC.mix = ctx.createGain(); VC.padGain = ctx.createGain(); VC.padGain.gain.value = 0.8; VC.padGain.connect(VC.mix);
     VC.monGain = ctx.createGain(); VC.monGain.gain.value = 0.8; VC.monGain.connect(ctx.destination);
     VC.lstGain = ctx.createGain(); VC.lstGain.connect(ctx.destination); VC.lstGain.gain.value = VC.listen ? 1 : 0;
-    VC.proc = ctx.createScriptProcessor(2048, 2, 2); VC.sink = ctx.createGain(); VC.sink.gain.value = 0;
-    VC.mix.connect(VC.proc); VC.proc.connect(VC.sink); VC.sink.connect(ctx.destination);
-    VC.proc.onaudioprocess = (e) => {
-      if (!VC.ws || VC.ws.readyState !== 1 || !vcReady()) return;
-      const L = e.inputBuffer.getChannelData(0), R = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : L;
-      for (let i = 0; i < L.length; i++) {
-        VC.buf[VC.fill++] = Math.max(-1, Math.min(1, L[i])) * 32767; VC.buf[VC.fill++] = Math.max(-1, Math.min(1, R[i])) * 32767;
-        if (VC.fill >= 1920) {
-          let peak = 0; for (let k = 0; k < 1920; k += 8) peak = Math.max(peak, Math.abs(VC.buf[k]));
-          if (peak > 80) VC.hang = Date.now() + 300;
-          if (Date.now() < VC.hang && VC.ws.bufferedAmount < 65536) VC.ws.send(VC.buf.slice(0, 1920).buffer);
-          VC.fill = 0;
+    VC.sink = ctx.createGain(); VC.sink.gain.value = 0; VC.sink.connect(ctx.destination);
+    // One 20 ms block (1920 interleaved int16) from the capture node. A short voice gate keeps the
+    // line quiet, and the block before speech starts is sent too so the first syllable is not clipped.
+    VC.feed = (blk) => {
+      if (!VC.ws || VC.ws.readyState !== 1 || !vcReady()) { VC.prev = null; return; }
+      let peak = 0; for (let k = 0; k < 1920; k += 8) { const v = Math.abs(blk[k]); if (v > peak) peak = v; }
+      const was = Date.now() < VC.hang;
+      if (peak > 80) VC.hang = Date.now() + 300;
+      if (Date.now() < VC.hang) {
+        if (VC.ws.bufferedAmount < 32768) {
+          if (!was && VC.prev) VC.ws.send(VC.prev);
+          VC.ws.send(blk.buffer);
         }
-      }
+        VC.prev = null;
+      } else VC.prev = blk.buffer.slice(0);
     };
+    const fallback = () => {
+      VC.proc = ctx.createScriptProcessor(2048, 2, 2);
+      VC.mix.connect(VC.proc); VC.proc.connect(VC.sink);
+      VC.proc.onaudioprocess = (e) => {
+        const L = e.inputBuffer.getChannelData(0), R = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : L;
+        for (let i = 0; i < L.length; i++) {
+          VC.buf[VC.fill++] = Math.max(-1, Math.min(1, L[i])) * 32767; VC.buf[VC.fill++] = Math.max(-1, Math.min(1, R[i])) * 32767;
+          if (VC.fill >= 1920) { VC.feed(VC.buf.slice(0, 1920)); VC.fill = 0; }
+        }
+      };
+    };
+    if (ctx.audioWorklet && window.AudioWorkletNode) {
+      ctx.audioWorklet.addModule(base + 'mic-worklet.js').then(() => {
+        const n = new AudioWorkletNode(ctx, 'bd-cap', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2] });
+        n.port.onmessage = (e) => VC.feed(new Int16Array(e.data));
+        VC.mix.connect(n); n.connect(VC.sink); VC.proc = n;
+      }).catch(fallback);
+    } else fallback();
   }
   if (VC.ctx.state === 'suspended') VC.ctx.resume();
   return VC.ctx;
@@ -1199,7 +1218,7 @@ function vcUp() {
     if (typeof ev.data === 'string') {
       let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
       if (m.t === 'src') VC.srcs.set(m.slot, m.id);
-      else if (m.t === 'speaking') { if (m.on) speaking.add(m.id); else speaking.delete(m.id); renderChans(); drawPeople(); }
+      else if (m.t === 'speaking') { if (m.on) speaking.add(m.id); else speaking.delete(m.id); if (!VC.raf) VC.raf = requestAnimationFrame(() => { VC.raf = 0; renderChans(); drawPeople(); }); }
       return;
     }
     if (!VC.ctx || !VC.listen) return;
@@ -1208,7 +1227,7 @@ function vcUp() {
     const buf = VC.ctx.createBuffer(2, n, 48000), l = buf.getChannelData(0), r = buf.getChannelData(1);
     for (let i = 0; i < n; i++) { l[i] = dv.getInt16(3 + i * 4, true) / 32768; r[i] = dv.getInt16(5 + i * 4, true) / 32768; }
     const src = VC.ctx.createBufferSource(); src.buffer = buf; src.connect(VC.lstGain);
-    const t = Math.max(VC.ctx.currentTime + 0.08, VC.nextAt.get(slot) || 0); src.start(t); VC.nextAt.set(slot, t + buf.duration);
+    const t = Math.max(VC.ctx.currentTime + 0.06, VC.nextAt.get(slot) || 0); src.start(t); VC.nextAt.set(slot, t + buf.duration);
   };
   ws.onclose = () => { if (VC.ws === ws) VC.ws = null; if (VC.want && vcReady()) setTimeout(() => { if (vcReady()) vcUp(); }, 1500); };
 }

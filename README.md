@@ -71,3 +71,7 @@ The same port answers both `http://` and `https://`. The HTTPS side uses a certi
 ## Server administration
 
 Click the server name (top of the channel list) for settings: rename the server, create invite links, create/edit/delete roles (colour, hoist, mentionable, common permissions), and create/edit/delete channels or delete the latest N messages of a channel. Click a member's name for moderation: give or remove roles, set a nickname, timeout, kick, ban. The bot can only do what its own role allows; buttons are greyed out when a permission is missing, and Discord's own error is shown if it still refuses (for example a role above the bot's highest role). Kicks, bans and purges ask for confirmation first.
+
+## Voice latency notes
+
+Microphone audio is captured on the audio thread (AudioWorklet, 20 ms blocks), sent over the WebSocket, buffered on the server for at most 160 ms, Opus-encoded and sent to Discord on a steady 20 ms clock. Voice needs Node 22.12+ on the host, outbound UDP, and HTTPS for the browser's microphone permission.

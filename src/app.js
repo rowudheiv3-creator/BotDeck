@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { brotliCompressSync, gzipSync } from 'node:zlib';
 import Busboy from 'busboy';
 import { Discord, apiError, sanitizeErr } from './discord.js';
 import { Gateway, INTENTS } from './gateway.js';
@@ -12,6 +13,21 @@ import { WebSocketServer } from 'ws';
 import { installAdmin } from './admin.js';
 
 const indexHtml = readFileSync(fileURLToPath(new URL('../public/index.html', import.meta.url)));
+const workletJs = readFileSync(fileURLToPath(new URL('../public/mic-worklet.js', import.meta.url)));
+// Pre-compress the page once so every load is a ~30 KB transfer instead of ~150 KB.
+const packed = (buf) => ({ raw: buf, br: brotliCompressSync(buf), gz: gzipSync(buf, { level: 9 }) });
+const PAGE = packed(indexHtml);
+const WORKLET = packed(workletJs);
+const sendPacked = (req, res, type, p) => {
+  const ae = String(req.headers['accept-encoding'] || '');
+  const h = { 'Content-Type': type, Vary: 'Accept-Encoding', 'Cache-Control': 'no-store' };
+  let body = p.raw;
+  if (/\bbr\b/.test(ae)) { h['Content-Encoding'] = 'br'; body = p.br; }
+  else if (/\bgzip\b/.test(ae)) { h['Content-Encoding'] = 'gzip'; body = p.gz; }
+  h['Content-Length'] = body.length;
+  res.writeHead(200, h);
+  res.end(body);
+};
 const BASE = '/app/';
 const MAX_UPLOAD = 25 * 1024 * 1024;
 const MAX_FILES = 10;
@@ -25,7 +41,7 @@ const validEmoji = (e) => {
   return n >= 1 && n <= 16 && !/[/?#%\\:"]/.test(e);
 };
 
-const CSP = "default-src 'self'; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net https://images-ext-1.discordapp.net; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
+const CSP = "default-src 'self'; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net https://images-ext-1.discordapp.net; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
 
 const parseJson = (buf) => { try { const v = JSON.parse(buf.toString()); return v && typeof v === 'object' ? v : {}; } catch { return {}; } };
 
@@ -215,9 +231,9 @@ export class App {
     }
     if (path === BASE) {
       if (req.method !== 'GET') { res.writeHead(405); return res.end(); }
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      return res.end(indexHtml);
+      return sendPacked(req, res, 'text/html; charset=utf-8', PAGE);
     }
+    if (path === BASE + 'mic-worklet.js' && req.method === 'GET') return sendPacked(req, res, 'text/javascript; charset=utf-8', WORKLET);
     const name = path.slice(BASE.length + 4); // after "api/"
     const route = path.startsWith(BASE + 'api/') ? this.routes.get(`${req.method} ${name}`) : null;
     if (!route) return this.json(res, 404, { error: 'not found' });

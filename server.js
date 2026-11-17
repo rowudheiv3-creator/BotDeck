@@ -70,5 +70,6 @@ if (process.env.BOTDECK_TOKEN) {
     .catch((e) => console.error('Auto-login failed:', e.message));
 }
 
+process.on('uncaughtException', (e) => console.error('uncaught exception (kept running):', e && e.message));
 process.on('unhandledRejection', (e) => console.error('unhandled rejection:', e && e.message));
 for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { app.stop(); front.close(() => process.exit(0)); setTimeout(() => process.exit(0), 2000).unref(); });

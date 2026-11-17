@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "node --test test/app.test.js test/gateway.test.js test/security.test.js"
+    "test": "node --test test/sender.test.js test/app.test.js test/gateway.test.js test/security.test.js"
   },
   "dependencies": {
     "@discordjs/voice": "^0.19.2",
