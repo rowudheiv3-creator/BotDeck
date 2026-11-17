@@ -1227,7 +1227,9 @@ function vcUp() {
     const buf = VC.ctx.createBuffer(2, n, 48000), l = buf.getChannelData(0), r = buf.getChannelData(1);
     for (let i = 0; i < n; i++) { l[i] = dv.getInt16(3 + i * 4, true) / 32768; r[i] = dv.getInt16(5 + i * 4, true) / 32768; }
     const src = VC.ctx.createBufferSource(); src.buffer = buf; src.connect(VC.lstGain);
-    const t = Math.max(VC.ctx.currentTime + 0.06, VC.nextAt.get(slot) || 0); src.start(t); VC.nextAt.set(slot, t + buf.duration);
+    const now = VC.ctx.currentTime; let t = Math.max(now + 0.06, VC.nextAt.get(slot) || 0);
+    if (t - now > 0.3) { if (t - now > 0.6) { VC.nextAt.set(slot, 0); t = now + 0.06; } else return; } // never let a backlog turn into seconds of delay
+    src.start(t); VC.nextAt.set(slot, t + buf.duration);
   };
   ws.onclose = () => { if (VC.ws === ws) VC.ws = null; if (VC.want && vcReady()) setTimeout(() => { if (vcReady()) vcUp(); }, 1500); };
 }

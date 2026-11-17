@@ -174,7 +174,7 @@ export class Voice {
       this.json({ t: 'src', slot, id: uid });
     }
     const frame = Buffer.concat([Buffer.from([1, slot >> 8, slot & 255]), chunk]);
-    for (const ws of this.clients) if (ws.listening && ws.readyState === 1 && ws.bufferedAmount < 1 << 20) ws.send(frame, { binary: true });
+    for (const ws of this.clients) if (ws.listening && ws.readyState === 1 && ws.bufferedAmount < 48000) ws.send(frame, { binary: true });
   }
 
   addClient(ws) {
